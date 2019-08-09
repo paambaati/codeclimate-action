@@ -10,10 +10,6 @@ LABEL com.github.actions.description="Sends Node.js code coverage to Code Climat
 LABEL com.github.actions.icon="code"
 LABEL com.github.actions.color="gray-dark"
 
-RUN env
-RUN pwd
-RUN ls -lshrta /github
-
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
