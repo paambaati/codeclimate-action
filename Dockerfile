@@ -10,7 +10,7 @@ LABEL com.github.actions.description="Sends Node.js code coverage to Code Climat
 LABEL com.github.actions.icon="upload-cloud"
 LABEL com.github.actions.color="black"
 
-RUN apk add --no-cache curl bash git
+RUN ls -lshrt
 
 ADD entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
