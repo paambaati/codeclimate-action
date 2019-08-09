@@ -6,7 +6,7 @@ LABEL homepage="http://github.com/paambaati/codeclimate-action"
 LABEL maintainer="GP <me@httgp.com>"
 
 LABEL com.github.actions.name="Code Climate Action"
-LABEL com.github.actions.description="Sends Node.js code coverage to Code Climate"
+LABEL com.github.actions.description="Publish code coverage to Code Climate"
 LABEL com.github.actions.icon="code"
 LABEL com.github.actions.color="gray-dark"
 
