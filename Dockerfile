@@ -8,7 +8,7 @@ LABEL maintainer="GP <me@httgp.com>"
 LABEL com.github.actions.name="Code Climate Action"
 LABEL com.github.actions.description="Sends Node.js code coverage to Code Climate"
 LABEL com.github.actions.icon="code"
-LABEL com.github.actions.color="black"
+LABEL com.github.actions.color="gray-dark"
 
 RUN env
 RUN pwd
