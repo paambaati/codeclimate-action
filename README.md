@@ -3,7 +3,7 @@
 A GitHub action that sends your code coverage to [Code Climate](http://codeclimate.com/).
 
 # Usage
-This action requires that you set [`CC_TEST_REPORTER_ID`](https://docs.codeclimate.com/docs/configuring-test-coverage). You can find it under Repo Settings in your Code Climate project.
+This action requires that you set [`CC_TEST_REPORTER_ID`](https://docs.codeclimate.com/docs/configuring-test-coverage) environment variable. You can find it under Repo Settings in your Code Climate project.
 
 # Example
 
