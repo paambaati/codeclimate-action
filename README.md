@@ -12,6 +12,6 @@ This action requires that you set [`CC_TEST_REPORTER_ID`](https://docs.codeclima
 ```
 action "send coverage to code climate" {
   uses = "paambaati/codeclimate-action@v1.0.0"
-  secrets = ["CC_TEST_REPORTER_ID"]
+  env = ["CC_TEST_REPORTER_ID"]
 }
 ```

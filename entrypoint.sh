@@ -8,6 +8,6 @@ curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-lin
 chmod +x ./cc-test-reporter
 ./cc-test-reporter before-build
 
-npm coverage
+bash -c "$1"
 
 ./cc-test-reporter after-build --exit-code
