@@ -10,9 +10,13 @@ LABEL com.github.actions.description="Sends Node.js code coverage to Code Climat
 LABEL com.github.actions.icon="upload-cloud"
 LABEL com.github.actions.color="black"
 
-RUN ls -lshrt
+RUN env
+RUN pwd
+RUN ls -lshrta
+RUN ls -lshrta /github/home
+RUN ls -lshrta /github/workspace
 
-ADD entrypoint.sh /entrypoint.sh
+COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT [ "/entrypoint.sh" ]
