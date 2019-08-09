@@ -12,9 +12,7 @@ LABEL com.github.actions.color="black"
 
 RUN env
 RUN pwd
-RUN ls -lshrta
-RUN ls -lshrta /github/home
-RUN ls -lshrta /github/workspace
+RUN ls -lshrta /github
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
