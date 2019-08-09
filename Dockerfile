@@ -10,7 +10,7 @@ LABEL com.github.actions.description="Sends Node.js code coverage to Code Climat
 LABEL com.github.actions.icon="code"
 LABEL com.github.actions.color="gray-dark"
 
-RUN apk add --no-cache curl
+RUN apk add --no-cache python make g++ curl
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
