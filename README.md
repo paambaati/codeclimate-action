@@ -13,11 +13,25 @@ The default coverage command is `yarn coverage`. You can change it by setting th
 
 <img height="891" src="action.png?raw=true">
 
-```
+#### HCL syntax
+```hcl
 action "Publish code coverage" {
-  uses = "paambaati/codeclimate-action@v1.0.0"
-  env = ["CC_TEST_REPORTER_ID"]
+  uses = "paambaati/codeclimate-action@master"
+  env = {
+    CC_TEST_REPORTER_ID = "<code_climate_reporter_id>"
+  }
+  args = "yarn coverage"
 }
 ```
+#### YAML syntax
+```yaml
+steps:
+- name: Test & publish code coverage
+  uses: paambaati/codeclimate-action@master
+  env:
+    CC_TEST_REPORTER_ID: <code_climate_reporter_id>
+  with:
+    args: yarn coverage
+```
 
-Example project — [paambaati/websight](https://github.com/paambaati/websight/blob/master/.github/main.workflow)
+Example project — [paambaati/websight](https://github.com/paambaati/websight/blob/master/.github/)
