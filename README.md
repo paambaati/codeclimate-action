@@ -15,7 +15,7 @@ The default coverage command is `yarn coverage`. You can change it by setting th
 
 #### HCL syntax
 ```hcl
-action "Publish code coverage" {
+action "Test & publish code coverage" {
   uses = "paambaati/codeclimate-action@master"
   env = {
     CC_TEST_REPORTER_ID = "<code_climate_reporter_id>"
