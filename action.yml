@@ -7,4 +7,4 @@ inputs:
     default: 'yarn coverage'
 runs:
   using: 'node12'
-  main: 'lib/codeclimate.js'
+  main: 'lib/main.js'
