@@ -9,8 +9,6 @@ The default coverage command is `yarn coverage`. You can change it by setting th
 
 # Example
 
-<img height="891" src="action.png?raw=true">
-
 #### HCL syntax
 ```hcl
 action "Test & publish code coverage" {
@@ -29,7 +27,7 @@ steps:
   env:
     CC_TEST_REPORTER_ID: <code_climate_reporter_id>
   with:
-    args: npm run coverage
+    coverageCommand: npm run coverage
 ```
 
 Example project — [paambaati/websight](https://github.com/paambaati/websight/blob/master/.github/)
