@@ -1,0 +1,39 @@
+{
+    "name": "codeclimate-action",
+    "version": "2.0.0",
+    "private": true,
+    "description": "Publish code coverage to Code Climate",
+    "main": "lib/main.js",
+    "scripts": {
+        "build": "tsc",
+        "test": "tape -r ts-node/register/transpile-only test/*.test.ts"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/paambaati/codeclimate-action.git"
+    },
+    "keywords": [
+        "actions",
+        "codeclimate",
+        "quality",
+        "coverage"
+    ],
+    "author": "GP <me@httgp.com>",
+    "license": "MIT",
+    "dependencies": {
+        "@actions/core": "^1.0.0",
+        "@actions/exec": "^1.0.0",
+        "got": "^9.6.0"
+    },
+    "devDependencies": {
+        "@types/got": "^9.6.6",
+        "@types/nock": "^10.0.3",
+        "@types/node": "^12.0.4",
+        "@types/tape": "^4.2.33",
+        "intercept-stdout": "^0.1.2",
+        "nock": "^11.0.0",
+        "tape": "^4.11.0",
+        "ts-node": "^8.3.0",
+        "typescript": "^3.5.3"
+    }
+}

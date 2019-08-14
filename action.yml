@@ -1,0 +1,10 @@
+name: 'Code Climate Action'
+description: 'Publish code coverage to Code Climate'
+author: 'GP <me@httgp.com>'
+inputs: 
+  coverageCommand:
+    description: 'Coverage command to execute'
+    default: 'yarn coverage'
+runs:
+  using: 'node12'
+  main: 'lib/codeclimate.js'
