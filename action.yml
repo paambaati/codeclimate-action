@@ -1,7 +1,10 @@
 name: 'Code Climate Action'
 description: 'Publish code coverage to Code Climate'
 author: 'GP <me@httgp.com>'
-inputs: 
+branding:
+  icon: 'code'
+  color: 'gray-dark'
+inputs:
   coverageCommand:
     description: 'Coverage command to execute'
     default: 'yarn coverage'
