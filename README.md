@@ -12,7 +12,7 @@ The default coverage command is `yarn coverage`. You can change it by setting th
 ```yaml
 steps:
 - name: Test & publish code coverage
-  uses: paambaati/codeclimate-action@master
+  uses: paambaati/codeclimate-action@v2.1.0
   env:
     CC_TEST_REPORTER_ID: <code_climate_reporter_id>
   with:
