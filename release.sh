@@ -17,9 +17,11 @@ npm run build
 
 # Build & tests successful. Now keep only production deps.
 npm prune --production
+echo "1"
 
 # Force add built files and deps.
 git add --force lib/ node_modules/
+echo "2"
 git commit -a -m "Publishing $git_branch"
 git push -u origin $git_branch
 
