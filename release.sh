@@ -10,7 +10,7 @@ if [ "$git_branch" == "master" ]; then
     exit 1
 fi
 
-# Install depedencies and build & test.
+# Install dependencies and build & test.
 npm install
 npm test
 npm run build
