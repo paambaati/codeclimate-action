@@ -1,6 +1,6 @@
 import { platform } from 'os';
 import { createWriteStream } from 'fs';
-import { stream } from 'got';
+import fetch from 'node-fetch';
 import { debug, error, setFailed, getInput } from '@actions/core';
 import { exec } from '@actions/exec';
 
@@ -9,16 +9,17 @@ const EXECUTABLE = './cc-reporter';
 const DEFAULT_COVERAGE_COMMAND = 'yarn coverage';
 
 export function downloadToFile(url: string, file: string, mode: number = 0o755): Promise<void> {
-    return new Promise((resolve, reject) => {
-        const downloader = stream(url, { timeout: 2 * 60 * 1000 }); // Timeout in 2 minutes.
-        downloader.on('error', err => {
-            downloader.destroy();
+    return new Promise(async (resolve, reject) => {
+        try {
+            const response = await fetch(url, { timeout: 2 * 60 * 1000 }); // Timeout in 2 minutes.
+            const writer = createWriteStream(file, { mode });
+            response.body.pipe(writer);
+            writer.on('close', () => {
+                return resolve();
+            });
+        } catch (err) {
             return reject(err);
-        });
-        const writer = downloader.pipe(createWriteStream(file, { mode }));
-        writer.on('close', () => {
-            return resolve();
-        });
+        }
     });
 }
 
