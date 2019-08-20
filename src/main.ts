@@ -29,15 +29,13 @@ export function downloadToFile(
 }
 
 function prepareEnv() {
-  const env: {
-    [key: string]: string
-  } = {}
-  if (process.env.CC_TEST_REPORTER_ID !== undefined)
-    env.CC_TEST_REPORTER_ID = process.env.CC_TEST_REPORTER_ID
+  const env = process.env as { [key: string]: string }
+
   if (process.env.GITHUB_SHA !== undefined)
     env.GIT_COMMIT_SHA = process.env.GITHUB_SHA
   if (process.env.GITHUB_REF !== undefined)
     env.GIT_BRANCH = process.env.GITHUB_REF
+
   return env
 }
 
