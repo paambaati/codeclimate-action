@@ -1,5 +1,5 @@
 {
     "hooks": {
-        "pre-commit": "prettier --check src/*.ts test/*.ts"
+        "pre-commit": "npm run format:check --silent"
     }
 }
