@@ -18,7 +18,7 @@ jobs:
 
     - name: "check for unformatted sources"
       run: |
-        npm run format:check
+        npm run format:check \
         || (echo "##[error] found unformatted files. please 'npm run format'" \
                  "and check in all changes" \
             && exit 1)
