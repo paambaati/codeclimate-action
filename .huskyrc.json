@@ -1,0 +1,5 @@
+{
+    "hooks": {
+        "pre-commit": "prettier --check src/*.ts test/*.ts"
+    }
+}
