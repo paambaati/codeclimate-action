@@ -17,16 +17,14 @@ npm run build
 
 # Build & tests successful. Now keep only production deps.
 npm prune --production
-echo "1"
 
 # Force add built files and deps.
 git add --force lib/ node_modules/
-echo "2"
-git commit -a -m "Publishing $git_branch"
+GIT_TRACE=1 git commit -a -m "Publishing $git_branch"
 git push -u origin $git_branch
 
 # Set up release tag.
-read -p "Enter tag (example: v1.0.0) " git_tag
+read -p "Enter tag (example: v2.2.0) " git_tag
 git push origin ":refs/tags/$git_tag"
 git tag -fa "$git_tag" -m "Release $git_tag"
 git push -u origin $git_tag
