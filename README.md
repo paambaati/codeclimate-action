@@ -1,5 +1,7 @@
 # codeclimate-action
 
+[![Build Status](https://github.com/paambaati/codeclimate-action/workflows/PR%20Checks/badge.svg)](https://actions-badge.atrox.dev/paambaati/codeclimate-action/goto) [![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 A GitHub action that publishes your code coverage to [Code Climate](http://codeclimate.com/).
 
 ## Usage
