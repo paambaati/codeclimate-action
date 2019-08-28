@@ -3,6 +3,7 @@ import { createWriteStream } from 'fs';
 import fetch from 'node-fetch';
 import { debug, error, setFailed, getInput } from '@actions/core';
 import { exec } from '@actions/exec';
+import { ExecOptions } from '@actions/exec/lib/interfaces';
 
 const DOWNLOAD_URL = `https://codeclimate.com/downloads/test-reporter/test-reporter-latest-${platform()}-amd64`;
 const EXECUTABLE = './cc-reporter';
@@ -27,6 +28,17 @@ export function downloadToFile(
   });
 }
 
+function prepareEnv() {
+  const env = process.env as { [key: string]: string };
+
+  if (process.env.GITHUB_SHA !== undefined)
+    env.GIT_COMMIT_SHA = process.env.GITHUB_SHA;
+  if (process.env.GITHUB_REF !== undefined)
+    env.GIT_BRANCH = process.env.GITHUB_REF;
+
+  return env;
+}
+
 export function run(
   downloadUrl: string = DOWNLOAD_URL,
   executable: string = EXECUTABLE,
@@ -43,8 +55,11 @@ export function run(
       setFailed('🚨 CC Reporter download failed!');
       return reject(err);
     }
+    const execOpts: ExecOptions = {
+      env: prepareEnv()
+    };
     try {
-      lastExitCode = await exec(executable, ['before-build']);
+      lastExitCode = await exec(executable, ['before-build'], execOpts);
       debug('✅ CC Reporter before-build checkin completed...');
     } catch (err) {
       error(err);
@@ -52,7 +67,7 @@ export function run(
       return reject(err);
     }
     try {
-      lastExitCode = await exec(coverageCommand);
+      lastExitCode = await exec(coverageCommand, undefined, execOpts);
       if (lastExitCode !== 0) {
         throw new Error(`Coverage run exited with code ${lastExitCode}`);
       }
@@ -63,11 +78,11 @@ export function run(
       return reject(err);
     }
     try {
-      await exec(executable, [
-        'after-build',
-        '--exit-code',
-        lastExitCode.toString()
-      ]);
+      await exec(
+        executable,
+        ['after-build', '--exit-code', lastExitCode.toString()],
+        execOpts
+      );
       debug('✅ CC Reporter after-build checkin completed!');
       return resolve();
     } catch (err) {
