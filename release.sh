@@ -20,7 +20,7 @@ npm prune --production
 
 # Force add built files and deps.
 git add --force lib/ node_modules/
-GIT_TRACE=1 git commit -a -m "Publishing $git_branch"
+git commit -a -m "Publishing $git_branch"
 git push -u origin $git_branch
 
 # Set up release tag.
