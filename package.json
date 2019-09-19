@@ -23,22 +23,22 @@
     "author": "GP <me@httgp.com>",
     "license": "MIT",
     "dependencies": {
-        "@actions/core": "^1.0.0",
-        "@actions/exec": "^1.0.0",
+        "@actions/core": "^1.1.1",
+        "@actions/exec": "^1.0.1",
         "node-fetch": "^2.6.0"
     },
     "devDependencies": {
-        "@types/nock": "^10.0.3",
-        "@types/node": "^12.0.4",
-        "@types/node-fetch": "^2.5.0",
+        "@types/nock": "^11.1.0",
+        "@types/node": "^12.7.5",
+        "@types/node-fetch": "^2.5.1",
         "@types/tape": "^4.2.33",
-        "husky": "^3.0.4",
+        "husky": "^3.0.5",
         "intercept-stdout": "^0.1.2",
-        "nock": "^11.3.2",
+        "nock": "^11.3.4",
         "prettier": "^1.18.2",
         "tape": "^4.11.0",
         "to-readable-stream": "^2.1.0",
-        "ts-node": "^8.3.0",
-        "typescript": "^3.5.3"
+        "ts-node": "^8.4.1",
+        "typescript": "^3.6.3"
     }
 }
