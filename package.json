@@ -23,7 +23,7 @@
     "author": "GP <me@httgp.com>",
     "license": "MIT",
     "dependencies": {
-        "@actions/core": "^1.1.1",
+        "@actions/core": "^1.1.3",
         "@actions/exec": "^1.0.1",
         "node-fetch": "^2.6.0"
     },
