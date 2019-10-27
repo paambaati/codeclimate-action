@@ -11,7 +11,7 @@ if [ "$git_branch" == "master" ]; then
 fi
 
 # Install dependencies and build & test.
-npm install
+DISABLE_OPENCOLLECTIVE=true npm install
 npm test
 npm run build
 
