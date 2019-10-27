@@ -18,13 +18,17 @@ npm run build
 # Build & tests successful. Now keep only production deps.
 npm prune --production
 
+echo 1
 # Remove Git hooks.
 rm -rf .git/hooks/*
-
+echo 2
 # Force add built files and deps.
 git add --force lib/ node_modules/
+echo 3
 git commit -a -m "Publishing $git_branch"
+echo 4
 git push -u origin $git_branch
+echo 5
 
 # Set up release tag.
 read -p "Enter tag (example: v2.2.4) " git_tag
