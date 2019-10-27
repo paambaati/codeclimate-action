@@ -1,6 +1,6 @@
 {
     "name": "codeclimate-action",
-    "version": "2.2.1",
+    "version": "2.2.2",
     "private": true,
     "description": "Publish code coverage to Code Climate",
     "main": "lib/main.js",
@@ -23,22 +23,22 @@
     "author": "GP <me@httgp.com>",
     "license": "MIT",
     "dependencies": {
-        "@actions/core": "^1.1.1",
+        "@actions/core": "^1.2.0",
         "@actions/exec": "^1.0.1",
         "node-fetch": "^2.6.0"
     },
     "devDependencies": {
         "@types/nock": "^11.1.0",
-        "@types/node": "^12.7.5",
-        "@types/node-fetch": "^2.5.1",
+        "@types/node": "^12.11.7",
+        "@types/node-fetch": "^2.5.2",
         "@types/tape": "^4.2.33",
-        "husky": "^3.0.5",
+        "husky": "^3.0.9",
         "intercept-stdout": "^0.1.2",
-        "nock": "^11.3.4",
+        "nock": "^11.6.0",
         "prettier": "^1.18.2",
         "tape": "^4.11.0",
         "to-readable-stream": "^2.1.0",
         "ts-node": "^8.4.1",
-        "typescript": "^3.6.3"
+        "typescript": "^3.6.4"
     }
 }
