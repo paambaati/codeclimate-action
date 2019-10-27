@@ -21,4 +21,4 @@ steps:
     coverageCommand: npm run coverage
 ```
 
-Example project — [paambaati/websight](https://github.com/paambaati/websight/blob/3275cf0451e4c4651190eecdbfa424dbacfdfbe7/.github/workflows/ci.yml#L33-L49)
+Example project — [paambaati/websight](https://github.com/paambaati/websight/blob/663bd4245b3c2dbd768aff9bfc197103ee77973e/.github/workflows/ci.yml#L33-L49)
