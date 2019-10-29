@@ -11,5 +11,3 @@ inputs:
 runs:
   using: 'node12'
   main: 'lib/main.js'
-  env:
-    DISABLE_OPENCOLLECTIVE: 'true'
