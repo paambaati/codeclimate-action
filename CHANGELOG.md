@@ -8,7 +8,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - `env` issues introduced after the Husky-related fixes.
 
-# 
 # [2.2.5] - 2019-10-29
 ### Fixed
 - Remove `husky` as a dependency.
