@@ -1,0 +1,12 @@
+name: "Publish"
+on: create
+
+jobs:
+  release:
+    name: Publish GitHub Actions to Marketplace
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publish GitHub Actions to Marketplace
+        uses: technote-space/release-github-actions@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
