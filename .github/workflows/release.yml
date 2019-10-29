@@ -10,3 +10,5 @@ jobs:
         uses: technote-space/release-github-actions@v1
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COMMIT_NAME: 'GP'
+          COMMIT_EMAIL: 'me@httgp.com'
