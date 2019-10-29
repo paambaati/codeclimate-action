@@ -1,0 +1,15 @@
+name: 'Code Climate Coverage Action'
+description: 'Publish code coverage to Code Climate'
+author: 'GP <me@httgp.com>'
+branding:
+  icon: 'code'
+  color: 'gray-dark'
+inputs:
+  coverageCommand:
+    description: 'Coverage command to execute'
+    default: 'yarn coverage'
+runs:
+  using: 'node12'
+  main: 'lib/main.js'
+  env:
+    DISABLE_OPENCOLLECTIVE: 'true'
