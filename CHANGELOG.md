@@ -6,7 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # [2.2.5] - 2019-10-29
 ### Fixed
-- Remove  `husky` as a dependency.
+- Remove `husky` as a dependency.
+
+### Changed
+- Automated releases thanks to [`technote-space/release-github-actions`](https://github.com/technote-space/release-github-actions).
 
 # [2.2.4] - 2019-10-27
 ### Fixed
