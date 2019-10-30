@@ -12,3 +12,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COMMIT_NAME: 'GP'
           COMMIT_EMAIL: 'me@httgp.com'
+          CREATE_MAJOR_VERSION_TAG: false
+          CREATE_MINOR_VERSION_TAG: false
