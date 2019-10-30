@@ -14,3 +14,4 @@ jobs:
           COMMIT_EMAIL: 'me@httgp.com'
           CREATE_MAJOR_VERSION_TAG: false
           CREATE_MINOR_VERSION_TAG: false
+          key: '.[!.]*,test,src,*.js,*.ts,*.json,CHANGELOG.md,_config.yml'
