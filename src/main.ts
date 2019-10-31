@@ -38,7 +38,7 @@ function prepareEnv() {
     env.GIT_BRANCH = process.env.GITHUB_REF;
 
   if (env.GIT_BRANCH)
-    env.GIT_BRANCH = env.GIT_BRANCH.replace(/^refs\/head\//, ''); // Remove 'refs/head/' prefix (See https://github.com/paambaati/codeclimate-action/issues/42)
+    env.GIT_BRANCH = env.GIT_BRANCH.replace(/^refs\/heads\//, ''); // Remove 'refs/heads/' prefix (See https://github.com/paambaati/codeclimate-action/issues/42)
   return env;
 }
 
