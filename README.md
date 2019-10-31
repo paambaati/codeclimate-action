@@ -24,7 +24,7 @@ steps:
     CC_TEST_REPORTER_ID: <code_climate_reporter_id>
   with:
     coverageCommand: npm run coverage
-    debug: false
+    debug: true
 ```
 
 Example project — [paambaati/websight](https://github.com/paambaati/websight/blob/663bd4245b3c2dbd768aff9bfc197103ee77973e/.github/workflows/ci.yml#L33-L49)
