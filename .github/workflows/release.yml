@@ -1,5 +1,8 @@
 name: "Publish"
-on: create
+on:
+  create:
+    branches:
+      - master
 
 jobs:
   release:
