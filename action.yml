@@ -8,6 +8,9 @@ inputs:
   coverageCommand:
     description: 'Coverage command to execute'
     default: 'yarn coverage'
+  debug:
+    description: 'Enable debugging logs for the Code Climate test reporter'
+    default: 'false'
 runs:
   using: 'node12'
   main: 'lib/main.js'
