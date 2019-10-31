@@ -46,7 +46,7 @@ export function run(
   downloadUrl: string = DOWNLOAD_URL,
   executable: string = EXECUTABLE,
   coverageCommand: string = DEFAULT_COVERAGE_COMMAND,
-  codeClimateDebug: string = DEFAULT_CODECLIMATE_DEBUG,
+  codeClimateDebug: string = DEFAULT_CODECLIMATE_DEBUG
 ): Promise<void> {
   return new Promise(async (resolve, reject) => {
     let lastExitCode = 1;
@@ -82,13 +82,9 @@ export function run(
       return reject(err);
     }
     try {
-      const commands = ['after-build', '--exit-code', lastExitCode.toString()]
+      const commands = ['after-build', '--exit-code', lastExitCode.toString()];
       if (codeClimateDebug === 'true') commands.push('--debug');
-      await exec(
-        executable,
-        commands,
-        execOpts
-      );
+      await exec(executable, commands, execOpts);
       debug('✅ CC Reporter after-build checkin completed!');
       return resolve();
     } catch (err) {
