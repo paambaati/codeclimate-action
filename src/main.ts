@@ -34,8 +34,9 @@ function prepareEnv() {
   if (process.env.GITHUB_SHA !== undefined)
     env.GIT_COMMIT_SHA = process.env.GITHUB_SHA;
   if (process.env.GITHUB_REF !== undefined)
-    env.GIT_BRANCH = process.env.GITHUB_REF.replace(/^refs\/head\//, ''); // Remove 'refs/head/' prefix (See https://github.com/paambaati/codeclimate-action/issues/42)
+    env.GIT_BRANCH = process.env.GITHUB_REF;
 
+  env.GIT_BRANCH = env.GIT_BRANCH.replace(/^refs\/head\//, ''); // Remove 'refs/head/' prefix (See https://github.com/paambaati/codeclimate-action/issues/42)
   return env;
 }
 
