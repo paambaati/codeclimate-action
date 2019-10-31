@@ -33,7 +33,7 @@
         "@types/node-fetch": "^2.5.2",
         "@types/tape": "^4.2.33",
         "intercept-stdout": "^0.1.2",
-        "nock": "^11.6.0",
+        "nock": "^11.7.0",
         "prettier": "^1.18.2",
         "tape": "^4.11.0",
         "to-readable-stream": "^2.1.0",
