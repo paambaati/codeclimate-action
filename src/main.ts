@@ -98,7 +98,7 @@ export function run(
 if (!module.parent) {
   let coverageCommand = getInput('coverageCommand', { required: false });
   if (!coverageCommand.length) coverageCommand = DEFAULT_COVERAGE_COMMAND;
-  let codeClimateDebug = getInput('codeClimateDebug', { required: false });
+  let codeClimateDebug = getInput('debug', { required: false });
   if (!coverageCommand.length) codeClimateDebug = DEFAULT_CODECLIMATE_DEBUG;
   run(DOWNLOAD_URL, EXECUTABLE, coverageCommand, codeClimateDebug);
 }
