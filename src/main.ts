@@ -8,6 +8,7 @@ import { ExecOptions } from '@actions/exec/lib/interfaces';
 const DOWNLOAD_URL = `https://codeclimate.com/downloads/test-reporter/test-reporter-latest-${platform()}-amd64`;
 const EXECUTABLE = './cc-reporter';
 const DEFAULT_COVERAGE_COMMAND = 'yarn coverage';
+const DEFAULT_CODECLIMATE_DEBUG = 'false';
 
 export function downloadToFile(
   url: string,
@@ -36,14 +37,16 @@ function prepareEnv() {
   if (process.env.GITHUB_REF !== undefined)
     env.GIT_BRANCH = process.env.GITHUB_REF;
 
-  env.GIT_BRANCH = env.GIT_BRANCH.replace(/^refs\/head\//, ''); // Remove 'refs/head/' prefix (See https://github.com/paambaati/codeclimate-action/issues/42)
+  if (env.GIT_BRANCH)
+    env.GIT_BRANCH = env.GIT_BRANCH.replace(/^refs\/head\//, ''); // Remove 'refs/head/' prefix (See https://github.com/paambaati/codeclimate-action/issues/42)
   return env;
 }
 
 export function run(
   downloadUrl: string = DOWNLOAD_URL,
   executable: string = EXECUTABLE,
-  coverageCommand: string = DEFAULT_COVERAGE_COMMAND
+  coverageCommand: string = DEFAULT_COVERAGE_COMMAND,
+  codeClimateDebug: string = DEFAULT_CODECLIMATE_DEBUG
 ): Promise<void> {
   return new Promise(async (resolve, reject) => {
     let lastExitCode = 1;
@@ -79,11 +82,9 @@ export function run(
       return reject(err);
     }
     try {
-      await exec(
-        executable,
-        ['after-build', '--exit-code', lastExitCode.toString()],
-        execOpts
-      );
+      const commands = ['after-build', '--exit-code', lastExitCode.toString()];
+      if (codeClimateDebug === 'true') commands.push('--debug');
+      await exec(executable, commands, execOpts);
       debug('✅ CC Reporter after-build checkin completed!');
       return resolve();
     } catch (err) {
@@ -97,5 +98,7 @@ export function run(
 if (!module.parent) {
   let coverageCommand = getInput('coverageCommand', { required: false });
   if (!coverageCommand.length) coverageCommand = DEFAULT_COVERAGE_COMMAND;
-  run(DOWNLOAD_URL, EXECUTABLE, coverageCommand);
+  let codeClimateDebug = getInput('codeClimateDebug', { required: false });
+  if (!coverageCommand.length) codeClimateDebug = DEFAULT_CODECLIMATE_DEBUG;
+  run(DOWNLOAD_URL, EXECUTABLE, coverageCommand, codeClimateDebug);
 }
