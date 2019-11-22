@@ -89,7 +89,7 @@ export function run(
       return resolve();
     } catch (err) {
       error(err);
-      setFailed('🚨 CC Reporter before-build checkin failed!');
+      setFailed('🚨 CC Reporter after-build checkin failed!');
       return reject(err);
     }
   });
