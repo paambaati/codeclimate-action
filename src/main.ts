@@ -9,6 +9,7 @@ const DOWNLOAD_URL = `https://codeclimate.com/downloads/test-reporter/test-repor
 const EXECUTABLE = './cc-reporter';
 const DEFAULT_COVERAGE_COMMAND = 'yarn coverage';
 const DEFAULT_CODECLIMATE_DEBUG = 'false';
+const DEFAULT_COVERAGE_LOCATIONS = [];
 
 export function downloadToFile(
   url: string,
@@ -46,7 +47,8 @@ export function run(
   downloadUrl: string = DOWNLOAD_URL,
   executable: string = EXECUTABLE,
   coverageCommand: string = DEFAULT_COVERAGE_COMMAND,
-  codeClimateDebug: string = DEFAULT_CODECLIMATE_DEBUG
+  codeClimateDebug: string = DEFAULT_CODECLIMATE_DEBUG,
+  coverageLocations: Array<String> = DEFAULT_COVERAGE_LOCATIONS
 ): Promise<void> {
   return new Promise(async (resolve, reject) => {
     let lastExitCode = 1;
@@ -81,6 +83,68 @@ export function run(
       setFailed('🚨 Coverage run failed!');
       return reject(err);
     }
+
+    if (!!coverageLocations.length) {
+      //Run format-coverage on each location.
+      for (const i in coverageLocations) {
+        const location = coverageLocations[i];
+        const commands = [
+          'format-coverage',
+          location.toString(),
+          '-o',
+          `/tmp/codeclimate.${i}.json`,
+          '--exit-code',
+          lastExitCode.toString()
+        ];
+        if (codeClimateDebug === 'true') commands.push('--debug');
+
+        try {
+          lastExitCode = await exec(executable, commands, execOpts);
+        } catch (err) {
+          error(err);
+          setFailed('🚨 CC Reporter after-build checkin failed!');
+          return reject(err);
+        }
+      }
+
+      //run sum coverage
+      const sumCommands = [
+        'sum-coverage',
+        'tmp/codeclimate.*.json',
+        '-o',
+        `/tmp/coverage.total.json`,
+        '--exit-code',
+        lastExitCode.toString()
+      ];
+      if (codeClimateDebug === 'true') sumCommands.push('--debug');
+
+      try {
+        lastExitCode = await exec(executable, sumCommands, execOpts);
+      } catch (err) {
+        error(err);
+        setFailed('🚨 CC Reporter after-build checkin failed!');
+        return reject(err);
+      }
+
+      //upload to code climate:
+      const uploadCommands = [
+        'upload-coverage',
+        '-i',
+        `/tmp/coverage.total.json`,
+        '--exit-code',
+        lastExitCode.toString()
+      ];
+      if (codeClimateDebug === 'true') uploadCommands.push('--debug');
+
+      try {
+        lastExitCode = await exec(executable, uploadCommands, execOpts);
+      } catch (err) {
+        error(err);
+        setFailed('🚨 CC Reporter after-build checkin failed!');
+        return reject(err);
+      }
+    }
+
     try {
       const commands = ['after-build', '--exit-code', lastExitCode.toString()];
       if (codeClimateDebug === 'true') commands.push('--debug');
@@ -100,5 +164,15 @@ if (!module.parent) {
   if (!coverageCommand.length) coverageCommand = DEFAULT_COVERAGE_COMMAND;
   let codeClimateDebug = getInput('debug', { required: false });
   if (!coverageCommand.length) codeClimateDebug = DEFAULT_CODECLIMATE_DEBUG;
-  run(DOWNLOAD_URL, EXECUTABLE, coverageCommand, codeClimateDebug);
+  const coverageLocations =
+    getInput('coverageLocations', { required: false }).split(' ') ||
+    DEFAULT_COVERAGE_LOCATIONS;
+
+  run(
+    DOWNLOAD_URL,
+    EXECUTABLE,
+    coverageCommand,
+    codeClimateDebug,
+    coverageLocations
+  );
 }
