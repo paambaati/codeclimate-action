@@ -84,19 +84,23 @@ export function run(
       return reject(err);
     }
 
-    if (!!coverageLocations.length) {
+    if (coverageLocations.length > 0) {
       //Run format-coverage on each location.
+      const parts: Array<string> = [];
+
       for (const i in coverageLocations) {
-        const location = coverageLocations[i];
+        const [location, type] = coverageLocations[i].split(':');
         const commands = [
           'format-coverage',
-          location.toString(),
+          location,
+          '-t',
+          type,
           '-o',
-          `/tmp/codeclimate.${i}.json`,
-          '--exit-code',
-          lastExitCode.toString()
+          `codeclimate.${i}.json`
         ];
         if (codeClimateDebug === 'true') commands.push('--debug');
+
+        parts.push(`codeclimate.${i}.json`);
 
         try {
           lastExitCode = await exec(executable, commands, execOpts);
@@ -110,11 +114,11 @@ export function run(
       //run sum coverage
       const sumCommands = [
         'sum-coverage',
-        'tmp/codeclimate.*.json',
+        ...parts,
+        '-p',
+        `${coverageLocations.length}`,
         '-o',
-        `/tmp/coverage.total.json`,
-        '--exit-code',
-        lastExitCode.toString()
+        `coverage.total.json`
       ];
       if (codeClimateDebug === 'true') sumCommands.push('--debug');
 
@@ -127,17 +131,13 @@ export function run(
       }
 
       //upload to code climate:
-      const uploadCommands = [
-        'upload-coverage',
-        '-i',
-        `/tmp/coverage.total.json`,
-        '--exit-code',
-        lastExitCode.toString()
-      ];
+      const uploadCommands = ['upload-coverage', '-i', `coverage.total.json`];
       if (codeClimateDebug === 'true') uploadCommands.push('--debug');
 
       try {
         lastExitCode = await exec(executable, uploadCommands, execOpts);
+        debug('✅ CC Reporter after-build checkin completed!');
+        return resolve();
       } catch (err) {
         error(err);
         setFailed('🚨 CC Reporter after-build checkin failed!');
@@ -164,9 +164,12 @@ if (!module.parent) {
   if (!coverageCommand.length) coverageCommand = DEFAULT_COVERAGE_COMMAND;
   let codeClimateDebug = getInput('debug', { required: false });
   if (!coverageCommand.length) codeClimateDebug = DEFAULT_CODECLIMATE_DEBUG;
-  const coverageLocations =
-    getInput('coverageLocations', { required: false }).split(' ') ||
-    DEFAULT_COVERAGE_LOCATIONS;
+  const coverageLocationsText = getInput('coverageLocations', {
+    required: false
+  });
+  const coverageLocations = coverageLocationsText.length
+    ? coverageLocationsText.split(' ')
+    : DEFAULT_COVERAGE_LOCATIONS;
 
   run(
     DOWNLOAD_URL,
