@@ -22,7 +22,7 @@ This action requires that you set the [`CC_TEST_REPORTER_ID`](https://docs.codec
 ```yaml
 steps:
   - name: Test & publish code coverage
-    uses: paambaati/codeclimate-action@v2.3.0
+    uses: paambaati/codeclimate-action@v2.4.0
     env:
       CC_TEST_REPORTER_ID: <code_climate_reporter_id>
     with:
