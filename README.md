@@ -37,12 +37,15 @@ steps:
   - name: Test & publish code coverage
     uses: paambaati/codeclimate-action@v2.4.0
     env:
-      CC_TEST_REPORTER_ID: <code_climate_reporter_id>
+      # Set CC_TEST_REPORTER_ID as secret of your repo
+      CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
+      JACOCO_SOURCE_PATH: "${{github.workspace}}/src/main/java"
     with:
+      # The report file must be there, otherwise Code Climate won't find it
       coverageCommand: mvn test
       debug: true
       coverageLocations:
-          "${{github.workspace}}/target/site/jacoco/jacoco.xml:jacoco"
+        "${{github.workspace}}/target/site/jacoco/jacoco.xml:jacoco"
 ```
 
 Example project — [paambaati/websight](https://github.com/paambaati/websight/blob/663bd4245b3c2dbd768aff9bfc197103ee77973e/.github/workflows/ci.yml#L33-L49)
