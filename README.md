@@ -39,7 +39,7 @@ steps:
     env:
       CC_TEST_REPORTER_ID: <code_climate_reporter_id>
     with:
-      coverageCommand: npm run coverage
+      coverageCommand: mvn test
       debug: true
       coverageLocations:
           "${{github.workspace}}/target/site/jacoco/jacoco.xml:jacoco"
