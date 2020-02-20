@@ -43,7 +43,6 @@ steps:
     with:
       # The report file must be there, otherwise Code Climate won't find it
       coverageCommand: mvn test
-      debug: true
       coverageLocations:
         "${{github.workspace}}/target/site/jacoco/jacoco.xml:jacoco"
 ```
