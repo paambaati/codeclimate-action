@@ -48,7 +48,8 @@ export function run(
   executable: string = EXECUTABLE,
   coverageCommand: string = DEFAULT_COVERAGE_COMMAND,
   codeClimateDebug: string = DEFAULT_CODECLIMATE_DEBUG,
-  coverageLocations: Array<String> = DEFAULT_COVERAGE_LOCATIONS
+  coverageLocations: Array<String> = DEFAULT_COVERAGE_LOCATIONS,
+  coveragePrefix: string|undefined = undefined,
 ): Promise<void> {
   return new Promise(async (resolve, reject) => {
     let lastExitCode = 1;
@@ -85,9 +86,8 @@ export function run(
     }
 
     if (coverageLocations.length > 0) {
-      //Run format-coverage on each location.
+      // Run format-coverage on each location.
       const parts: Array<string> = [];
-
       for (const i in coverageLocations) {
         const [location, type] = coverageLocations[i].split(':');
         const commands = [
@@ -111,7 +111,7 @@ export function run(
         }
       }
 
-      //run sum coverage
+      // Run sum coverage.
       const sumCommands = [
         'sum-coverage',
         ...parts,
@@ -130,10 +130,9 @@ export function run(
         return reject(err);
       }
 
-      //upload to code climate:
+      // Upload to Code Climate.
       const uploadCommands = ['upload-coverage', '-i', `coverage.total.json`];
       if (codeClimateDebug === 'true') uploadCommands.push('--debug');
-
       try {
         lastExitCode = await exec(executable, uploadCommands, execOpts);
         debug('✅ CC Reporter after-build checkin completed!');
@@ -148,6 +147,7 @@ export function run(
     try {
       const commands = ['after-build', '--exit-code', lastExitCode.toString()];
       if (codeClimateDebug === 'true') commands.push('--debug');
+      if (typeof coveragePrefix === 'string') commands.push('--prefix', coveragePrefix);
       await exec(executable, commands, execOpts);
       debug('✅ CC Reporter after-build checkin completed!');
       return resolve();
@@ -170,12 +170,13 @@ if (!module.parent) {
   const coverageLocations = coverageLocationsText.length
     ? coverageLocationsText.split(' ')
     : DEFAULT_COVERAGE_LOCATIONS;
-
+  const coveragePrefix = getInput('prefix', { required: false });
   run(
     DOWNLOAD_URL,
     EXECUTABLE,
     coverageCommand,
     codeClimateDebug,
-    coverageLocations
+    coverageLocations,
+    coveragePrefix,
   );
 }
