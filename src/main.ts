@@ -49,7 +49,7 @@ export function run(
   coverageCommand: string = DEFAULT_COVERAGE_COMMAND,
   codeClimateDebug: string = DEFAULT_CODECLIMATE_DEBUG,
   coverageLocations: Array<String> = DEFAULT_COVERAGE_LOCATIONS,
-  coveragePrefix: string|undefined = undefined,
+  coveragePrefix: string | undefined = undefined
 ): Promise<void> {
   return new Promise(async (resolve, reject) => {
     let lastExitCode = 1;
@@ -147,7 +147,8 @@ export function run(
     try {
       const commands = ['after-build', '--exit-code', lastExitCode.toString()];
       if (codeClimateDebug === 'true') commands.push('--debug');
-      if (typeof coveragePrefix === 'string') commands.push('--prefix', coveragePrefix);
+      if (typeof coveragePrefix === 'string')
+        commands.push('--prefix', coveragePrefix);
       await exec(executable, commands, execOpts);
       debug('✅ CC Reporter after-build checkin completed!');
       return resolve();
@@ -177,6 +178,6 @@ if (!module.parent) {
     coverageCommand,
     codeClimateDebug,
     coverageLocations,
-    coveragePrefix,
+    coveragePrefix
   );
 }
