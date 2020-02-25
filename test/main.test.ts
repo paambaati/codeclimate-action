@@ -5,6 +5,8 @@ import * as intercept from 'intercept-stdout';
 import { stat, unlinkSync } from 'fs';
 import { downloadToFile, run } from '../src/main';
 
+const DEFAULT_WORKDIR = process.cwd();
+
 test('🛠 setup', t => {
   nock.disableNetConnect();
   t.end();
@@ -71,12 +73,12 @@ test('🧪 run() should run the CC reporter (happy path).', async t => {
     capturedOutput,
     `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...
 ::debug::✅ CC Reporter downloaded...
-[command]./test.sh before-build\nbefore-build
+[command]${DEFAULT_WORKDIR}/test.sh before-build\nbefore-build
 ::debug::✅ CC Reporter before-build checkin completed...
 [command]echo \'coverage ok\'
 \'coverage ok\'
 ::debug::✅ Coverage run completed...
-[command]./test.sh after-build --exit-code 0
+[command]${DEFAULT_WORKDIR}/test.sh after-build --exit-code 0
 after-build --exit-code 0
 ::debug::✅ CC Reporter after-build checkin completed!
 `,
