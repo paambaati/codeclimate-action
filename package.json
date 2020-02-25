@@ -24,11 +24,10 @@
     "license": "MIT",
     "dependencies": {
         "@actions/core": "^1.2.2",
-        "@actions/exec": "^1.0.1",
+        "@actions/exec": "^1.0.3",
         "node-fetch": "^2.6.0"
     },
     "devDependencies": {
-        "@types/nock": "^11.1.0",
         "@types/node": "^13.7.2",
         "@types/node-fetch": "^2.5.4",
         "@types/tape": "^4.2.34",
