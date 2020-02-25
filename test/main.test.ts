@@ -3,12 +3,17 @@ import nock from 'nock';
 import toReadableStream from 'to-readable-stream';
 import * as intercept from 'intercept-stdout';
 import { stat, unlinkSync } from 'fs';
+import { exec as pExec } from 'child_process';
 import { downloadToFile, run } from '../src/main';
 
 const DEFAULT_WORKDIR = process.cwd();
+let DEFAULT_ECHO = '/bin/echo';
 
 test('🛠 setup', t => {
   nock.disableNetConnect();
+  pExec('which echo', (_, stdout) => {
+    DEFAULT_ECHO = stdout.trim(); // Finds system default `echo`.
+  });
   t.end();
 });
 
@@ -75,7 +80,7 @@ test('🧪 run() should run the CC reporter (happy path).', async t => {
 ::debug::✅ CC Reporter downloaded...
 [command]${DEFAULT_WORKDIR}/test.sh before-build\nbefore-build
 ::debug::✅ CC Reporter before-build checkin completed...
-[command]echo \'coverage ok\'
+[command]${DEFAULT_ECHO} \'coverage ok\'
 \'coverage ok\'
 ::debug::✅ Coverage run completed...
 [command]${DEFAULT_WORKDIR}/test.sh after-build --exit-code 0
