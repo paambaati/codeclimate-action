@@ -40,6 +40,11 @@ function prepareEnv() {
 
   if (env.GIT_BRANCH)
     env.GIT_BRANCH = env.GIT_BRANCH.replace(/^refs\/heads\//, ''); // Remove 'refs/heads/' prefix (See https://github.com/paambaati/codeclimate-action/issues/42)
+
+  if (process.env.GITHUB_EVENT_NAME === 'pull_request') {
+    env.GIT_BRANCH = process.env.GITHUB_HEAD_REF || env.GIT_BRANCH; // Report correct branch for PRs (See https://github.com/paambaati/codeclimate-action/issues/86)
+  }
+
   return env;
 }
 
