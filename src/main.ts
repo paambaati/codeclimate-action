@@ -108,6 +108,9 @@ export function run(
           `codeclimate.${i}.json`
         ];
         if (codeClimateDebug === 'true') commands.push('--debug');
+        if (!coveragePrefix && typeof coveragePrefix === 'string') {
+          commands.push('--prefix', coveragePrefix);
+        }
 
         parts.push(`codeclimate.${i}.json`);
 
@@ -156,8 +159,6 @@ export function run(
     try {
       const commands = ['after-build', '--exit-code', lastExitCode.toString()];
       if (codeClimateDebug === 'true') commands.push('--debug');
-      if (typeof coveragePrefix === 'string')
-        commands.push('--prefix', coveragePrefix);
       await exec(executable, commands, execOpts);
       debug('✅ CC Reporter after-build checkin completed!');
       return resolve();
