@@ -66,7 +66,9 @@ export function run(
       error(err.message);
       setFailed('🚨 CC Reporter download failed!');
       warning(`Could not download ${downloadUrl}`);
-      warning(`Please check if your platform is supported — see https://docs.codeclimate.com/docs/configuring-test-coverage#section-locations-of-pre-built-binaries`);
+      warning(
+        `Please check if your platform is supported — see https://docs.codeclimate.com/docs/configuring-test-coverage#section-locations-of-pre-built-binaries`
+      );
       return reject(err);
     }
     const execOpts: ExecOptions = {
