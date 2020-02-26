@@ -23,7 +23,7 @@ This action requires that you set the [`CC_TEST_REPORTER_ID`](https://docs.codec
 ```yaml
 steps:
   - name: Test & publish code coverage
-    uses: paambaati/codeclimate-action@v2.5.1
+    uses: paambaati/codeclimate-action@v2.5.3
     env:
       CC_TEST_REPORTER_ID: <code_climate_reporter_id>
     with:
@@ -36,7 +36,7 @@ steps:
 ```yaml
 steps:
   - name: Test & publish code coverage
-    uses: paambaati/codeclimate-action@v2.5.1
+    uses: paambaati/codeclimate-action@v2.5.3
     env:
       # Set CC_TEST_REPORTER_ID as secret of your repo
       CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
@@ -48,4 +48,4 @@ steps:
         "${{github.workspace}}/target/site/jacoco/jacoco.xml:jacoco"
 ```
 
-Example project — [paambaati/websight](https://github.com/paambaati/websight/blob/663bd4245b3c2dbd768aff9bfc197103ee77973e/.github/workflows/ci.yml#L33-L49)
+Example project — [paambaati/websight](https://github.com/paambaati/websight/blob/3e64f8d7b048aa5d4639c3c455e96ca7979d46c3/.github/workflows/ci.yml#L33-L49)
