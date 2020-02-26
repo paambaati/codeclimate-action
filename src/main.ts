@@ -1,7 +1,7 @@
 import { platform } from 'os';
 import { createWriteStream } from 'fs';
 import fetch from 'node-fetch';
-import { debug, error, setFailed, getInput } from '@actions/core';
+import { debug, error, setFailed, getInput, warning } from '@actions/core';
 import { exec } from '@actions/exec';
 import { ExecOptions } from '@actions/exec/lib/interfaces';
 
@@ -65,6 +65,8 @@ export function run(
     } catch (err) {
       error(err.message);
       setFailed('🚨 CC Reporter download failed!');
+      warning(`Could not download ${downloadUrl}`);
+      warning(`Please check if your platform is supported — see https://docs.codeclimate.com/docs/configuring-test-coverage#section-locations-of-pre-built-binaries`);
       return reject(err);
     }
     const execOpts: ExecOptions = {
