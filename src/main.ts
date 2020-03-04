@@ -89,7 +89,7 @@ export function run(
       }
       debug('✅ Coverage run completed...');
     } catch (err) {
-      error(err);
+      error(err.message);
       setFailed('🚨 Coverage run failed!');
       return reject(err);
     }
