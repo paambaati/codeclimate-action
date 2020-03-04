@@ -24,8 +24,8 @@ test('🧪 downloadToFile() should download the give URL and write to given file
     .get('/dummy-cc-reporter')
     .reply(200, () => {
       return toReadableStream(`#!/bin/bash
-            echo "hello"
-            `);
+echo "hello"
+`);
     });
   await downloadToFile(
     'http://localhost.test/dummy-cc-reporter',
@@ -52,8 +52,8 @@ test('🧪 run() should run the CC reporter (happy path).', async t => {
     .get('/dummy-cc-reporter')
     .reply(200, () => {
       return toReadableStream(`#!/bin/bash
-            echo "$*"
-            `); // Dummy shell script that just echoes back all arguments.
+echo "$*"
+`); // Dummy shell script that just echoes back all arguments.
     });
 
   let capturedOutput = '';
@@ -70,8 +70,9 @@ test('🧪 run() should run the CC reporter (happy path).', async t => {
     unhookIntercept();
   } catch (err) {
     unhookIntercept();
-    nock.cleanAll();
     t.fail(err);
+  } finally {
+    nock.cleanAll();
   }
 
   t.equal(
@@ -92,6 +93,53 @@ after-build --exit-code 0
   unlinkSync(filePath);
   nock.cleanAll();
   t.end();
+});
+
+// TODO: @paambaati — Figure out why this test itself passes but why tape fails with exit code 1.
+test.skip('🧪 run() should exit cleanly when the coverage command fails.', async t => {
+  t.plan(1);
+  const COVERAGE_COMMAND = 'wololololo'; // Random command that doesn't exist (and so should fail).
+  const filePath = './test.sh';
+  const mock = await nock('http://localhost.test')
+    .get('/dummy-cc-reporter')
+    .reply(200, () => {
+      return toReadableStream(`#!/bin/bash
+echo "$*"
+`); // Dummy shell script that just echoes back all arguments.
+    });
+
+  let capturedOutput = '';
+  const unhookIntercept = intercept.default((text: string) => {
+    capturedOutput += text;
+  });
+
+  try {
+    await run(
+      'http://localhost.test/dummy-cc-reporter',
+      filePath,
+      COVERAGE_COMMAND
+    );
+    unhookIntercept();
+    t.fail('Should throw an error.');
+  } catch (err) {
+    unhookIntercept();
+    t.equal(
+      capturedOutput,
+      `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...
+::debug::✅ CC Reporter downloaded...
+[command]${DEFAULT_WORKDIR}/test.sh before-build
+before-build
+::debug::✅ CC Reporter before-build checkin completed...
+::error::Unable to locate executable file: ${COVERAGE_COMMAND}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also check the file mode to verify the file is executable.
+::error::🚨 Coverage run failed!
+`,
+      'should fail correctly on wrong/invalid coverage command.'
+    );
+  } finally {
+    unlinkSync(filePath);
+    nock.cleanAll();
+    t.end();
+  }
 });
 
 test('💣 teardown', t => {
