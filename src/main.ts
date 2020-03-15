@@ -54,7 +54,7 @@ export function run(
   coverageCommand: string = DEFAULT_COVERAGE_COMMAND,
   codeClimateDebug: string = DEFAULT_CODECLIMATE_DEBUG,
   coverageLocations: Array<String> = DEFAULT_COVERAGE_LOCATIONS,
-  coveragePrefix: string | undefined = undefined
+  coveragePrefix: string
 ): Promise<void> {
   return new Promise(async (resolve, reject) => {
     let lastExitCode = 1;
@@ -108,7 +108,7 @@ export function run(
           `codeclimate.${i}.json`
         ];
         if (codeClimateDebug === 'true') commands.push('--debug');
-        if (!coveragePrefix && typeof coveragePrefix === 'string') {
+        if (coveragePrefix) {
           commands.push('--prefix', coveragePrefix);
         }
 
