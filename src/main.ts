@@ -4,6 +4,7 @@ import fetch from 'node-fetch';
 import { debug, error, setFailed, getInput, warning } from '@actions/core';
 import { exec } from '@actions/exec';
 import { ExecOptions } from '@actions/exec/lib/interfaces';
+import { context } from '@actions/github';
 
 const DOWNLOAD_URL = `https://codeclimate.com/downloads/test-reporter/test-reporter-latest-${platform()}-amd64`;
 const EXECUTABLE = './cc-reporter';
@@ -51,6 +52,7 @@ function prepareEnv() {
 
   if (process.env.GITHUB_EVENT_NAME === 'pull_request') {
     env.GIT_BRANCH = process.env.GITHUB_HEAD_REF || env.GIT_BRANCH; // Report correct branch for PRs (See https://github.com/paambaati/codeclimate-action/issues/86)
+    env.GIT_COMMIT_SHA = context.payload.pull_request?.['head']?.['sha']; // Report correct sha for the head branch (See https://github.com/paambaati/codeclimate-action/issues/140)
   }
 
   return env;
