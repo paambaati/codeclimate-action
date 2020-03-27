@@ -11,6 +11,14 @@ const DEFAULT_COVERAGE_COMMAND = 'yarn coverage';
 const DEFAULT_CODECLIMATE_DEBUG = 'false';
 const DEFAULT_COVERAGE_LOCATIONS = [];
 
+const getOptionalString = (name: string, def = '') =>
+  getInput(name, { required: false }) || def;
+const getOptionalArray = (name: string, def: string[] = []) => {
+  const input = getInput(name, { required: false });
+
+  return !input.length ? def : input.split(' ');
+};
+
 export function downloadToFile(
   url: string,
   file: string,
@@ -171,17 +179,20 @@ export function run(
 }
 
 if (!module.parent) {
-  let coverageCommand = getInput('coverageCommand', { required: false });
-  if (!coverageCommand.length) coverageCommand = DEFAULT_COVERAGE_COMMAND;
-  let codeClimateDebug = getInput('debug', { required: false });
-  if (!coverageCommand.length) codeClimateDebug = DEFAULT_CODECLIMATE_DEBUG;
-  const coverageLocationsText = getInput('coverageLocations', {
-    required: false
-  });
-  const coverageLocations = coverageLocationsText.length
-    ? coverageLocationsText.split(' ')
-    : DEFAULT_COVERAGE_LOCATIONS;
-  const coveragePrefix = getInput('prefix', { required: false });
+  const coverageCommand = getOptionalString(
+    'coverageCommand',
+    DEFAULT_COVERAGE_COMMAND
+  );
+  const codeClimateDebug = getOptionalString(
+    'debug',
+    DEFAULT_CODECLIMATE_DEBUG
+  );
+  const coverageLocations = getOptionalArray(
+    'coverageLocations',
+    DEFAULT_COVERAGE_LOCATIONS
+  );
+  const coveragePrefix = getOptionalString('prefix');
+
   run(
     DOWNLOAD_URL,
     EXECUTABLE,
