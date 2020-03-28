@@ -29,7 +29,7 @@
         "node-fetch": "^2.6.0"
     },
     "devDependencies": {
-        "@types/node": "^13.9.4",
+        "@types/node": "^13.9.5",
         "@types/node-fetch": "^2.5.5",
         "@types/tape": "^4.2.34",
         "intercept-stdout": "^0.1.2",
