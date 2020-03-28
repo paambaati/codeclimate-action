@@ -6,11 +6,21 @@ branding:
   color: 'gray-dark'
 inputs:
   coverageCommand:
+    required: false
     description: 'Coverage command to execute'
     default: 'yarn coverage'
   debug:
+    required: false
     description: 'Enable debugging logs for the Code Climate test reporter'
     default: 'false'
+  coverageLocations:
+    required: false
+    description: 'Locations to find code coverage (Used for builds from multiple locations)'
+    default: '[]'
+  prefix:
+    required: false
+    description: 'See https://docs.codeclimate.com/docs/configuring-test-coverage'
+    default: ''
 runs:
   using: 'node12'
   main: 'lib/main.js'
