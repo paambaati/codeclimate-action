@@ -82,7 +82,7 @@ export function run(
       return reject(err);
     }
     const execOpts: ExecOptions = {
-      env: prepareEnv()
+      env: prepareEnv(),
     };
     try {
       lastExitCode = await exec(executable, ['before-build'], execOpts);
@@ -115,7 +115,7 @@ export function run(
           '-t',
           type,
           '-o',
-          `codeclimate.${i}.json`
+          `codeclimate.${i}.json`,
         ];
         if (codeClimateDebug === 'true') commands.push('--debug');
         if (coveragePrefix) {
@@ -140,7 +140,7 @@ export function run(
         '-p',
         `${coverageLocations.length}`,
         '-o',
-        `coverage.total.json`
+        `coverage.total.json`,
       ];
       if (codeClimateDebug === 'true') sumCommands.push('--debug');
 
