@@ -4,12 +4,21 @@ import fetch from 'node-fetch';
 import { debug, error, setFailed, getInput, warning } from '@actions/core';
 import { exec } from '@actions/exec';
 import { ExecOptions } from '@actions/exec/lib/interfaces';
+import { context } from '@actions/github';
 
 const DOWNLOAD_URL = `https://codeclimate.com/downloads/test-reporter/test-reporter-latest-${platform()}-amd64`;
 const EXECUTABLE = './cc-reporter';
 const DEFAULT_COVERAGE_COMMAND = 'yarn coverage';
 const DEFAULT_CODECLIMATE_DEBUG = 'false';
 const DEFAULT_COVERAGE_LOCATIONS = [];
+
+const getOptionalString = (name: string, def = '') =>
+  getInput(name, { required: false }) || def;
+const getOptionalArray = (name: string, def: string[] = []) => {
+  const input = getInput(name, { required: false });
+
+  return !input.length ? def : input.split(' ');
+};
 
 export function downloadToFile(
   url: string,
@@ -43,6 +52,7 @@ function prepareEnv() {
 
   if (process.env.GITHUB_EVENT_NAME === 'pull_request') {
     env.GIT_BRANCH = process.env.GITHUB_HEAD_REF || env.GIT_BRANCH; // Report correct branch for PRs (See https://github.com/paambaati/codeclimate-action/issues/86)
+    env.GIT_COMMIT_SHA = context.payload.pull_request?.['head']?.['sha']; // Report correct sha for the head branch (See https://github.com/paambaati/codeclimate-action/issues/140)
   }
 
   return env;
@@ -171,17 +181,20 @@ export function run(
 }
 
 if (!module.parent) {
-  let coverageCommand = getInput('coverageCommand', { required: false });
-  if (!coverageCommand.length) coverageCommand = DEFAULT_COVERAGE_COMMAND;
-  let codeClimateDebug = getInput('debug', { required: false });
-  if (!coverageCommand.length) codeClimateDebug = DEFAULT_CODECLIMATE_DEBUG;
-  const coverageLocationsText = getInput('coverageLocations', {
-    required: false
-  });
-  const coverageLocations = coverageLocationsText.length
-    ? coverageLocationsText.split(' ')
-    : DEFAULT_COVERAGE_LOCATIONS;
-  const coveragePrefix = getInput('prefix', { required: false });
+  const coverageCommand = getOptionalString(
+    'coverageCommand',
+    DEFAULT_COVERAGE_COMMAND
+  );
+  const codeClimateDebug = getOptionalString(
+    'debug',
+    DEFAULT_CODECLIMATE_DEBUG
+  );
+  const coverageLocations = getOptionalArray(
+    'coverageLocations',
+    DEFAULT_COVERAGE_LOCATIONS
+  );
+  const coveragePrefix = getOptionalString('prefix');
+
   run(
     DOWNLOAD_URL,
     EXECUTABLE,
