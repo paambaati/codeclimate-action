@@ -23,7 +23,7 @@ This action requires that you set the [`CC_TEST_REPORTER_ID`](https://docs.codec
 ```yaml
 steps:
   - name: Test & publish code coverage
-    uses: paambaati/codeclimate-action@v2.5.5
+    uses: paambaati/codeclimate-action@v2.5.6
     env:
       CC_TEST_REPORTER_ID: <code_climate_reporter_id>
     with:
@@ -36,7 +36,7 @@ steps:
 ```yaml
 steps:
   - name: Test & publish code coverage
-    uses: paambaati/codeclimate-action@v2.5.5
+    uses: paambaati/codeclimate-action@v2.5.6
     env:
       # Set CC_TEST_REPORTER_ID as secret of your repo
       CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
