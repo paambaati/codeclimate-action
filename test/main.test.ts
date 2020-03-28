@@ -9,7 +9,7 @@ import { downloadToFile, run } from '../src/main';
 const DEFAULT_WORKDIR = process.cwd();
 let DEFAULT_ECHO = '/bin/echo';
 
-test('🛠 setup', t => {
+test('🛠 setup', (t) => {
   nock.disableNetConnect();
   pExec('which echo', (_, stdout) => {
     DEFAULT_ECHO = stdout.trim(); // Finds system default `echo`.
@@ -17,7 +17,7 @@ test('🛠 setup', t => {
   t.end();
 });
 
-test('🧪 downloadToFile() should download the give URL and write to given file location with given mode.', async t => {
+test('🧪 downloadToFile() should download the give URL and write to given file location with given mode.', async (t) => {
   t.plan(1);
   const filePath = './test.sh';
   const mock = await nock('http://localhost.test')
@@ -45,7 +45,7 @@ echo "hello"
   });
 });
 
-test('🧪 run() should run the CC reporter (happy path).', async t => {
+test('🧪 run() should run the CC reporter (happy path).', async (t) => {
   t.plan(1);
   const filePath = './test.sh';
   const mock = await nock('http://localhost.test')
@@ -96,7 +96,7 @@ after-build --exit-code 0
 });
 
 // TODO: @paambaati — Figure out why this test itself passes but why tape fails with exit code 1.
-test.skip('🧪 run() should exit cleanly when the coverage command fails.', async t => {
+test.skip('🧪 run() should exit cleanly when the coverage command fails.', async (t) => {
   t.plan(1);
   const COVERAGE_COMMAND = 'wololololo'; // Random command that doesn't exist (and so should fail).
   const filePath = './test.sh';
@@ -142,7 +142,7 @@ before-build
   }
 });
 
-test('💣 teardown', t => {
+test('💣 teardown', (t) => {
   nock.restore();
   nock.cleanAll();
   nock.enableNetConnect();
