@@ -104,14 +104,14 @@ export function run(
     }
 
     if (Array.isArray(coverageLocations) && coverageLocations.length > 0) {
+      debug(`Parsing ${coverageLocations.length} coverage locations — ${coverageLocations} (${typeof coverageLocations})`);
       // Run format-coverage on each location.
       const parts: Array<string> = [];
       for (const i in coverageLocations) {
         const [location, type] = coverageLocations[i].split(':');
         if (!type) {
-          const err = new Error('Invalid formatter type!');
-          debug('⚠️ Could not find coverage formatter type! Found —');
-          debug(`${coverageLocations[i]} (${typeof coverageLocations[i]})`);
+          const err = new Error(`Invalid formatter type ${type}`);
+          debug(`⚠️ Could not find coverage formatter type! Found ${coverageLocations[i]} (${typeof coverageLocations[i]})`);
           error(err.message);
           setFailed(
             '🚨 Coverage formatter type not set! Each coverage location should be of the format <file_path>:<coverage_format>'
