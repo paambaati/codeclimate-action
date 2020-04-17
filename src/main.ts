@@ -112,7 +112,11 @@ export function run(
       return reject(err);
     }
 
-    if (coverageLocations.length > 0) {
+    // What's this weird check, you ask?
+    // If coverageLocations are not explicitly given, they default to an empty array.
+    // HOWEVER, no amount of checking if its an empty array seems to work, so this is the
+    // ONLY way I can confidently say if a user gave a valid set of locations or didn't give any.
+    if (coverageLocations.length > 0 && coverageLocations[0]?.split(':')[1]) {
       debug(
         `Parsing ${
           coverageLocations.length
@@ -123,23 +127,17 @@ export function run(
       for (const i in coverageLocations) {
         const [location, type] = coverageLocations[i].split(':');
         if (!type) {
-          if (coverageLocations.length === 1) {
-            info(
-              'Skipping coverage formatting because no valid coverage locations were explicitly given.'
-            );
-          } else {
-            const err = new Error(`Invalid formatter type ${type}`);
-            debug(
-              `⚠️ Could not find coverage formatter type! Found ${
-                coverageLocations[i]
-              } (${typeof coverageLocations[i]})`
-            );
-            error(err.message);
-            setFailed(
-              '🚨 Coverage formatter type not set! Each coverage location should be of the format <file_path>:<coverage_format>'
-            );
-            return reject(err);
-          }
+          const err = new Error(`Invalid formatter type ${type}`);
+          debug(
+            `⚠️ Could not find coverage formatter type! Found ${
+              coverageLocations[i]
+            } (${typeof coverageLocations[i]})`
+          );
+          error(err.message);
+          setFailed(
+            '🚨 Coverage formatter type not set! Each coverage location should be of the format <file_path>:<coverage_format>'
+          );
+          return reject(err);
         }
         const commands = [
           'format-coverage',
