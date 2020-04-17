@@ -11,10 +11,11 @@ let DEFAULT_ECHO = '/bin/echo';
 
 test('🛠 setup', (t) => {
   nock.disableNetConnect();
-  pExec('which echo', (_, stdout) => {
+  pExec('which echo', (err, stdout, stderr) => {
+    if (err || stderr) t.fail(err?.message || stderr);
     DEFAULT_ECHO = stdout.trim(); // Finds system default `echo`.
+    t.end();
   });
-  t.end();
 });
 
 test('🧪 downloadToFile() should download the give URL and write to given file location with given mode.', async (t) => {
