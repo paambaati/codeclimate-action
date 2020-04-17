@@ -18,7 +18,8 @@ const getOptionalArray = (name: string, def: string[] = []) => {
   const input = getInput(name, { required: false });
   return !input.length ? def : input.split(' ');
 };
-const flattenArray = (arr: any[]): any[] => [].concat(...arr);
+const areObjectsEqual = (obj1: object | [], obj2: object | []): boolean =>
+  JSON.stringify(obj1) === JSON.stringify(obj2);
 
 export function downloadToFile(
   url: string,
@@ -104,10 +105,7 @@ export function run(
       return reject(err);
     }
 
-    if (
-      Array.isArray(coverageLocations) &&
-      flattenArray(coverageLocations).length > 0
-    ) {
+    if (!areObjectsEqual(coverageLocations, [])) {
       debug(
         `Parsing ${
           coverageLocations.length
