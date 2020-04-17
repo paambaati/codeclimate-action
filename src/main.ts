@@ -16,7 +16,6 @@ const getOptionalString = (name: string, def = '') =>
   getInput(name, { required: false }) || def;
 const getOptionalArray = (name: string, def: string[] = []) => {
   const input = getInput(name, { required: false });
-
   return !input.length ? def : input.split(' ');
 };
 
@@ -52,7 +51,7 @@ function prepareEnv() {
 
   if (process.env.GITHUB_EVENT_NAME === 'pull_request') {
     env.GIT_BRANCH = process.env.GITHUB_HEAD_REF || env.GIT_BRANCH; // Report correct branch for PRs (See https://github.com/paambaati/codeclimate-action/issues/86)
-    env.GIT_COMMIT_SHA = context.payload.pull_request?.['head']?.['sha']; // Report correct sha for the head branch (See https://github.com/paambaati/codeclimate-action/issues/140)
+    env.GIT_COMMIT_SHA = context.payload.pull_request?.['head']?.['sha']; // Report correct SHA for the head branch (See https://github.com/paambaati/codeclimate-action/issues/140)
   }
 
   return env;
@@ -64,7 +63,7 @@ export function run(
   coverageCommand: string = DEFAULT_COVERAGE_COMMAND,
   codeClimateDebug: string = DEFAULT_CODECLIMATE_DEBUG,
   coverageLocations: Array<String> = DEFAULT_COVERAGE_LOCATIONS,
-  coveragePrefix: string
+  coveragePrefix?: string
 ): Promise<void> {
   return new Promise(async (resolve, reject) => {
     let lastExitCode = 1;
@@ -104,11 +103,21 @@ export function run(
       return reject(err);
     }
 
-    if (coverageLocations.length > 0) {
+    if (Array.isArray(coverageLocations) && coverageLocations.length > 0) {
       // Run format-coverage on each location.
       const parts: Array<string> = [];
       for (const i in coverageLocations) {
         const [location, type] = coverageLocations[i].split(':');
+        if (!type) {
+          const err = new Error('Invalid formatter type!');
+          debug('⚠️ Could not find coverage formatter type! Found —');
+          debug(`${coverageLocations[i]} (${typeof coverageLocations[i]})`);
+          error(err.message);
+          setFailed(
+            '🚨 Coverage formatter type not set! Each coverage location should be of the format <file_path>:<coverage_format>'
+          );
+          return reject(err);
+        }
         const commands = [
           'format-coverage',
           location,
@@ -126,9 +135,14 @@ export function run(
 
         try {
           lastExitCode = await exec(executable, commands, execOpts);
+          if (lastExitCode !== 0) {
+            throw new Error(
+              `Coverage formatter exited with code ${lastExitCode}`
+            );
+          }
         } catch (err) {
           error(err);
-          setFailed('🚨 CC Reporter after-build checkin failed!');
+          setFailed('🚨 CC Reporter coverage formatting failed!');
           return reject(err);
         }
       }
@@ -146,9 +160,14 @@ export function run(
 
       try {
         lastExitCode = await exec(executable, sumCommands, execOpts);
+        if (lastExitCode !== 0) {
+          throw new Error(
+            `Coverage sum process exited with code ${lastExitCode}`
+          );
+        }
       } catch (err) {
         error(err);
-        setFailed('🚨 CC Reporter after-build checkin failed!');
+        setFailed('🚨 CC Reporter coverage sum failed!');
         return reject(err);
       }
 
@@ -157,11 +176,14 @@ export function run(
       if (codeClimateDebug === 'true') uploadCommands.push('--debug');
       try {
         lastExitCode = await exec(executable, uploadCommands, execOpts);
-        debug('✅ CC Reporter after-build checkin completed!');
+        if (lastExitCode !== 0) {
+          throw new Error(`Coverage upload exited with code ${lastExitCode}`);
+        }
+        debug('✅ CC Reporter upload coverage completed!');
         return resolve();
       } catch (err) {
         error(err);
-        setFailed('🚨 CC Reporter after-build checkin failed!');
+        setFailed('🚨 CC Reporter coverage upload failed!');
         return reject(err);
       }
     }
