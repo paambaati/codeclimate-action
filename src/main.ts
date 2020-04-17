@@ -1,7 +1,14 @@
 import { platform } from 'os';
 import { createWriteStream } from 'fs';
 import fetch from 'node-fetch';
-import { debug, error, setFailed, getInput, warning } from '@actions/core';
+import {
+  debug,
+  error,
+  setFailed,
+  getInput,
+  warning,
+  info,
+} from '@actions/core';
 import { exec } from '@actions/exec';
 import { ExecOptions } from '@actions/exec/lib/interfaces';
 import { context } from '@actions/github';
@@ -105,7 +112,7 @@ export function run(
       return reject(err);
     }
 
-    if (!areObjectsEqual(coverageLocations, [])) {
+    if (coverageLocations.length > 0) {
       debug(
         `Parsing ${
           coverageLocations.length
@@ -116,17 +123,23 @@ export function run(
       for (const i in coverageLocations) {
         const [location, type] = coverageLocations[i].split(':');
         if (!type) {
-          const err = new Error(`Invalid formatter type ${type}`);
-          debug(
-            `⚠️ Could not find coverage formatter type! Found ${
-              coverageLocations[i]
-            } (${typeof coverageLocations[i]})`
-          );
-          error(err.message);
-          setFailed(
-            '🚨 Coverage formatter type not set! Each coverage location should be of the format <file_path>:<coverage_format>'
-          );
-          return reject(err);
+          if (coverageLocations.length === 1) {
+            info(
+              'Skipping coverage formatting because no valid coverage locations were explicitly given.'
+            );
+          } else {
+            const err = new Error(`Invalid formatter type ${type}`);
+            debug(
+              `⚠️ Could not find coverage formatter type! Found ${
+                coverageLocations[i]
+              } (${typeof coverageLocations[i]})`
+            );
+            error(err.message);
+            setFailed(
+              '🚨 Coverage formatter type not set! Each coverage location should be of the format <file_path>:<coverage_format>'
+            );
+            return reject(err);
+          }
         }
         const commands = [
           'format-coverage',
