@@ -11,10 +11,11 @@ let DEFAULT_ECHO = '/bin/echo';
 
 test('🛠 setup', (t) => {
   nock.disableNetConnect();
-  pExec('which echo', (_, stdout) => {
+  pExec('which echo', (err, stdout, stderr) => {
+    if (err || stderr) t.fail(err?.message || stderr);
     DEFAULT_ECHO = stdout.trim(); // Finds system default `echo`.
+    t.end();
   });
-  t.end();
 });
 
 test('🧪 downloadToFile() should download the give URL and write to given file location with given mode.', async (t) => {
@@ -77,6 +78,7 @@ echo "$*"
 
   t.equal(
     capturedOutput,
+    // prettier-ignore
     `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...
 ::debug::✅ CC Reporter downloaded...
 [command]${DEFAULT_WORKDIR}/test.sh before-build\nbefore-build
@@ -96,13 +98,14 @@ after-build --exit-code 0
 });
 
 // TODO: @paambaati — Figure out why this test itself passes but why tape fails with exit code 1.
-test.skip('🧪 run() should exit cleanly when the coverage command fails.', async (t) => {
+test('🧪 run() should exit cleanly when the coverage command fails.', async (t) => {
   t.plan(1);
   const COVERAGE_COMMAND = 'wololololo'; // Random command that doesn't exist (and so should fail).
   const filePath = './test.sh';
   const mock = await nock('http://localhost.test')
     .get('/dummy-cc-reporter')
     .reply(200, () => {
+      // prettier-ignore
       return toReadableStream(`#!/bin/bash
 echo "$*"
 `); // Dummy shell script that just echoes back all arguments.
@@ -125,6 +128,7 @@ echo "$*"
     unhookIntercept();
     t.equal(
       capturedOutput,
+      // prettier-ignore
       `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...
 ::debug::✅ CC Reporter downloaded...
 [command]${DEFAULT_WORKDIR}/test.sh before-build
@@ -146,5 +150,6 @@ test('💣 teardown', (t) => {
   nock.restore();
   nock.cleanAll();
   nock.enableNetConnect();
+  if (process.exitCode === 1) process.exitCode = 0; // This is required because @actions/core `setFailed` sets the exit code to 0 when we're testing errors.
   t.end();
 });
