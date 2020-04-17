@@ -98,7 +98,7 @@ after-build --exit-code 0
 });
 
 // TODO: @paambaati — Figure out why this test itself passes but why tape fails with exit code 1.
-test.skip('🧪 run() should exit cleanly when the coverage command fails.', async (t) => {
+test('🧪 run() should exit cleanly when the coverage command fails.', async (t) => {
   t.plan(1);
   const COVERAGE_COMMAND = 'wololololo'; // Random command that doesn't exist (and so should fail).
   const filePath = './test.sh';
