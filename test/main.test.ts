@@ -78,6 +78,7 @@ echo "$*"
 
   t.equal(
     capturedOutput,
+    // prettier-ignore
     `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...
 ::debug::✅ CC Reporter downloaded...
 [command]${DEFAULT_WORKDIR}/test.sh before-build\nbefore-build
@@ -104,6 +105,7 @@ test.skip('🧪 run() should exit cleanly when the coverage command fails.', asy
   const mock = await nock('http://localhost.test')
     .get('/dummy-cc-reporter')
     .reply(200, () => {
+      // prettier-ignore
       return toReadableStream(`#!/bin/bash
 echo "$*"
 `); // Dummy shell script that just echoes back all arguments.
@@ -126,6 +128,7 @@ echo "$*"
     unhookIntercept();
     t.equal(
       capturedOutput,
+      // prettier-ignore
       `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...
 ::debug::✅ CC Reporter downloaded...
 [command]${DEFAULT_WORKDIR}/test.sh before-build
