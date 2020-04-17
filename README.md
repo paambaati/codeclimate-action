@@ -48,4 +48,4 @@ steps:
         "${{github.workspace}}/target/site/jacoco/jacoco.xml:jacoco"
 ```
 
-Example project — [paambaati/websight](https://github.com/paambaati/websight/blob/3e64f8d7b048aa5d4639c3c455e96ca7979d46c3/.github/workflows/ci.yml#L33-L49)
+Example project — [paambaati/websight](https://github.com/paambaati/websight/blob/ae00c393cd6cdf8c4d0fce1195293b761fa689ad/.github/workflows/ci.yml#L33-L49)
