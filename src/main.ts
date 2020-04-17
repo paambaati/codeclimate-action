@@ -18,6 +18,7 @@ const getOptionalArray = (name: string, def: string[] = []) => {
   const input = getInput(name, { required: false });
   return !input.length ? def : input.split(' ');
 };
+const flattenArray = (arr: any[]): any[] => [].concat(...arr);
 
 export function downloadToFile(
   url: string,
@@ -62,7 +63,7 @@ export function run(
   executable: string = EXECUTABLE,
   coverageCommand: string = DEFAULT_COVERAGE_COMMAND,
   codeClimateDebug: string = DEFAULT_CODECLIMATE_DEBUG,
-  coverageLocations: Array<String> = DEFAULT_COVERAGE_LOCATIONS,
+  coverageLocations: Array<string> = DEFAULT_COVERAGE_LOCATIONS,
   coveragePrefix?: string
 ): Promise<void> {
   return new Promise(async (resolve, reject) => {
@@ -103,11 +104,11 @@ export function run(
       return reject(err);
     }
 
-    if (Array.isArray(coverageLocations) && coverageLocations.length > 0) {
+    if (Array.isArray(coverageLocations) && flattenArray(coverageLocations).length > 0) {
       debug(
         `Parsing ${
           coverageLocations.length
-        } coverage locations — ${coverageLocations} (${typeof coverageLocations})`
+        } coverage location(s) — ${coverageLocations} (${typeof coverageLocations})`
       );
       // Run format-coverage on each location.
       const parts: Array<string> = [];
