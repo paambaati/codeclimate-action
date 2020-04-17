@@ -104,7 +104,10 @@ export function run(
       return reject(err);
     }
 
-    if (Array.isArray(coverageLocations) && flattenArray(coverageLocations).length > 0) {
+    if (
+      Array.isArray(coverageLocations) &&
+      flattenArray(coverageLocations).length > 0
+    ) {
       debug(
         `Parsing ${
           coverageLocations.length
