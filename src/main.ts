@@ -1,32 +1,18 @@
 import { platform } from 'os';
 import { createWriteStream } from 'fs';
 import fetch from 'node-fetch';
-import {
-  debug,
-  error,
-  setFailed,
-  getInput,
-  warning,
-  info,
-} from '@actions/core';
+import { debug, error, setFailed, warning, info } from '@actions/core';
 import { exec } from '@actions/exec';
 import { ExecOptions } from '@actions/exec/lib/interfaces';
 import { context } from '@actions/github';
+
+import { getOptionalString } from './utils';
 
 const DOWNLOAD_URL = `https://codeclimate.com/downloads/test-reporter/test-reporter-latest-${platform()}-amd64`;
 const EXECUTABLE = './cc-reporter';
 const DEFAULT_COVERAGE_COMMAND = 'yarn coverage';
 const DEFAULT_CODECLIMATE_DEBUG = 'false';
-const DEFAULT_COVERAGE_LOCATIONS = [];
-
-const getOptionalString = (name: string, def = '') =>
-  getInput(name, { required: false }) || def;
-const getOptionalArray = (name: string, def: string[] = []) => {
-  const input = getInput(name, { required: false });
-  return !input.length ? def : input.split(' ');
-};
-const areObjectsEqual = (obj1: object | [], obj2: object | []): boolean =>
-  JSON.stringify(obj1) === JSON.stringify(obj2);
+const DEFAULT_COVERAGE_LOCATIONS = '';
 
 export function downloadToFile(
   url: string,
@@ -71,7 +57,7 @@ export function run(
   executable: string = EXECUTABLE,
   coverageCommand: string = DEFAULT_COVERAGE_COMMAND,
   codeClimateDebug: string = DEFAULT_CODECLIMATE_DEBUG,
-  coverageLocations: Array<string> = DEFAULT_COVERAGE_LOCATIONS,
+  coverageLocationsParam: string = DEFAULT_COVERAGE_LOCATIONS,
   coveragePrefix?: string
 ): Promise<void> {
   return new Promise(async (resolve, reject) => {
@@ -112,11 +98,11 @@ export function run(
       return reject(err);
     }
 
-    // What's this weird check, you ask?
-    // If coverageLocations are not explicitly given, they default to an empty array.
-    // HOWEVER, no amount of checking if its an empty array seems to work, so this is the
-    // ONLY way I can confidently say if a user gave a valid set of locations or didn't give any.
-    if (coverageLocations.length > 0 && coverageLocations[0]?.split(':')[1]) {
+    const coverageLocations = coverageLocationsParam
+      .split(/\r?\n/)
+      .filter((pat) => pat)
+      .map((pat) => pat.trim());
+    if (coverageLocations.length > 0) {
       debug(
         `Parsing ${
           coverageLocations.length
@@ -232,7 +218,7 @@ if (!module.parent) {
     'debug',
     DEFAULT_CODECLIMATE_DEBUG
   );
-  const coverageLocations = getOptionalArray(
+  const coverageLocations = getOptionalString(
     'coverageLocations',
     DEFAULT_COVERAGE_LOCATIONS
   );

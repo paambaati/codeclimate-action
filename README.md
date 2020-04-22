@@ -14,8 +14,7 @@ This action requires that you set the [`CC_TEST_REPORTER_ID`](https://docs.codec
 | ------------------- | --------------- | ---------------------------------------------------------------------------------- |
 | `coverageCommand`   | `yarn coverage` | The actual command that should be executed to run your tests and capture coverage. |
 | `debug`             | `false`         | Enable Code Coverage debug output when set to `true`.                              |
-| `coverageLocations` | `[]`            | Locations to find code coverage (Used for builds from multiple locations)          |
-|                     |                 | Format is `location:type`, e.g. `./coverage/lcov.info:lcov`)                       |
+| `coverageLocations` |                 | Locations to find code coverage (Used for builds from multiple locations). Multiline string.<br>Format is `location:type`, e.g. `./coverage/lcov.info:lcov`)|
 | `prefix`            | `undefined`     | See [`--prefix`](https://docs.codeclimate.com/docs/configuring-test-coverage)      |
 
 #### Example
@@ -44,8 +43,9 @@ steps:
     with:
       # The report file must be there, otherwise Code Climate won't find it
       coverageCommand: mvn test
-      coverageLocations:
-        "${{github.workspace}}/target/site/jacoco/jacoco.xml:jacoco"
+      coverageLocations: |
+        ${{github.workspace}}/target/site/jacoco/jacoco.xml:jacoco
+        ${{github.workspace}}/target/site/jacoco/jacoco2.xml:jacoco
 ```
 
 Example project — [paambaati/websight](https://github.com/paambaati/websight/blob/ae00c393cd6cdf8c4d0fce1195293b761fa689ad/.github/workflows/ci.yml#L33-L49)
