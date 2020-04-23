@@ -43,9 +43,47 @@ steps:
     with:
       # The report file must be there, otherwise Code Climate won't find it
       coverageCommand: mvn test
+      coverageLocations: ${{github.workspace}}/target/site/jacoco/jacoco.xml:jacoco
+```
+
+#### Example of multiple test coverages for monorepo with Jest
+
+Let's say you have a monorepo with two folders `client` and `server` both with separated coverage folders and `yarn coverage` script which runs jest within both folders.
+
+```json
+"scripts": {
+  "coverage": "yarn client coverage && yarn server coverage"
+}
+```
+
+First be sure that paths in your `coverage/lcov.info` are correct. Means they should be either absolute or relative *to the root of the monorepo*. Open `lcov.info` and search for any path. For example:
+
+```lcov
+SF:src/server.ts
+```
+
+If you find a *relative* path like this (happens for Jest 25+) it's not correct. The path must be relative to the monorepo root. Means it should be `server/src/server.ts`. For Jest you can set the root of your repo like this:
+
+```javascript
+// server/jest.config.js
+module.exports = {
+  ...
+  coverageReporters: [['lcov', { projectRoot: '..' }]]
+  ...
+};
+```
+
+```yaml
+steps:
+  - name: Test & publish code coverage
+    uses: paambaati/codeclimate-action@v2.5.7
+    env:
+      CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
+    with:
+      # coverageCommand: yarn coverage - this line is actually not needed because `yarn coverage` is by default
       coverageLocations: |
-        ${{github.workspace}}/target/site/jacoco/jacoco.xml:jacoco
-        ${{github.workspace}}/target/site/jacoco/jacoco2.xml:jacoco
+        ${{github.workspace}}/client/coverage/lcov.info:lcov
+        ${{github.workspace}}/server/coverage/lcov.info:lcov
 ```
 
 Example project — [paambaati/websight](https://github.com/paambaati/websight/blob/ae00c393cd6cdf8c4d0fce1195293b761fa689ad/.github/workflows/ci.yml#L33-L49)
