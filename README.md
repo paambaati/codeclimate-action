@@ -14,7 +14,7 @@ This action requires that you set the [`CC_TEST_REPORTER_ID`](https://docs.codec
 | ------------------- | --------------- | ---------------------------------------------------------------------------------- |
 | `coverageCommand`   | `yarn coverage` | The actual command that should be executed to run your tests and capture coverage. |
 | `debug`             | `false`         | Enable Code Coverage debug output when set to `true`.                              |
-| `coverageLocations` |                 | Locations to find code coverage (Used for builds from multiple locations). Multiline string.<br>Format is `location:type`, e.g. `./coverage/lcov.info:lcov`)|
+| `coverageLocations` |                 | Locations to find code coverage as a multiline string.<br>Each line should be of the form `<location>:<type>`. See examples below.
 | `prefix`            | `undefined`     | See [`--prefix`](https://docs.codeclimate.com/docs/configuring-test-coverage)      |
 
 #### Example
@@ -22,7 +22,7 @@ This action requires that you set the [`CC_TEST_REPORTER_ID`](https://docs.codec
 ```yaml
 steps:
   - name: Test & publish code coverage
-    uses: paambaati/codeclimate-action@v2.5.7
+    uses: paambaati/codeclimate-action@v2.6.0
     env:
       CC_TEST_REPORTER_ID: <code_climate_reporter_id>
     with:
@@ -30,12 +30,27 @@ steps:
       debug: true
 ```
 
+#### Example with multiple coverage locations
+
+```yaml
+steps:
+  - name: Test & publish code coverage
+    uses: paambaati/codeclimate-action@v2.6.0
+    env:
+      CC_TEST_REPORTER_ID: <code_climate_reporter_id>
+    with:
+      coverageCommand: yarn coverage
+      coverageLocations: |
+        ${{github.workspace}}/some-directory/coverage/lcov.info:lcov
+        ${{github.workspace}}/some-other/coverage/lcov.info:lcov
+```
+
 #### Example with Jacoco
 
 ```yaml
 steps:
   - name: Test & publish code coverage
-    uses: paambaati/codeclimate-action@v2.5.7
+    uses: paambaati/codeclimate-action@v2.6.0
     env:
       # Set CC_TEST_REPORTER_ID as secret of your repo
       CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
@@ -48,7 +63,7 @@ steps:
 
 #### Example of multiple test coverages for monorepo with Jest
 
-Let's say you have a monorepo with two folders `client` and `server` both with separated coverage folders and `yarn coverage` script which runs jest within both folders.
+Let's say you have a monorepo with two folders —`client` and `server`, both with their own coverage folders and a `yarn coverage` script which runs Jest within both folders.
 
 ```json
 "scripts": {
@@ -56,13 +71,13 @@ Let's say you have a monorepo with two folders `client` and `server` both with s
 }
 ```
 
-First be sure that paths in your `coverage/lcov.info` are correct. Means they should be either absolute or relative *to the root of the monorepo*. Open `lcov.info` and search for any path. For example:
+First be sure that paths in your `coverage/lcov.info` are correct; they should be either absolute or relative to the **root** of the monorepo. Open `lcov.info` and search for any path. For example —
 
 ```lcov
 SF:src/server.ts
 ```
 
-If you find a *relative* path like this (happens for Jest 25+) it's not correct. The path must be relative to the monorepo root. Means it should be `server/src/server.ts`. For Jest you can set the root of your repo like this:
+If you find a *relative* path like this (happens for Jest 25+), it's incorrect as it is relative to the sub-package. This can be fixed by configuring Jest to set the root of your monorepo —
 
 ```javascript
 // server/jest.config.js
@@ -76,14 +91,18 @@ module.exports = {
 ```yaml
 steps:
   - name: Test & publish code coverage
-    uses: paambaati/codeclimate-action@v2.5.7
+    uses: paambaati/codeclimate-action@v2.6.0
     env:
       CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
     with:
-      # coverageCommand: yarn coverage - this line is actually not needed because `yarn coverage` is by default
+      coverageCommand: yarn coverage
       coverageLocations: |
         ${{github.workspace}}/client/coverage/lcov.info:lcov
         ${{github.workspace}}/server/coverage/lcov.info:lcov
 ```
 
-Example project — [paambaati/websight](https://github.com/paambaati/websight/blob/ae00c393cd6cdf8c4d0fce1195293b761fa689ad/.github/workflows/ci.yml#L33-L49)
+Example projects
+
+1. [paambaati/websight](https://github.com/paambaati/websight/blob/ae00c393cd6cdf8c4d0fce1195293b761fa689ad/.github/workflows/ci.yml#L33-L49)
+
+2. [MartinNuc/coverage-ga-test](https://github.com/MartinNuc/coverage-ga-test/blob/master/.github/workflows/ci.yaml)
