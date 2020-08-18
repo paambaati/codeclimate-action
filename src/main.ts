@@ -80,6 +80,11 @@ export function run(
     };
     try {
       lastExitCode = await exec(executable, ['before-build'], execOpts);
+      if (lastExitCode !== 0) {
+        throw new Error(
+          `Coverage after-build exited with code ${lastExitCode}`
+        );
+      }
       debug('✅ CC Reporter before-build checkin completed...');
     } catch (err) {
       error(err);
@@ -198,7 +203,12 @@ export function run(
     try {
       const commands = ['after-build', '--exit-code', lastExitCode.toString()];
       if (codeClimateDebug === 'true') commands.push('--debug');
-      await exec(executable, commands, execOpts);
+      lastExitCode = await exec(executable, commands, execOpts);
+      if (lastExitCode !== 0) {
+        throw new Error(
+          `Coverage after-build exited with code ${lastExitCode}`
+        );
+      }
       debug('✅ CC Reporter after-build checkin completed!');
       return resolve();
     } catch (err) {
