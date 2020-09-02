@@ -9,6 +9,10 @@ inputs:
     required: false
     description: 'Coverage command to execute'
     default: 'yarn coverage'
+  workingDirectory:
+    required: false
+    description: 'Custom working directory for executing the coverage command'
+    default: ''
   debug:
     required: false
     description: 'Enable debugging logs for the Code Climate test reporter'
