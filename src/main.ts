@@ -219,7 +219,7 @@ export function run(
   });
 }
 
-if (require.main?.children?.length as number < 1) {
+if ((require.main?.children?.length as number) < 1) {
   const coverageCommand = getOptionalString(
     'coverageCommand',
     DEFAULT_COVERAGE_COMMAND
