@@ -103,6 +103,51 @@ after-build --exit-code 0
   t.end();
 });
 
+test('🧪 run() should run the CC reporter without a coverage command.', async (t) => {
+  t.plan(1);
+  const filePath = './test.sh';
+  nock('http://localhost.test')
+    .get('/dummy-cc-reporter')
+    .reply(200, () => {
+      return toReadableStream(`#!/bin/bash
+echo "$*"
+`); // Dummy shell script that just echoes back all arguments.
+    });
+
+  let capturedOutput = '';
+  const unhookIntercept = intercept.default((text: string) => {
+    capturedOutput += text;
+  });
+
+  try {
+    await run('http://localhost.test/dummy-cc-reporter', filePath, '');
+    unhookIntercept();
+  } catch (err) {
+    unhookIntercept();
+    t.fail(err);
+  } finally {
+    nock.cleanAll();
+  }
+
+  t.equal(
+    capturedOutput,
+    // prettier-ignore
+    `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...
+::debug::✅ CC Reporter downloaded...
+[command]${DEFAULT_WORKDIR}/test.sh before-build\nbefore-build
+::debug::✅ CC Reporter before-build checkin completed...
+ℹ️ 'coverageCommand' not set, so skipping building coverage report!
+[command]${DEFAULT_WORKDIR}/test.sh after-build --exit-code 0
+after-build --exit-code 0
+::debug::✅ CC Reporter after-build checkin completed!
+`,
+    'should execute all steps (except running the coverage command).'
+  );
+  unlinkSync(filePath);
+  nock.cleanAll();
+  t.end();
+});
+
 test('🧪 run() should correctly switch the working directory if given.', async (t) => {
   t.plan(1);
   const filePath = './test.sh';

@@ -11,7 +11,7 @@ import { getOptionalString } from './utils';
 
 const DOWNLOAD_URL = `https://codeclimate.com/downloads/test-reporter/test-reporter-latest-${platform()}-amd64`;
 const EXECUTABLE = './cc-reporter';
-const DEFAULT_COVERAGE_COMMAND = 'yarn coverage';
+const DEFAULT_COVERAGE_COMMAND = '';
 const DEFAULT_WORKING_DIRECTORY = '';
 const DEFAULT_CODECLIMATE_DEBUG = 'false';
 const DEFAULT_COVERAGE_LOCATIONS = '';
@@ -106,16 +106,23 @@ export function run(
       setFailed('🚨 CC Reporter before-build checkin failed!');
       return reject(err);
     }
-    try {
-      lastExitCode = await exec(coverageCommand, undefined, execOpts);
-      if (lastExitCode !== 0) {
-        throw new Error(`Coverage run exited with code ${lastExitCode}`);
+
+    if (coverageCommand) {
+      try {
+        lastExitCode = await exec(coverageCommand, undefined, execOpts);
+        if (lastExitCode !== 0) {
+          throw new Error(`Coverage run exited with code ${lastExitCode}`);
+        }
+        debug('✅ Coverage run completed...');
+      } catch (err) {
+        error(err.message);
+        setFailed('🚨 Coverage run failed!');
+        return reject(err);
       }
-      debug('✅ Coverage run completed...');
-    } catch (err) {
-      error(err.message);
-      setFailed('🚨 Coverage run failed!');
-      return reject(err);
+    } else {
+      info(
+        `ℹ️ 'coverageCommand' not set, so skipping building coverage report!`
+      );
     }
 
     const coverageLocations = coverageLocationsParam
