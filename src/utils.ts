@@ -1,7 +1,7 @@
 import { getInput } from '@actions/core';
 
-export const getOptionalString = (name: string, def = '') =>
-  getInput(name, { required: false }) || def;
+export const getOptionalString = (name: string, defaultValue = '') =>
+  getInput(name, { required: false }) || defaultValue;
 
 export const areObjectsEqual = (
   obj1: object | [],
