@@ -3,7 +3,11 @@ import nock from 'nock';
 import toReadableStream from 'to-readable-stream';
 import * as intercept from 'intercept-stdout';
 import { tmpdir } from 'os';
-import { stat as statCallback, unlinkSync, realpath as realpathCallback } from 'fs';
+import {
+  stat as statCallback,
+  unlinkSync,
+  realpath as realpathCallback,
+} from 'fs';
 import { exec as pExec } from 'child_process';
 import { promisify } from 'util';
 import { downloadToFile, run } from '../src/main';
