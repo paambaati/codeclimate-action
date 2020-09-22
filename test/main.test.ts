@@ -12,6 +12,16 @@ import { exec as pExec } from 'child_process';
 import { promisify } from 'util';
 import { downloadToFile, run } from '../src/main';
 
+/**
+ * Dev Notes
+ *
+ * 1. `stdHook.unhook()` is called at the end of both `try` and `catch`
+ * instead of once in `finally` specifically because the hook is still
+ * capturing stdout/stderr, and so if there's some error, it can still
+ * be printed on the screen. If the unhook method is moved to `finally`,
+ * it will capture, i.e. swallow and not print, error traces.
+ * */
+
 const stat = promisify(statCallback);
 const realpath = promisify(realpathCallback);
 
