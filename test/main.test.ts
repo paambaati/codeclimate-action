@@ -132,9 +132,64 @@ exit 69
     // prettier-ignore
     `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...
 ::debug::✅ CC Reporter downloaded...
-[command]/Users/gp/Projects/codeclimate-action/test.sh before-build
-::error::Error: The process '/Users/gp/Projects/codeclimate-action/test.sh' failed with exit code 69
+[command]${DEFAULT_WORKDIR}/test.sh before-build
+::error::Error: The process '${DEFAULT_WORKDIR}/test.sh' failed with exit code 69
 ::error::🚨 CC Reporter before-build checkin failed!
+`,
+    'should correctly throw the error.'
+  );
+  unlinkSync(filePath);
+  nock.cleanAll();
+  t.end();
+});
+
+test('🧪 run() should throw an error if the after-build step throws an error.', async (t) => {
+  t.plan(1);
+  const filePath = './test.sh';
+  nock('http://localhost.test')
+    .get('/dummy-cc-reporter')
+    .reply(200, () => {
+      return toReadableStream(`#!/bin/bash
+if [[ "$*" == "after-build --exit-code 0" ]]
+  then exit 69
+else
+  :
+fi
+`); // Dummy shell script that with a non-zero code when the argument 'after-build' is given.
+    });
+
+  let capturedOutput = '';
+  const unhookIntercept = intercept.default((text: string) => {
+    capturedOutput += text;
+  });
+
+  try {
+    await run(
+      'http://localhost.test/dummy-cc-reporter',
+      filePath,
+      `echo 'coverage ok'`
+    );
+    unhookIntercept();
+  } catch (err) {
+    unhookIntercept();
+    // do nothing else, we expect this run command to fail.
+  } finally {
+    nock.cleanAll();
+  }
+
+  t.equal(
+    capturedOutput,
+    // prettier-ignore
+    `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...
+::debug::✅ CC Reporter downloaded...
+[command]${DEFAULT_WORKDIR}/test.sh before-build
+::debug::✅ CC Reporter before-build checkin completed...
+[command]${DEFAULT_ECHO} 'coverage ok'
+'coverage ok'
+::debug::✅ Coverage run completed...
+[command]${DEFAULT_WORKDIR}/test.sh after-build --exit-code 0
+::error::Error: The process '${DEFAULT_WORKDIR}/test.sh' failed with exit code 69
+::error::🚨 CC Reporter after-build checkin failed!
 `,
     'should correctly throw the error.'
   );
