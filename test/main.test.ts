@@ -2,9 +2,12 @@ import test from 'tape';
 import nock from 'nock';
 import toReadableStream from 'to-readable-stream';
 import * as intercept from 'intercept-stdout';
-import { stat, unlinkSync } from 'fs';
+import { stat as statSync, unlinkSync } from 'fs';
 import { exec as pExec } from 'child_process';
+import { promisify } from 'util';
 import { downloadToFile, run } from '../src/main';
+
+const stat = promisify(statSync);
 
 const DEFAULT_WORKDIR = process.cwd();
 let DEFAULT_ECHO = '/bin/echo';
@@ -21,7 +24,7 @@ test('🛠 setup', (t) => {
 test('🧪 downloadToFile() should download the give URL and write to given file location with given mode.', async (t) => {
   t.plan(1);
   const filePath = './test.sh';
-  const mock = await nock('http://localhost.test')
+  nock('http://localhost.test')
     .get('/dummy-cc-reporter')
     .reply(200, () => {
       return toReadableStream(`#!/bin/bash
@@ -33,17 +36,14 @@ echo "hello"
     filePath,
     0o777
   );
-  stat(filePath, (err, stats) => {
-    if (err) t.fail(err.message);
-    t.equal(
-      stats.mode,
-      33261,
-      'downloaded file should exist and have executable permissions.'
-    );
-    unlinkSync(filePath);
-    nock.cleanAll();
-    t.end();
-  });
+  const stats = await stat(filePath);
+  t.equal(
+    stats.mode,
+    33261,
+    'downloaded file should exist and have executable permissions.'
+  );
+  unlinkSync(filePath);
+  nock.cleanAll();
 });
 
 test('🧪 run() should run the CC reporter (happy path).', async (t) => {
