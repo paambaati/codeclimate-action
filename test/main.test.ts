@@ -1,7 +1,7 @@
 import test from 'tape';
 import nock from 'nock';
 import toReadableStream from 'to-readable-stream';
-import * as intercept from 'intercept-stdout';
+import { default as hookStd } from 'hook-std';
 import { tmpdir } from 'os';
 import {
   stat as statCallback,
@@ -64,7 +64,7 @@ echo "$*"
     });
 
   let capturedOutput = '';
-  const unhookIntercept = intercept.default((text: string) => {
+  const stdHook = hookStd((text: string) => {
     capturedOutput += text;
   });
 
@@ -74,9 +74,9 @@ echo "$*"
       filePath,
       `echo 'coverage ok'`
     );
-    unhookIntercept();
+    stdHook.unhook();
   } catch (err) {
-    unhookIntercept();
+    stdHook.unhook();
     t.fail(err);
   } finally {
     nock.cleanAll();
@@ -115,15 +115,15 @@ echo "$*"
     });
 
   let capturedOutput = '';
-  const unhookIntercept = intercept.default((text: string) => {
+  const stdHook = hookStd((text: string) => {
     capturedOutput += text;
   });
 
   try {
     await run('http://localhost.test/dummy-cc-reporter', filePath, '');
-    unhookIntercept();
+    stdHook.unhook();
   } catch (err) {
-    unhookIntercept();
+    stdHook.unhook();
     t.fail(err);
   } finally {
     nock.cleanAll();
@@ -160,7 +160,7 @@ echo "$*"
     });
 
   let capturedOutput = '';
-  const unhookIntercept = intercept.default((text: string) => {
+  const stdHook = hookStd((text: string) => {
     capturedOutput += text;
   });
 
@@ -172,9 +172,9 @@ echo "$*"
       `echo 'coverage ok'`,
       CUSTOM_WORKDIR
     );
-    unhookIntercept();
+    stdHook.unhook();
   } catch (err) {
-    unhookIntercept();
+    stdHook.unhook();
     t.fail(err);
   } finally {
     nock.cleanAll();
@@ -217,7 +217,7 @@ exit 69
     });
 
   let capturedOutput = '';
-  const unhookIntercept = intercept.default((text: string) => {
+  const stdHook = hookStd((text: string) => {
     capturedOutput += text;
   });
 
@@ -227,9 +227,9 @@ exit 69
       filePath,
       `echo 'coverage ok'`
     );
-    unhookIntercept();
+    stdHook.unhook();
   } catch (err) {
-    unhookIntercept();
+    stdHook.unhook();
     // do nothing else, we expect this run command to fail.
   } finally {
     nock.cleanAll();
@@ -267,7 +267,7 @@ fi
     });
 
   let capturedOutput = '';
-  const unhookIntercept = intercept.default((text: string) => {
+  const stdHook = hookStd((text: string) => {
     capturedOutput += text;
   });
 
@@ -277,9 +277,9 @@ fi
       filePath,
       `echo 'coverage ok'`
     );
-    unhookIntercept();
+    stdHook.unhook();
   } catch (err) {
-    unhookIntercept();
+    stdHook.unhook();
     // do nothing else, we expect this run command to fail.
   } finally {
     nock.cleanAll();
@@ -321,7 +321,7 @@ echo "$*"
     });
 
   let capturedOutput = '';
-  const unhookIntercept = intercept.default((text: string) => {
+  const stdHook = hookStd((text: string) => {
     capturedOutput += text;
   });
 
@@ -331,10 +331,10 @@ echo "$*"
       filePath,
       COVERAGE_COMMAND
     );
-    unhookIntercept();
+    stdHook.unhook();
     t.fail('Should throw an error.');
   } catch (err) {
-    unhookIntercept();
+    stdHook.unhook();
     t.equal(
       capturedOutput,
       // prettier-ignore
