@@ -1,5 +1,6 @@
 import { platform } from 'os';
 import { createWriteStream } from 'fs';
+import { chdir } from 'process';
 import fetch from 'node-fetch';
 import { debug, error, setFailed, warning, info } from '@actions/core';
 import { exec } from '@actions/exec';
@@ -11,6 +12,7 @@ import { getOptionalString } from './utils';
 const DOWNLOAD_URL = `https://codeclimate.com/downloads/test-reporter/test-reporter-latest-${platform()}-amd64`;
 const EXECUTABLE = './cc-reporter';
 const DEFAULT_COVERAGE_COMMAND = 'yarn coverage';
+const DEFAULT_WORKING_DIRECTORY = '';
 const DEFAULT_CODECLIMATE_DEBUG = 'false';
 const DEFAULT_COVERAGE_LOCATIONS = '';
 
@@ -56,12 +58,25 @@ export function run(
   downloadUrl: string = DOWNLOAD_URL,
   executable: string = EXECUTABLE,
   coverageCommand: string = DEFAULT_COVERAGE_COMMAND,
+  workingDirectory: string = DEFAULT_WORKING_DIRECTORY,
   codeClimateDebug: string = DEFAULT_CODECLIMATE_DEBUG,
   coverageLocationsParam: string = DEFAULT_COVERAGE_LOCATIONS,
   coveragePrefix?: string
 ): Promise<void> {
   return new Promise(async (resolve, reject) => {
     let lastExitCode = 1;
+    if (workingDirectory) {
+      debug(`Changing working directory to: ${workingDirectory}`);
+      try {
+        chdir(workingDirectory);
+        lastExitCode = 0;
+        debug('✅ Changing working directory completed...');
+      } catch (err) {
+        error(err.message);
+        setFailed('🚨 Changing working directory failed!');
+        return reject(err);
+      }
+    }
     try {
       debug(`ℹ️ Downloading CC Reporter from ${downloadUrl} ...`);
       await downloadToFile(downloadUrl, executable);
@@ -87,7 +102,7 @@ export function run(
       }
       debug('✅ CC Reporter before-build checkin completed...');
     } catch (err) {
-      error(err);
+      error(err.message);
       setFailed('🚨 CC Reporter before-build checkin failed!');
       return reject(err);
     }
@@ -153,7 +168,7 @@ export function run(
             );
           }
         } catch (err) {
-          error(err);
+          error(err.message);
           setFailed('🚨 CC Reporter coverage formatting failed!');
           return reject(err);
         }
@@ -178,7 +193,7 @@ export function run(
           );
         }
       } catch (err) {
-        error(err);
+        error(err.message);
         setFailed('🚨 CC Reporter coverage sum failed!');
         return reject(err);
       }
@@ -194,7 +209,7 @@ export function run(
         debug('✅ CC Reporter upload coverage completed!');
         return resolve();
       } catch (err) {
-        error(err);
+        error(err.message);
         setFailed('🚨 CC Reporter coverage upload failed!');
         return reject(err);
       }
@@ -212,7 +227,7 @@ export function run(
       debug('✅ CC Reporter after-build checkin completed!');
       return resolve();
     } catch (err) {
-      error(err);
+      error(err.message);
       setFailed('🚨 CC Reporter after-build checkin failed!');
       return reject(err);
     }
@@ -223,6 +238,10 @@ if ((require.main?.children?.length as number) < 1) {
   const coverageCommand = getOptionalString(
     'coverageCommand',
     DEFAULT_COVERAGE_COMMAND
+  );
+  const workingDirectory = getOptionalString(
+    'workingDirectory',
+    DEFAULT_WORKING_DIRECTORY
   );
   const codeClimateDebug = getOptionalString(
     'debug',
@@ -238,6 +257,7 @@ if ((require.main?.children?.length as number) < 1) {
     DOWNLOAD_URL,
     EXECUTABLE,
     coverageCommand,
+    workingDirectory,
     codeClimateDebug,
     coverageLocations,
     coveragePrefix
