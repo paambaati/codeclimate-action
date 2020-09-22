@@ -7,6 +7,7 @@
     "scripts": {
         "build": "tsc",
         "test": "tape -r ts-node/register/transpile-only test/*.test.ts",
+        "coverage": "nyc tape -r ts-node/register/transpile-only test/*.test.ts",
         "format": "prettier --write src/*.ts test/*.ts",
         "format:check": "prettier --check src/*.ts test/*.ts"
     },
@@ -26,7 +27,8 @@
         "@actions/core": "^1.2.5",
         "@actions/exec": "^1.0.4",
         "@actions/github": "^4.0.0",
-        "node-fetch": "^2.6.1"
+        "node-fetch": "^2.6.1",
+        "nyc": "^15.1.0"
     },
     "devDependencies": {
         "@types/node": "^14.11.2",
