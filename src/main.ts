@@ -66,7 +66,7 @@ export function run(
   return new Promise(async (resolve, reject) => {
     let lastExitCode = 1;
     if (workingDirectory) {
-      debug(`Changing working directory to: ${workingDirectory}`);
+      debug(`Changing working directory to ${workingDirectory}`);
       try {
         chdir(workingDirectory);
         lastExitCode = 0;
