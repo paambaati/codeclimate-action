@@ -68,7 +68,7 @@ export function run(
     if (workingDirectory) {
       debug(`Changing working directory to: ${workingDirectory}`);
       try {
-        await chdir(workingDirectory);
+        chdir(workingDirectory);
         lastExitCode = 0;
         debug('✅ Changing working directory completed...');
       } catch (err) {
