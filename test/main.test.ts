@@ -1,7 +1,7 @@
 import test from 'tape';
 import nock from 'nock';
 import toReadableStream from 'to-readable-stream';
-import * as intercept from 'intercept-stdout';
+import { default as hookStd } from 'hook-std';
 import { tmpdir } from 'os';
 import {
   stat as statCallback,
@@ -11,6 +11,16 @@ import {
 import { exec as pExec } from 'child_process';
 import { promisify } from 'util';
 import { downloadToFile, run } from '../src/main';
+
+/**
+ * Dev Notes
+ *
+ * 1. `stdHook.unhook()` is called at the end of both `try` and `catch`
+ * instead of once in `finally` specifically because the hook is still
+ * capturing stdout/stderr, and so if there's some error, it can still
+ * be printed on the screen. If the unhook method is moved to `finally`,
+ * it will capture, i.e. swallow and not print, error traces.
+ * */
 
 const stat = promisify(statCallback);
 const realpath = promisify(realpathCallback);
@@ -64,7 +74,7 @@ echo "$*"
     });
 
   let capturedOutput = '';
-  const unhookIntercept = intercept.default((text: string) => {
+  const stdHook = hookStd((text: string) => {
     capturedOutput += text;
   });
 
@@ -74,9 +84,9 @@ echo "$*"
       filePath,
       `echo 'coverage ok'`
     );
-    unhookIntercept();
+    stdHook.unhook();
   } catch (err) {
-    unhookIntercept();
+    stdHook.unhook();
     t.fail(err);
   } finally {
     nock.cleanAll();
@@ -103,6 +113,51 @@ after-build --exit-code 0
   t.end();
 });
 
+test('🧪 run() should run the CC reporter without a coverage command.', async (t) => {
+  t.plan(1);
+  const filePath = './test.sh';
+  nock('http://localhost.test')
+    .get('/dummy-cc-reporter')
+    .reply(200, () => {
+      return toReadableStream(`#!/bin/bash
+echo "$*"
+`); // Dummy shell script that just echoes back all arguments.
+    });
+
+  let capturedOutput = '';
+  const stdHook = hookStd((text: string) => {
+    capturedOutput += text;
+  });
+
+  try {
+    await run('http://localhost.test/dummy-cc-reporter', filePath, '');
+    stdHook.unhook();
+  } catch (err) {
+    stdHook.unhook();
+    t.fail(err);
+  } finally {
+    nock.cleanAll();
+  }
+
+  t.equal(
+    capturedOutput,
+    // prettier-ignore
+    `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...
+::debug::✅ CC Reporter downloaded...
+[command]${DEFAULT_WORKDIR}/test.sh before-build\nbefore-build
+::debug::✅ CC Reporter before-build checkin completed...
+ℹ️ 'coverageCommand' not set, so skipping building coverage report!
+[command]${DEFAULT_WORKDIR}/test.sh after-build --exit-code 0
+after-build --exit-code 0
+::debug::✅ CC Reporter after-build checkin completed!
+`,
+    'should execute all steps (except running the coverage command).'
+  );
+  unlinkSync(filePath);
+  nock.cleanAll();
+  t.end();
+});
+
 test('🧪 run() should correctly switch the working directory if given.', async (t) => {
   t.plan(1);
   const filePath = './test.sh';
@@ -115,7 +170,7 @@ echo "$*"
     });
 
   let capturedOutput = '';
-  const unhookIntercept = intercept.default((text: string) => {
+  const stdHook = hookStd((text: string) => {
     capturedOutput += text;
   });
 
@@ -127,9 +182,9 @@ echo "$*"
       `echo 'coverage ok'`,
       CUSTOM_WORKDIR
     );
-    unhookIntercept();
+    stdHook.unhook();
   } catch (err) {
-    unhookIntercept();
+    stdHook.unhook();
     t.fail(err);
   } finally {
     nock.cleanAll();
@@ -172,7 +227,7 @@ exit 69
     });
 
   let capturedOutput = '';
-  const unhookIntercept = intercept.default((text: string) => {
+  const stdHook = hookStd((text: string) => {
     capturedOutput += text;
   });
 
@@ -182,9 +237,9 @@ exit 69
       filePath,
       `echo 'coverage ok'`
     );
-    unhookIntercept();
+    stdHook.unhook();
   } catch (err) {
-    unhookIntercept();
+    stdHook.unhook();
     // do nothing else, we expect this run command to fail.
   } finally {
     nock.cleanAll();
@@ -222,7 +277,7 @@ fi
     });
 
   let capturedOutput = '';
-  const unhookIntercept = intercept.default((text: string) => {
+  const stdHook = hookStd((text: string) => {
     capturedOutput += text;
   });
 
@@ -232,9 +287,9 @@ fi
       filePath,
       `echo 'coverage ok'`
     );
-    unhookIntercept();
+    stdHook.unhook();
   } catch (err) {
-    unhookIntercept();
+    stdHook.unhook();
     // do nothing else, we expect this run command to fail.
   } finally {
     nock.cleanAll();
@@ -276,7 +331,7 @@ echo "$*"
     });
 
   let capturedOutput = '';
-  const unhookIntercept = intercept.default((text: string) => {
+  const stdHook = hookStd((text: string) => {
     capturedOutput += text;
   });
 
@@ -286,10 +341,10 @@ echo "$*"
       filePath,
       COVERAGE_COMMAND
     );
-    unhookIntercept();
+    stdHook.unhook();
     t.fail('Should throw an error.');
   } catch (err) {
-    unhookIntercept();
+    stdHook.unhook();
     t.equal(
       capturedOutput,
       // prettier-ignore
