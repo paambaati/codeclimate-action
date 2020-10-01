@@ -1,6 +1,6 @@
 {
     "name": "codeclimate-action",
-    "version": "2.7.2",
+    "version": "2.7.3",
     "private": true,
     "description": "Publish code coverage to Code Climate",
     "main": "lib/main.js",
