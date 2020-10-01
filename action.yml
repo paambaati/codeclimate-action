@@ -8,7 +8,7 @@ inputs:
   coverageCommand:
     required: false
     description: 'Coverage command to execute'
-    default: 'yarn coverage'
+    default: ''
   workingDirectory:
     required: false
     description: 'Custom working directory for executing the coverage command'
