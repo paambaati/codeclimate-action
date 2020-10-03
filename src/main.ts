@@ -6,6 +6,7 @@ import { debug, error, setFailed, warning, info } from '@actions/core';
 import { exec } from '@actions/exec';
 import { ExecOptions } from '@actions/exec/lib/interfaces';
 import { context } from '@actions/github';
+import * as glob from '@actions/glob';
 
 import { getOptionalString } from './utils';
 
@@ -52,6 +53,39 @@ function prepareEnv() {
   }
 
   return env;
+}
+
+async function getLocationLines(
+  coverageLocationPatternsParam: string
+): Promise<Array<string>> {
+  const coverageLocationPatternsLines = coverageLocationPatternsParam
+    .split(/\r?\n/)
+    .filter((pat) => pat)
+    .map((pat) => pat.trim());
+
+  const patternsAndFormats = coverageLocationPatternsLines.map((line) => {
+    const lineParts = line.split(':');
+    const format = lineParts.slice(-1)[0];
+    const pattern = lineParts.slice(0, -1)[0];
+    return { format, pattern };
+  });
+
+  const pathsWithFormat = await Promise.all(
+    patternsAndFormats.map(async ({ format, pattern }) => {
+      const globber = await glob.create(pattern);
+      const paths = await globber.glob();
+      const pathsWithFormat = paths.map(
+        (singlePath) => `${singlePath}:${format}`
+      );
+      return pathsWithFormat;
+    })
+  );
+
+  const coverageLocationLines = ([] as Array<string>).concat(
+    ...pathsWithFormat
+  );
+
+  return coverageLocationLines;
 }
 
 export function run(
@@ -125,10 +159,7 @@ export function run(
       );
     }
 
-    const coverageLocations = coverageLocationsParam
-      .split(/\r?\n/)
-      .filter((pat) => pat)
-      .map((pat) => pat.trim());
+    const coverageLocations = await getLocationLines(coverageLocationsParam);
     if (coverageLocations.length > 0) {
       debug(
         `Parsing ${
