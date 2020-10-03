@@ -23,7 +23,7 @@ This action requires that you set the [`CC_TEST_REPORTER_ID`](https://docs.codec
 ```yaml
 steps:
   - name: Test & publish code coverage
-    uses: paambaati/codeclimate-action@v2.7.3
+    uses: paambaati/codeclimate-action@v2.7.4
     env:
       CC_TEST_REPORTER_ID: <code_climate_reporter_id>
     with:
@@ -38,24 +38,25 @@ When you've already generated the coverage report in a previous step and wish to
 ```yaml
 steps:
   - name: Test & publish code coverage
-    uses: paambaati/codeclimate-action@v2.7.3
+    uses: paambaati/codeclimate-action@v2.7.4
     env:
       CC_TEST_REPORTER_ID: <code_climate_reporter_id>
 ```
 
-#### Example with multiple coverage locations
+#### Example with wildcard (glob) pattern
+
+This action supports basic glob patterns to search for files matching given patterns. It uses [`@actions/glob`](https://github.com/actions/toolkit/tree/master/packages/glob#basic) to expand the glob patterns.
 
 ```yaml
 steps:
   - name: Test & publish code coverage
-    uses: paambaati/codeclimate-action@v2.7.3
+    uses: paambaati/codeclimate-action@v2.7.4
     env:
       CC_TEST_REPORTER_ID: <code_climate_reporter_id>
     with:
-      coverageCommand: yarn coverage
+      coverageCommand: yarn run coverage
       coverageLocations: |
-        ${{github.workspace}}/some-directory/coverage/lcov.info:lcov
-        ${{github.workspace}}/some-other/coverage/lcov.info:lcov
+        ${{github.workspace}}/*.lcov:lcov
 ```
 
 #### Example with Jacoco
@@ -63,7 +64,7 @@ steps:
 ```yaml
 steps:
   - name: Test & publish code coverage
-    uses: paambaati/codeclimate-action@v2.7.3
+    uses: paambaati/codeclimate-action@v2.7.4
     env:
       # Set CC_TEST_REPORTER_ID as secret of your repo
       CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
@@ -104,11 +105,11 @@ module.exports = {
 ```yaml
 steps:
   - name: Test & publish code coverage
-    uses: paambaati/codeclimate-action@v2.7.3
+    uses: paambaati/codeclimate-action@v2.7.4
     env:
       CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
     with:
-      coverageCommand: yarn coverage
+      coverageCommand: yarn run coverage
       coverageLocations: |
         ${{github.workspace}}/client/coverage/lcov.info:lcov
         ${{github.workspace}}/server/coverage/lcov.info:lcov
