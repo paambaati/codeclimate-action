@@ -5,7 +5,7 @@ import { default as hookStd } from 'hook-std';
 import * as glob from '@actions/glob';
 import sinon from 'sinon';
 import { tmpdir } from 'os';
-import { resolve as resolvePath } from 'path';
+import { join as joinPath } from 'path';
 import {
   stat as statCallback,
   writeFileSync,
@@ -169,8 +169,8 @@ test('🧪 run() should convert patterns to locations.', async (t) => {
   const globSpy = sandbox
     .stub()
     .resolves([
-      resolvePath(__dirname, './file-a.lcov'),
-      resolvePath(__dirname, './file-b.lcov'),
+      joinPath(DEFAULT_WORKDIR, './file-a.lcov'),
+      joinPath(DEFAULT_WORKDIR, './file-b.lcov'),
     ]);
   sandbox.stub(glob, 'create').resolves({
     glob: globSpy,
@@ -186,7 +186,7 @@ echo "$*"
 `); // Dummy shell script that just echoes back all arguments.
     });
 
-  const filePattern = './*.lcov:lcov';
+  const filePattern = `${DEFAULT_WORKDIR}/*.lcov:lcov`;
   const fileA = 'file-a.lcov';
   const fileB = 'file-b.lcov';
 
@@ -217,30 +217,30 @@ echo "$*"
 
   t.deepEquals(
     ((glob.create as unknown) as sinon.SinonSpy).firstCall.firstArg,
-    './*.lcov',
-    'should create a globber with given pattern'
+    `${DEFAULT_WORKDIR}/*.lcov`,
+    'should create a globber with given pattern.'
   );
   t.true(
     globSpy.calledOnceWithExactly(),
-    'should get the paths of the files from the newly created globber instance'
+    'should get the paths of the files from the newly created globber instance.'
   );
   t.equal(
     capturedOutput,
     // prettier-ignore
     `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...
 ::debug::✅ CC Reporter downloaded...
-[command]${resolvePath(__dirname, '../test.sh')} before-build
+[command]${DEFAULT_WORKDIR}/test.sh before-build
 before-build
 ::debug::✅ CC Reporter before-build checkin completed...
 ℹ️ 'coverageCommand' not set, so skipping building coverage report!
-::debug::Parsing 2 coverage location(s) — ${resolvePath(__dirname, 'file-a.lcov')}:lcov,${resolvePath(__dirname, 'file-b.lcov')}:lcov (object)
-[command]${resolvePath(__dirname, '../test.sh')} format-coverage ${resolvePath(__dirname, 'file-a.lcov')} -t lcov -o codeclimate.0.json
-format-coverage ${resolvePath(__dirname, 'file-a.lcov')} -t lcov -o codeclimate.0.json
-[command]${resolvePath(__dirname, '../test.sh')} format-coverage ${resolvePath(__dirname, 'file-b.lcov')} -t lcov -o codeclimate.1.json
-format-coverage ${resolvePath(__dirname, 'file-b.lcov')} -t lcov -o codeclimate.1.json
-[command]${resolvePath(__dirname, '../test.sh')} sum-coverage codeclimate.0.json codeclimate.1.json -p 2 -o coverage.total.json
+::debug::Parsing 2 coverage location(s) — ${DEFAULT_WORKDIR}/file-a.lcov:lcov,${DEFAULT_WORKDIR}/file-b.lcov:lcov (object)
+[command]${DEFAULT_WORKDIR}/test.sh format-coverage ${DEFAULT_WORKDIR}/file-a.lcov -t lcov -o codeclimate.0.json
+format-coverage ${DEFAULT_WORKDIR}/file-a.lcov -t lcov -o codeclimate.0.json
+[command]${DEFAULT_WORKDIR}/test.sh format-coverage ${DEFAULT_WORKDIR}/file-b.lcov -t lcov -o codeclimate.1.json
+format-coverage ${DEFAULT_WORKDIR}/file-b.lcov -t lcov -o codeclimate.1.json
+[command]${DEFAULT_WORKDIR}/test.sh sum-coverage codeclimate.0.json codeclimate.1.json -p 2 -o coverage.total.json
 sum-coverage codeclimate.0.json codeclimate.1.json -p 2 -o coverage.total.json
-[command]${resolvePath(__dirname, '../test.sh')} upload-coverage -i coverage.total.json
+[command]${DEFAULT_WORKDIR}/test.sh upload-coverage -i coverage.total.json
 upload-coverage -i coverage.total.json
 ::debug::✅ CC Reporter upload coverage completed!
 `,
