@@ -256,6 +256,10 @@ export function run(
     try {
       const commands = ['after-build', '--exit-code', lastExitCode.toString()];
       if (codeClimateDebug === 'true') commands.push('--debug');
+      if (coveragePrefix) {
+        commands.push('--prefix', coveragePrefix);
+      }
+
       lastExitCode = await exec(executable, commands, execOpts);
       if (lastExitCode !== 0) {
         throw new Error(
