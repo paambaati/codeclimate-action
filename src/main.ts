@@ -10,12 +10,14 @@ import * as glob from '@actions/glob';
 
 import { getOptionalString } from './utils';
 
-const DOWNLOAD_URL = `https://codeclimate.com/downloads/test-reporter/test-reporter-latest-${platform()}-amd64`;
 const EXECUTABLE = './cc-reporter';
 const DEFAULT_COVERAGE_COMMAND = '';
 const DEFAULT_WORKING_DIRECTORY = '';
 const DEFAULT_CODECLIMATE_DEBUG = 'false';
 const DEFAULT_COVERAGE_LOCATIONS = '';
+const DEFAULT_TEST_REPORTER_VERSION = 'latest';
+
+const DOWNLOAD_URL = `https://codeclimate.com/downloads/test-reporter/test-reporter-latest-${platform()}-amd64`;
 
 export function downloadToFile(
   url: string,
@@ -293,10 +295,15 @@ if (require.main === module) {
     'coverageLocations',
     DEFAULT_COVERAGE_LOCATIONS
   );
+  const testReporterVersion = getOptionalString(
+    'testReporterVersion',
+    DEFAULT_TEST_REPORTER_VERSION
+  );
   const coveragePrefix = getOptionalString('prefix');
+  const downloadUrl = `https://codeclimate.com/downloads/test-reporter/test-reporter-${testReporterVersion}-${platform()}-amd64`;
 
   run(
-    DOWNLOAD_URL,
+    downloadUrl,
     EXECUTABLE,
     coverageCommand,
     workingDirectory,
