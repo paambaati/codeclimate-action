@@ -1,6 +1,6 @@
 # codeclimate-action
 
-[![Build Status](https://github.com/paambaati/codeclimate-action/workflows/PR%20Checks/badge.svg)](https://actions-badge.atrox.dev/paambaati/codeclimate-action/goto) [![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Build Status](https://github.com/paambaati/codeclimate-action/workflows/PR%20Checks/badge.svg)](https://actions-badge.atrox.dev/paambaati/codeclimate-action/goto) [![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) [![Meercode CI Score](https://meercode.io/badge/paambaati/codeclimate-action?type=ci-score&branch=master)](https://meercode.io/paambaati/codeclimate-action)
 
 A GitHub action that publishes your code coverage to [Code Climate](http://codeclimate.com/).
 
