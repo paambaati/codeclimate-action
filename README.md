@@ -15,7 +15,7 @@ This action requires that you set the [`CC_TEST_REPORTER_ID`](https://docs.codec
 | `coverageCommand`   |                 | The actual command that should be executed to run your tests and capture coverage. |
 | `workingDirectory`  |                 | Specify a custom working directory where the coverage command should be executed.  |
 | `debug`             | `false`         | Enable Code Coverage debug output when set to `true`.                              |
-| `coverageLocations` |                 | Locations to find code coverage as a multiline string.<br>Each line should be of the form `<location>:<type>`.<br>`type` can be any one of `simplecov,lcov,coverage.py,gcov,clover`. See examples below. |
+| `coverageLocations` |                 | Locations to find code coverage as a multiline string.<br>Each line should be of the form `<location>:<type>`.<br>`type` can be any one of `clover, cobertura, coverage.py, excoveralls, gcov, gocov, jacoco, lcov, lcov-json, simplecov, xccov`. See examples below. |
 | `prefix`            | `undefined`     | See [`--prefix`](https://docs.codeclimate.com/docs/configuring-test-coverage)      |
 
 #### Example
