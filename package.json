@@ -33,7 +33,7 @@
         "nyc": "^15.1.0"
     },
     "devDependencies": {
-        "@types/node": "^14.14.12",
+        "@types/node": "^15.12.1",
         "@types/node-fetch": "^2.5.10",
         "@types/sinon": "^9.0.9",
         "@types/tape": "^4.13.0",
