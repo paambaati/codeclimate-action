@@ -10,13 +10,14 @@ This action requires that you set the [`CC_TEST_REPORTER_ID`](https://docs.codec
 
 ### Inputs
 
-| Input               | Default         | Description                                                                        |
-| ------------------- | --------------- | ---------------------------------------------------------------------------------- |
-| `coverageCommand`   |                 | The actual command that should be executed to run your tests and capture coverage. |
-| `workingDirectory`  |                 | Specify a custom working directory where the coverage command should be executed.  |
-| `debug`             | `false`         | Enable Code Coverage debug output when set to `true`.                              |
-| `coverageLocations` |                 | Locations to find code coverage as a multiline string.<br>Each line should be of the form `<location>:<type>`. See examples below.
-| `prefix`            | `undefined`     | See [`--prefix`](https://docs.codeclimate.com/docs/configuring-test-coverage)      |
+| Input                 | Default         | Description                                                                        |
+| -------------------   | --------------- | ---------------------------------------------------------------------------------- |
+| `coverageCommand`     |                 | The actual command that should be executed to run your tests and capture coverage. |
+| `workingDirectory`    |                 | Specify a custom working directory where the coverage command should be executed.  |
+| `debug`               | `false`         | Enable Code Coverage debug output when set to `true`.                              |
+| `coverageLocations`   |                 | Locations to find code coverage as a multiline string.<br>Each line should be of the form `<location>:<type>`. See examples below.
+| `prefix`              | `undefined`     | See [`--prefix`](https://docs.codeclimate.com/docs/configuring-test-coverage)      |
+| `testReporterVersion` | `latest`        | Underlying version of the test-reporter tool that gets downloaded from codeclimate |
 
 #### Example
 
@@ -28,6 +29,20 @@ steps:
       CC_TEST_REPORTER_ID: <code_climate_reporter_id>
     with:
       coverageCommand: npm run coverage
+      debug: true
+```
+
+### Example locking the test-reporter version
+
+```yaml
+steps:
+  - name: Test & publish code coverage
+    uses: paambaati/codeclimate-action@v2.7.5
+    env:
+      CC_TEST_REPORTER_ID: <code_climate_reporter_id>
+    with:
+      coverageCommand: npm run coverage
+      testReporterVersion: 0.8.0
       debug: true
 ```
 
