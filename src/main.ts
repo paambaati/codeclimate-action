@@ -95,7 +95,8 @@ export function run(
   workingDirectory: string = DEFAULT_WORKING_DIRECTORY,
   codeClimateDebug: string = DEFAULT_CODECLIMATE_DEBUG,
   coverageLocationsParam: string = DEFAULT_COVERAGE_LOCATIONS,
-  coveragePrefix?: string
+  coveragePrefix?: string,
+  addCoveragePrefix?: string
 ): Promise<void> {
   return new Promise(async (resolve, reject) => {
     let lastExitCode = 1;
@@ -194,6 +195,9 @@ export function run(
         if (codeClimateDebug === 'true') commands.push('--debug');
         if (coveragePrefix) {
           commands.push('--prefix', coveragePrefix);
+        }
+        if (addCoveragePrefix) {
+          commands.push('--add-prefix', addCoveragePrefix);
         }
 
         parts.push(`codeclimate.${i}.json`);
@@ -294,6 +298,7 @@ if (require.main === module) {
     DEFAULT_COVERAGE_LOCATIONS
   );
   const coveragePrefix = getOptionalString('prefix');
+  const addCoveragePrefix = getOptionalString('addPrefix');
 
   run(
     DOWNLOAD_URL,
@@ -302,6 +307,7 @@ if (require.main === module) {
     workingDirectory,
     codeClimateDebug,
     coverageLocations,
-    coveragePrefix
+    coveragePrefix,
+    addCoveragePrefix
   );
 }
