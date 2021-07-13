@@ -263,9 +263,6 @@ export function run(
       if (coveragePrefix) {
         commands.push('--prefix', coveragePrefix);
       }
-      if (addCoveragePrefix) {
-        commands.push('--add-prefix', addCoveragePrefix);
-      }
 
       lastExitCode = await exec(executable, commands, execOpts);
       if (lastExitCode !== 0) {
