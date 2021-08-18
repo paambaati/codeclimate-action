@@ -42,7 +42,7 @@
         "sinon": "^9.2.2",
         "tape": "^5.2.2",
         "to-readable-stream": "^2.1.0",
-        "ts-node": "^9.1.1",
+        "ts-node": "^10.2.1",
         "typescript": "^4.2.4"
     }
 }
