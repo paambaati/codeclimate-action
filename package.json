@@ -24,7 +24,7 @@
     "author": "GP <me@httgp.com>",
     "license": "MIT",
     "dependencies": {
-        "@actions/core": "^1.2.7",
+        "@actions/core": "^1.5.0",
         "@actions/exec": "^1.0.4",
         "@actions/github": "^5.0.0",
         "@actions/glob": "^0.1.1",
