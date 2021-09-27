@@ -1,0 +1,16 @@
+name: Release
+on:
+  push:
+    tags: 'v[0-9]+.[0-9]+.[0-9]+'
+
+jobs:
+  major-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - env:
+          tag: ${{github.ref}}
+        run: |
+          tag=${tag#refs/tags/}
+          major=${tag%%.*}
+          git push origin HEAD:refs/heads/$major
