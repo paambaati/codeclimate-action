@@ -29,7 +29,7 @@
         "@actions/github": "^5.0.0",
         "@actions/glob": "^0.1.1",
         "hook-std": "^2.0.0",
-        "node-fetch": "^2.6.1",
+        "node-fetch": "^2.6.5",
         "nyc": "^15.1.0"
     },
     "devDependencies": {
