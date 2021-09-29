@@ -24,17 +24,19 @@
     "author": "GP <me@httgp.com>",
     "license": "MIT",
     "dependencies": {
-        "@actions/core": "^1.5.0",
+        "@actions/core": "^1.6.0",
         "@actions/exec": "^1.0.4",
         "@actions/github": "^5.0.0",
-        "@actions/glob": "^0.1.1",
+        "@actions/glob": "^0.2.0",
         "hook-std": "^2.0.0",
         "node-fetch": "^2.6.1",
-        "nyc": "^15.1.0"
+        "nyc": "^15.1.0",
+        "openpgp": "^5.0.0"
     },
     "devDependencies": {
         "@types/node": "^16.10.1",
         "@types/node-fetch": "^2.5.10",
+        "@types/openpgp": "^4.4.18",
         "@types/sinon": "^10.0.3",
         "@types/tape": "^4.13.0",
         "nock": "^13.0.11",
