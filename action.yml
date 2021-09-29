@@ -25,6 +25,10 @@ inputs:
     required: false
     description: 'See https://docs.codeclimate.com/docs/configuring-test-coverage'
     default: ''
+  verifyDownload:
+    required: false
+    description: 'Verify the downloaded reporter\'s checksum and GPG signature'
+    default: 'true'
 runs:
   using: 'node12'
   main: 'lib/main.js'
