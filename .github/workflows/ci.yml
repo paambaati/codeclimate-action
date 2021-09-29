@@ -5,28 +5,34 @@ jobs:
   check_pr:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
+    - name: checkout code
+      uses: actions/checkout@v2
 
-    - name: "npm ci"
+    - name: install dependencies
       run: npm ci
 
-    - name: "npm run build"
+    - name: build typescript
       run: npm run build
 
-    - name: "npm run test"
-      run: npm run test
-
-    - name: "check for unformatted sources"
+    - name: check for unformatted sources
       run: |
         npm run format:check \
         || (echo "##[error] found unformatted files. please 'npm run format'" \
                  "and check in all changes" \
             && exit 1)
 
-    - name: "check for uncommitted changes"
+    - name: check for uncommitted changes
       # Ensure no changes, but ignore node_modules dir since dev/fresh ci deps installed.
       run: |
         git diff --exit-code --stat -- . ':!node_modules' \
         || (echo "##[error] found changed files after build. please 'npm run build'" \
                  "and check in all changes" \
             && exit 1)
+
+    - name: publish code coverage to code-climate (duh)
+      uses: paambaati/codeclimate-action@v2.7.5
+      env:
+        CC_TEST_REPORTER_ID: 3470adaf12ff7cecdfe5a968ae0e95d098b6ee58c340114e1e90d440ee9e66ab
+      with:
+        coverageCommand: npm run coverage
+        debug: true
