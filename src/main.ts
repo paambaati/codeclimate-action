@@ -17,7 +17,8 @@ const DEFAULT_CODECLIMATE_DEBUG = 'false';
 const DEFAULT_COVERAGE_LOCATIONS = '';
 const DEFAULT_TEST_REPORTER_VERSION = 'latest';
 
-const DOWNLOAD_URL = `https://codeclimate.com/downloads/test-reporter/test-reporter-latest-${platform()}-amd64`;
+const DOWNLOAD_URL = `https://codeclimate.com/downloads/test-reporter/test-reporter-${DEFAULT_TEST_REPORTER_VERSION}-${platform()}-amd64`;
+
 
 export function downloadToFile(
   url: string,
