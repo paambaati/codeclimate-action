@@ -1,40 +1,28 @@
 import { platform } from 'os';
-import { createWriteStream } from 'fs';
 import { chdir } from 'process';
-import fetch from 'node-fetch';
 import { debug, error, setFailed, warning, info } from '@actions/core';
 import { exec } from '@actions/exec';
-import { ExecOptions } from '@actions/exec/lib/interfaces';
 import { context } from '@actions/github';
 import * as glob from '@actions/glob';
-
-import { getOptionalString } from './utils';
+import {
+  downloadToFile,
+  getOptionalString,
+  verifyChecksum,
+  verifySignature,
+} from './utils';
+import type { ExecOptions } from '@actions/exec/lib/interfaces';
 
 const DOWNLOAD_URL = `https://codeclimate.com/downloads/test-reporter/test-reporter-latest-${platform()}-amd64`;
 const EXECUTABLE = './cc-reporter';
+export const CODECLIMATE_GPG_PUBLIC_KEY_ID =
+  '9BD9E2DD46DA965A537E5B0A5CBF320243B6FD85' as const;
+const CODECLIMATE_GPG_PUBLIC_KEY_URL =
+  `https://keys.openpgp.org/vks/v1/by-fingerprint/${CODECLIMATE_GPG_PUBLIC_KEY_ID}` as const;
 const DEFAULT_COVERAGE_COMMAND = '';
 const DEFAULT_WORKING_DIRECTORY = '';
 const DEFAULT_CODECLIMATE_DEBUG = 'false';
 const DEFAULT_COVERAGE_LOCATIONS = '';
-
-export function downloadToFile(
-  url: string,
-  file: string,
-  mode: number = 0o755
-): Promise<void> {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const response = await fetch(url, { timeout: 2 * 60 * 1000 }); // Timeout in 2 minutes.
-      const writer = createWriteStream(file, { mode });
-      response.body.pipe(writer);
-      writer.on('close', () => {
-        return resolve();
-      });
-    } catch (err) {
-      return reject(err);
-    }
-  });
-}
+const DEFAULT_VERIFY_DOWNLOAD = 'true';
 
 function prepareEnv() {
   const env = process.env as { [key: string]: string };
@@ -95,9 +83,14 @@ export function run(
   workingDirectory: string = DEFAULT_WORKING_DIRECTORY,
   codeClimateDebug: string = DEFAULT_CODECLIMATE_DEBUG,
   coverageLocationsParam: string = DEFAULT_COVERAGE_LOCATIONS,
-  coveragePrefix?: string
+  coveragePrefix?: string,
+  verifyDownload: string = DEFAULT_VERIFY_DOWNLOAD
 ): Promise<void> {
   return new Promise(async (resolve, reject) => {
+    if (platform() === 'win32') {
+      return reject(new Error('CC Reporter is not supported on Windows!'));
+    }
+
     let lastExitCode = 1;
     if (workingDirectory) {
       debug(`Changing working directory to ${workingDirectory}`);
@@ -106,17 +99,18 @@ export function run(
         lastExitCode = 0;
         debug('✅ Changing working directory completed...');
       } catch (err) {
-        error(err.message);
+        error((err as Error).message);
         setFailed('🚨 Changing working directory failed!');
         return reject(err);
       }
     }
+
     try {
       debug(`ℹ️ Downloading CC Reporter from ${downloadUrl} ...`);
       await downloadToFile(downloadUrl, executable);
       debug('✅ CC Reporter downloaded...');
     } catch (err) {
-      error(err.message);
+      error((err as Error).message);
       setFailed('🚨 CC Reporter download failed!');
       warning(`Could not download ${downloadUrl}`);
       warning(
@@ -124,6 +118,53 @@ export function run(
       );
       return reject(err);
     }
+
+    if (verifyDownload === 'true') {
+      const checksumUrl = `${downloadUrl}.sha256`;
+      const checksumFilePath = `${executable}.sha256`;
+      const signatureUrl = `${downloadUrl}.sha256.sig`;
+      const signatureFilePath = `${executable}.sha256.sig`;
+      const ccPublicKeyFilePath = 'public-key.asc';
+
+      try {
+        debug(`ℹ️ Verifying CC Reporter checksum...`);
+        await downloadToFile(checksumUrl, checksumFilePath);
+        const checksumVerified = await verifyChecksum(
+          executable,
+          checksumFilePath,
+          'sha256'
+        );
+        if (!checksumVerified)
+          throw new Error('CC Reporter checksum does not match!');
+        debug('✅ CC Reported checksum verification completed...');
+      } catch (err) {
+        error((err as Error).message);
+        setFailed('🚨 CC Reporter checksum verfication failed!');
+        return reject(err);
+      }
+
+      try {
+        debug(`ℹ️ Verifying CC Reporter GPG signature...`);
+        await downloadToFile(signatureUrl, signatureFilePath);
+        await downloadToFile(
+          CODECLIMATE_GPG_PUBLIC_KEY_URL,
+          ccPublicKeyFilePath
+        );
+        const signatureVerified = await verifySignature(
+          checksumFilePath,
+          signatureFilePath,
+          ccPublicKeyFilePath
+        );
+        if (!signatureVerified)
+          throw new Error('CC Reporter GPG signature is invalid!');
+        debug('✅ CC Reported GPG signature verification completed...');
+      } catch (err) {
+        error((err as Error).message);
+        setFailed('🚨 CC Reporter GPG signature verfication failed!');
+        return reject(err);
+      }
+    }
+
     const execOpts: ExecOptions = {
       env: prepareEnv(),
     };
@@ -136,7 +177,7 @@ export function run(
       }
       debug('✅ CC Reporter before-build checkin completed...');
     } catch (err) {
-      error(err.message);
+      error((err as Error).message);
       setFailed('🚨 CC Reporter before-build checkin failed!');
       return reject(err);
     }
@@ -149,7 +190,7 @@ export function run(
         }
         debug('✅ Coverage run completed...');
       } catch (err) {
-        error(err.message);
+        error((err as Error).message);
         setFailed('🚨 Coverage run failed!');
         return reject(err);
       }
@@ -206,7 +247,7 @@ export function run(
             );
           }
         } catch (err) {
-          error(err.message);
+          error((err as Error).message);
           setFailed('🚨 CC Reporter coverage formatting failed!');
           return reject(err);
         }
@@ -231,7 +272,7 @@ export function run(
           );
         }
       } catch (err) {
-        error(err.message);
+        error((err as Error).message);
         setFailed('🚨 CC Reporter coverage sum failed!');
         return reject(err);
       }
@@ -247,7 +288,7 @@ export function run(
         debug('✅ CC Reporter upload coverage completed!');
         return resolve();
       } catch (err) {
-        error(err.message);
+        error((err as Error).message);
         setFailed('🚨 CC Reporter coverage upload failed!');
         return reject(err);
       }
@@ -269,7 +310,7 @@ export function run(
       debug('✅ CC Reporter after-build checkin completed!');
       return resolve();
     } catch (err) {
-      error(err.message);
+      error((err as Error).message);
       setFailed('🚨 CC Reporter after-build checkin failed!');
       return reject(err);
     }
@@ -294,7 +335,10 @@ if (require.main === module) {
     DEFAULT_COVERAGE_LOCATIONS
   );
   const coveragePrefix = getOptionalString('prefix');
-
+  const verifyDownload = getOptionalString(
+    'verifyDownload',
+    DEFAULT_VERIFY_DOWNLOAD
+  );
   run(
     DOWNLOAD_URL,
     EXECUTABLE,
@@ -302,6 +346,7 @@ if (require.main === module) {
     workingDirectory,
     codeClimateDebug,
     coverageLocations,
-    coveragePrefix
+    coveragePrefix,
+    verifyDownload
   );
 }
