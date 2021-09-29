@@ -14,6 +14,9 @@ jobs:
     - name: build typescript
       run: npm run build
 
+    - name: run tests and instrument coverage
+      run: npm run coverage
+
     - name: check for unformatted sources
       run: |
         npm run format:check \
@@ -34,5 +37,5 @@ jobs:
       env:
         CC_TEST_REPORTER_ID: 3470adaf12ff7cecdfe5a968ae0e95d098b6ee58c340114e1e90d440ee9e66ab
       with:
-        coverageCommand: npm run coverage
         debug: true
+      if: ${{ github.event_name == 'push' }}
