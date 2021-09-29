@@ -1,6 +1,8 @@
 # codeclimate-action
 
-[![Build Status](https://github.com/paambaati/codeclimate-action/workflows/PR%20Checks/badge.svg)](https://actions-badge.atrox.dev/paambaati/codeclimate-action/goto) [![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/8f2233d4c51c92ad427c/test_coverage)](https://codeclimate.com/github/paambaati/codeclimate-action/test_coverage)
+[![Build Status](https://github.com/paambaati/codeclimate-action/workflows/PR%20Checks/badge.svg)](https://actions-badge.atrox.dev/paambaati/codeclimate-action/goto)
+[![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 A GitHub action that publishes your code coverage to [Code Climate](http://codeclimate.com/).
 
@@ -15,8 +17,9 @@ This action requires that you set the [`CC_TEST_REPORTER_ID`](https://docs.codec
 | `coverageCommand`   |                 | The actual command that should be executed to run your tests and capture coverage. |
 | `workingDirectory`  |                 | Specify a custom working directory where the coverage command should be executed.  |
 | `debug`             | `false`         | Enable Code Coverage debug output when set to `true`.                              |
-| `coverageLocations` |                 | Locations to find code coverage as a multiline string.<br>Each line should be of the form `<location>:<type>`. See examples below.
+| `coverageLocations` |                 | Locations to find code coverage as a multiline string.<br>Each line should be of the form `<location>:<type>`.<br>`type` can be any one of `clover, cobertura, coverage.py, excoveralls, gcov, gocov, jacoco, lcov, lcov-json, simplecov, xccov`. See examples below. |
 | `prefix`            | `undefined`     | See [`--prefix`](https://docs.codeclimate.com/docs/configuring-test-coverage)      |
+| `verifyDownload`    | `true`          | Verifies the downloaded Code Climate reporter binary's checksum and GPG signature. See [Verifying binaries](https://github.com/codeclimate/test-reporter#verifying-binaries)      |
 
 #### Example
 
