@@ -26,7 +26,7 @@ This action requires that you set the [`CC_TEST_REPORTER_ID`](https://docs.codec
 ```yaml
 steps:
   - name: Test & publish code coverage
-    uses: paambaati/codeclimate-action@v2.7.5
+    uses: paambaati/codeclimate-action@v3.0.0
     env:
       CC_TEST_REPORTER_ID: <code_climate_reporter_id>
     with:
@@ -41,7 +41,7 @@ When you've already generated the coverage report in a previous step and wish to
 ```yaml
 steps:
   - name: Test & publish code coverage
-    uses: paambaati/codeclimate-action@v2.7.5
+    uses: paambaati/codeclimate-action@v3.0.0
     env:
       CC_TEST_REPORTER_ID: <code_climate_reporter_id>
 ```
@@ -53,7 +53,7 @@ This action supports basic glob patterns to search for files matching given patt
 ```yaml
 steps:
   - name: Test & publish code coverage
-    uses: paambaati/codeclimate-action@v2.7.5
+    uses: paambaati/codeclimate-action@v3.0.0
     env:
       CC_TEST_REPORTER_ID: <code_climate_reporter_id>
     with:
@@ -67,7 +67,7 @@ steps:
 ```yaml
 steps:
   - name: Test & publish code coverage
-    uses: paambaati/codeclimate-action@v2.7.5
+    uses: paambaati/codeclimate-action@v3.0.0
     env:
       # Set CC_TEST_REPORTER_ID as secret of your repo
       CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
@@ -108,7 +108,7 @@ module.exports = {
 ```yaml
 steps:
   - name: Test & publish code coverage
-    uses: paambaati/codeclimate-action@v2.7.5
+    uses: paambaati/codeclimate-action@v3.0.0
     env:
       CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
     with:
@@ -120,6 +120,6 @@ steps:
 
 Example projects
 
-1. [paambaati/websight](https://github.com/paambaati/websight/blob/ae00c393cd6cdf8c4d0fce1195293b761fa689ad/.github/workflows/ci.yml#L33-L49)
+1. [paambaati/websight](https://github.com/paambaati/websight/blob/89f03007680531587dd5ff5c673e6d813a298d8c/.github/workflows/ci.yml#L33-L50)
 
 2. [MartinNuc/coverage-ga-test](https://github.com/MartinNuc/coverage-ga-test/blob/master/.github/workflows/ci.yaml)
