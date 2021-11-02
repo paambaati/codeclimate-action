@@ -36,7 +36,7 @@
     "devDependencies": {
         "@types/node": "^16.11.6",
         "@types/node-fetch": "^2.5.12",
-        "@types/sinon": "^10.0.5",
+        "@types/sinon": "^10.0.6",
         "@types/tape": "^4.13.0",
         "nock": "^13.1.4",
         "prettier": "^2.4.1",
