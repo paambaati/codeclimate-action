@@ -34,7 +34,7 @@
         "openpgp": "^5.0.1"
     },
     "devDependencies": {
-        "@types/node": "^16.11.7",
+        "@types/node": "^16.11.9",
         "@types/node-fetch": "^2.5.12",
         "@types/sinon": "^10.0.6",
         "@types/tape": "^4.13.0",
