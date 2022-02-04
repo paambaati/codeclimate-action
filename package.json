@@ -38,7 +38,7 @@
         "@types/node-fetch": "^2.5.12",
         "@types/sinon": "^10.0.9",
         "@types/tape": "^4.13.0",
-        "nock": "^13.2.2",
+        "nock": "^13.2.3",
         "prettier": "^2.5.1",
         "sinon": "^13.0.1",
         "tape": "^5.5.0",
