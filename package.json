@@ -39,7 +39,7 @@
         "@types/sinon": "^10.0.11",
         "@types/tape": "^4.13.0",
         "nock": "^13.2.4",
-        "prettier": "^2.6.0",
+        "prettier": "^2.6.2",
         "sinon": "^13.0.1",
         "tape": "^5.5.3",
         "to-readable-stream": "^2.1.0",
