@@ -88,7 +88,10 @@ export function run(
 ): Promise<void> {
   return new Promise(async (resolve, reject) => {
     if (platform() === 'win32') {
-      return reject(new Error('CC Reporter is not supported on Windows!'));
+      const err = new Error('CC Reporter is not supported on Windows!');
+      error(err.message);
+      setFailed('🚨 CodeClimate Reporter will not run on Windows!');
+      return reject(err);
     }
 
     let lastExitCode = 1;
