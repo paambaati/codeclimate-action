@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Publish GitHub Actions to Marketplace
-        uses: technote-space/release-github-actions@v6
+        uses: technote-space/release-github-actions@v7
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COMMIT_NAME: 'GP'

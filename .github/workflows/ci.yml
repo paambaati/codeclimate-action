@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: install dependencies
       run: npm ci
@@ -33,7 +33,7 @@ jobs:
             && exit 1)
 
     - name: publish code coverage to code-climate (duh)
-      uses: paambaati/codeclimate-action@v2.7.5
+      uses: paambaati/codeclimate-action@v3
       env:
         CC_TEST_REPORTER_ID: 3470adaf12ff7cecdfe5a968ae0e95d098b6ee58c340114e1e90d440ee9e66ab
       with:
