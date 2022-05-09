@@ -41,7 +41,7 @@
         "@types/tape": "^4.13.0",
         "nock": "^13.2.4",
         "prettier": "^2.6.2",
-        "sinon": "^13.0.2",
+        "sinon": "^14.0.0",
         "tape": "^5.5.3",
         "to-readable-stream": "^2.1.0",
         "ts-node": "^10.7.0",
