@@ -44,7 +44,7 @@
         "sinon": "^14.0.0",
         "tape": "^5.5.3",
         "to-readable-stream": "^2.1.0",
-        "ts-node": "^10.8.0",
+        "ts-node": "^10.8.2",
         "typescript": "^4.7.2"
     }
 }
