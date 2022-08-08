@@ -31,7 +31,7 @@
         "hook-std": "^2.0.0",
         "node-fetch": "^2.6.7",
         "nyc": "^15.1.0",
-        "openpgp": "^5.3.1"
+        "openpgp": "^5.4.0"
     },
     "devDependencies": {
         "@openpgp/web-stream-tools": "^0.0.11",
