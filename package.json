@@ -35,7 +35,7 @@
     },
     "devDependencies": {
         "@openpgp/web-stream-tools": "^0.0.11",
-        "@types/node": "^18.6.2",
+        "@types/node": "^18.7.17",
         "@types/node-fetch": "^2.6.1",
         "@types/sinon": "^10.0.12",
         "@types/tape": "^4.13.0",
