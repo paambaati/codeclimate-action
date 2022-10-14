@@ -8,9 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - env:
-          tag: ${{github.ref}}
+      - id: tag-version
+        uses: battila7/get-version-action@v2
+      - name: publish major version tag
         run: |
-          tag=${tag#refs/tags/}
-          major=${tag%%.*}
-          git push origin HEAD:refs/heads/$major
+          git push origin HEAD:refs/heads/${{ steps.tag-version.outputs.major }}
