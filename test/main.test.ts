@@ -495,6 +495,8 @@ test('🧪 run() should throw an error if run on Windows.', async (t) => {
 
   sandbox.stub(os, 'platform').returns('win32');
 
+  const stdHook = hookStd(() => {});
+
   try {
     await run('http://localhost.test/dummy-cc-reporter', undefined);
     t.fail('should actually throw an error and not succeed');
@@ -504,8 +506,11 @@ test('🧪 run() should throw an error if run on Windows.', async (t) => {
       'CC Reporter is not supported on Windows!',
       'should return the correct error message.'
     );
+  } finally {
+    stdHook.unhook();
   }
 
+  stdHook.unhook();
   t.end();
 });
 
