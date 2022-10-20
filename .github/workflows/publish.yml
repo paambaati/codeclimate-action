@@ -1,0 +1,27 @@
+name: "Publish"
+on:
+  release:
+    types:
+      - published
+      - created
+      - released
+      - rerequested
+
+jobs:
+  publish:
+    name: Publish released Action to GitHub marketplace
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publish action
+        uses: technote-space/release-github-actions@v7
+        with:
+          GITHUB_TOKEN: ${{ secrets.CUSTOM_GITHUB_PERSONAL_TOKEN }}
+          COMMIT_NAME: 'GP'
+          COMMIT_EMAIL: 'me@httgp.com'
+          CREATE_MAJOR_VERSION_TAG: true
+          CREATE_MINOR_VERSION_TAG: true
+          CREATE_PATCH_VERSION_TAG: true
+          CLEAN_TARGETS: '.[!.]*,test,src,*.ts,*.json,CHANGELOG.md,_config.yml,.github,coverage,.nyc_output'
+          BRANCH_NAME: 'releases/${MAJOR}/${MINOR}/${PATCH}'
+        env:
+          DEBUG: '*'

@@ -1,18 +1,28 @@
-name: "PR Checks"
+name: "PR checks"
 on: [pull_request, push]
 
 jobs:
   check_pr:
+    name: "PR checks"
     runs-on: ubuntu-latest
     steps:
     - name: checkout code
       uses: actions/checkout@v3
 
+    - name: setup node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16
+        cache: 'npm'
+
     - name: install dependencies
       run: npm ci
 
+    - name: check lock file for untrusted packages
+      run: npm_config_yes=true npx lockfile-lint --path package-lock.json --allowed-hosts npm --validate-https
+
     - name: build typescript
-      run: npm run build
+      run: npm run build -- --noEmit
 
     - name: run tests and instrument coverage
       run: npm run coverage
@@ -33,9 +43,9 @@ jobs:
             && exit 1)
 
     - name: publish code coverage to code-climate (duh)
-      uses: paambaati/codeclimate-action@v3.0.0
+      if: ${{ github.event_name == 'push' }}
+      uses: paambaati/codeclimate-action@v3.1.0
       env:
         CC_TEST_REPORTER_ID: 3470adaf12ff7cecdfe5a968ae0e95d098b6ee58c340114e1e90d440ee9e66ab
       with:
         debug: true
-      if: ${{ github.event_name == 'push' }}
