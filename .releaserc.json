@@ -12,7 +12,7 @@
                         "files": [
                             "README.md"
                         ],
-                        "from": "paambaati/codeclimate-action@v3.1.0.*",
+                        "from": "paambaati/codeclimate-action@v.*",
                         "to": "paambaati/codeclimate-action@v${nextRelease.version}",
                         "results": [
                             {
