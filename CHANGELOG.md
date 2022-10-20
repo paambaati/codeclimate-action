@@ -1,28 +1,3 @@
-# [2.3.0](https://github.com/paambaati/codeclimate-action/compare/v2.2.6...v2.3.0) (2022-10-20)
-
-
-### Bug Fixes
-
-* **ci:** better version tagging ([e7ede07](https://github.com/paambaati/codeclimate-action/commit/e7ede07acfbc6a654693402829004a85e680e713))
-* **deps:** add missing dev-only dep to unblock typescript build ([9e22dcb](https://github.com/paambaati/codeclimate-action/commit/9e22dcb3b7b5b5992a31f3577cf113dc2e950e03))
-* fix quote escaping ([b952316](https://github.com/paambaati/codeclimate-action/commit/b952316beee3b903d42039bf8c627ee4c07fc228))
-* make the after-build error message intuitive ([de9fc1d](https://github.com/paambaati/codeclimate-action/commit/de9fc1d31232bb8bf30513bedf53ff40231b108d))
-* unset default for coverageCommand ([843392a](https://github.com/paambaati/codeclimate-action/commit/843392a8c1176f873b5fecc54e31ce6e8ac32d59))
-
-
-### Features
-
-* checksum ang GPG verification utilities. ([8a68e94](https://github.com/paambaati/codeclimate-action/commit/8a68e94c2970eea2ea0be901707e4baf241869e3))
-* declate new input option in action yaml ([dffe183](https://github.com/paambaati/codeclimate-action/commit/dffe1839031e38034aeb1434c930f4a9524204a3))
-* implement verification methods ([3597522](https://github.com/paambaati/codeclimate-action/commit/3597522e3aad9926fedb6dd418ec3d8b77aed0c1))
-* verify reporter download ([#429](https://github.com/paambaati/codeclimate-action/issues/429)) ([e4483ed](https://github.com/paambaati/codeclimate-action/commit/e4483ed4ba41c889bad43c01fb00606224851627))
-
-# Changelog
-All notable changes to this project will be documented in this file.
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
 # [3.1.0] - 2022-10-14
 ### Changed
 - Updated base runtime version to Node.js 16.x - via [`#622`](https://github.com/paambaati/codeclimate-action/pull/622). This closes [`#621`](https://github.com/paambaati/codeclimate-action/issues/621). Thanks @fabn!
