@@ -1,20 +1,33 @@
-name: "Publish"
+name: "Release"
 on:
-  create:
+  push:
     branches:
-      - master
+      - main
+    tags:
+      - '!*'
 
 jobs:
   release:
-    name: Publish GitHub Actions to Marketplace
+    name: Cut a release on GitHub
     runs-on: ubuntu-latest
     steps:
-      - name: Publish GitHub Actions to Marketplace
-        uses: technote-space/release-github-actions@v7
+      - name: checkout code
+        uses: actions/checkout@v3
+
+      - name: setup node.js
+        uses: actions/setup-node@v3
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          COMMIT_NAME: 'GP'
-          COMMIT_EMAIL: 'me@httgp.com'
-          CREATE_MAJOR_VERSION_TAG: false
-          CREATE_MINOR_VERSION_TAG: false
-          CLEAN_TARGETS: '.[!.]*,test,src,*.ts,*.json,CHANGELOG.md,_config.yml'
+          node-version: 16
+          cache: 'npm'
+
+      - name: install dependencies
+        run: npm ci
+
+      - name: make a release on GitHub
+        run: npm_config_yes=true npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.CUSTOM_GITHUB_PERSONAL_TOKEN }}
+          GIT_AUTHOR_NAME: 'GP'
+          GIT_COMMITTER_NAME: 'GP'
+          GIT_AUTHOR_EMAIL: 'me@httgp.com'
+          GIT_COMMITTER_EMAIL: 'me@httgp.com'
