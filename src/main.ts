@@ -320,6 +320,7 @@ export function run(
   });
 }
 
+/* istanbul ignore next */
 if (require.main === module) {
   const coverageCommand = getOptionalString(
     'coverageCommand',
