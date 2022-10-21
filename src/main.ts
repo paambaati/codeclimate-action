@@ -24,6 +24,13 @@ const DEFAULT_CODECLIMATE_DEBUG = 'false';
 const DEFAULT_COVERAGE_LOCATIONS = '';
 const DEFAULT_VERIFY_DOWNLOAD = 'true';
 
+const SUPPORTED_GITHUB_EVENTS = [
+  // Regular PRs.
+  'pull_request',
+  // PRs that were triggered on remote forks.
+  'pull_request_target',
+];
+
 function prepareEnv() {
   const env = process.env as { [key: string]: string };
 
@@ -35,7 +42,10 @@ function prepareEnv() {
   if (env.GIT_BRANCH)
     env.GIT_BRANCH = env.GIT_BRANCH.replace(/^refs\/heads\//, ''); // Remove 'refs/heads/' prefix (See https://github.com/paambaati/codeclimate-action/issues/42)
 
-  if (process.env.GITHUB_EVENT_NAME === 'pull_request') {
+  if (
+    process.env.GITHUB_EVENT_NAME &&
+    SUPPORTED_GITHUB_EVENTS.includes(process.env.GITHUB_EVENT_NAME)
+  ) {
     env.GIT_BRANCH = process.env.GITHUB_HEAD_REF || env.GIT_BRANCH; // Report correct branch for PRs (See https://github.com/paambaati/codeclimate-action/issues/86)
     env.GIT_COMMIT_SHA = context.payload.pull_request?.['head']?.['sha']; // Report correct SHA for the head branch (See https://github.com/paambaati/codeclimate-action/issues/140)
   }

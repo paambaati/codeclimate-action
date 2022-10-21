@@ -1,7 +1,6 @@
 {
     "branches": [
-        "main",
-        "master"
+        "main"
     ],
     "plugins": [
         "@semantic-release/commit-analyzer",
@@ -11,7 +10,8 @@
                 "replacements": [
                     {
                         "files": [
-                            "README.md"
+                            "README.md",
+                            ".github/workflows/ci.yml"
                         ],
                         "from": "paambaati/codeclimate-action@v.*",
                         "to": "paambaati/codeclimate-action@v${nextRelease.version}",
@@ -21,6 +21,12 @@
                                 "hasChanged": true,
                                 "numMatches": 5,
                                 "numReplacements": 5
+                            },
+                            {
+                                "file": ".github/workflows/ci.yml",
+                                "hasChanged": true,
+                                "numMatches": 1,
+                                "numReplacements": 1
                             }
                         ],
                         "countMatches": true
@@ -43,7 +49,8 @@
                     "package.json",
                     "package-lock.json",
                     "CHANGELOG.md",
-                    "README.md"
+                    "README.md",
+                    ".github/workflows/ci.yml"
                 ],
                 "message": "chore(release): ${nextRelease.version}\n\n${nextRelease.notes}"
             }
