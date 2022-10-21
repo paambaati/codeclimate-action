@@ -1,0 +1,34 @@
+name: 'Code Climate Coverage Action'
+description: 'Publish code coverage to Code Climate'
+author: 'GP <me@httgp.com>'
+branding:
+  icon: 'code'
+  color: 'gray-dark'
+inputs:
+  coverageCommand:
+    required: false
+    description: 'Coverage command to execute'
+    default: ''
+  workingDirectory:
+    required: false
+    description: 'Custom working directory for executing the coverage command'
+    default: ''
+  debug:
+    required: false
+    description: 'Enable debugging logs for the Code Climate test reporter'
+    default: 'false'
+  coverageLocations:
+    required: false
+    description: 'Locations to find code coverage (Used for builds from multiple locations)'
+    default: ''
+  prefix:
+    required: false
+    description: 'See https://docs.codeclimate.com/docs/configuring-test-coverage'
+    default: ''
+  verifyDownload:
+    required: false
+    description: 'Verify the downloaded reporter''s checksum and GPG signature'
+    default: 'true'
+runs:
+  using: 'node16'
+  main: 'lib/main.js'
