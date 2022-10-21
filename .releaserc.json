@@ -10,8 +10,7 @@
                 "replacements": [
                     {
                         "files": [
-                            "README.md",
-                            ".github/workflows/ci.yml"
+                            "README.md"
                         ],
                         "from": "paambaati/codeclimate-action@v.*",
                         "to": "paambaati/codeclimate-action@v${nextRelease.version}",
@@ -21,12 +20,6 @@
                                 "hasChanged": true,
                                 "numMatches": 5,
                                 "numReplacements": 5
-                            },
-                            {
-                                "file": ".github/workflows/ci.yml",
-                                "hasChanged": true,
-                                "numMatches": 1,
-                                "numReplacements": 1
                             }
                         ],
                         "countMatches": true
@@ -49,8 +42,7 @@
                     "package.json",
                     "package-lock.json",
                     "CHANGELOG.md",
-                    "README.md",
-                    ".github/workflows/ci.yml"
+                    "README.md"
                 ],
                 "message": "chore(release): ${nextRelease.version}\n\n${nextRelease.notes}"
             }
