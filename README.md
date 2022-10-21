@@ -8,7 +8,7 @@ A GitHub action that publishes your code coverage to [Code Climate](http://codec
 
 > **Warning**
 >
-> Please upgrade to v3.1.1 immediately. v3.1.0 was recently broken inadverdently, and the only fix is to upgrade your action to v3.1.1. Please see [#626](https://github.com/paambaati/codeclimate-action/issues/626) for more details.
+> Please upgrade to v3.1.1 (or higher) immediately. v3.1.0 was recently broken inadverdently, and the only fix is to upgrade your action to v3.1.1 or higher. Please see [#626](https://github.com/paambaati/codeclimate-action/issues/626) for more details.
 
 
 ## Usage
