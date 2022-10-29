@@ -4,6 +4,7 @@
     ],
     "plugins": [
         "@semantic-release/commit-analyzer",
+        "semantic-release-export-data",
         [
             "@google/semantic-release-replace-plugin",
             {
@@ -47,7 +48,6 @@
                 "message": "chore(release): ${nextRelease.version}\n\n${nextRelease.notes}"
             }
         ],
-        "semantic-release-export-data",
         "@semantic-release/github"
     ]
 }
