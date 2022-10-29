@@ -7,9 +7,35 @@ on:
       - '!*'
 
 jobs:
+  next-version:
+    name: Get next release version
+    runs-on: ubuntu-latest
+    outputs:
+      new-release-published: ${{ steps.next-version.outputs.new-release-published }}
+      new-release-version: ${{ steps.next-version.outputs.new-release-version }}
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v3
+
+      - name: setup node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'npm'
+
+      - name: install dependencies
+        run: npm ci
+
+      - run: npm_config_yes=true npx semantic-release --dry-run
+        id: next-version
+        env:
+          GITHUB_TOKEN: ${{ secrets.CUSTOM_GITHUB_PERSONAL_TOKEN }}
+
   release:
     name: Cut a release on GitHub
     runs-on: ubuntu-latest
+    needs: next-version
+    if: needs.next-version.outputs.new-release-published == 'true'
     steps:
       - name: checkout code
         uses: actions/checkout@v3
