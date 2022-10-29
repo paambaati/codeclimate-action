@@ -11,7 +11,7 @@ jobs:
     name: Get next release version
     runs-on: ubuntu-latest
     outputs:
-      new-release-published: ${{ steps.next-version.outputs.new-release-published }}
+      git-tag: ${{ steps.git-tag.outputs.git-tag }}
       new-release-version: ${{ steps.next-version.outputs.new-release-version }}
     steps:
       - name: checkout code
@@ -26,8 +26,14 @@ jobs:
       - name: install dependencies
         run: npm ci
 
-      - run: npm_config_yes=true npx semantic-release --dry-run
+      - name: find current latest release version
+        id: git-tag
+        shell: bash
+        run: echo "git-tag=`echo $(git describe --tags --abbrev=0 | sed -e 's/^v//')`" >> $GITHUB_OUTPUT
+
+      - name: find next release version
         id: next-version
+        run: npm_config_yes=true npx semantic-release --dry-run
         env:
           GITHUB_TOKEN: ${{ secrets.CUSTOM_GITHUB_PERSONAL_TOKEN }}
 
@@ -35,7 +41,7 @@ jobs:
     name: Cut a release on GitHub
     runs-on: ubuntu-latest
     needs: next-version
-    if: needs.next-version.outputs.new-release-published == 'true'
+    if: needs.next-version.outputs.new-release-version == needs.next-version.outputs.git-tag
     steps:
       - name: checkout code
         uses: actions/checkout@v3
