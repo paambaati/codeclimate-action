@@ -42,7 +42,7 @@
         "@semantic-release/git": "10.0.1",
         "@semantic-release/github": "8.0.7",
         "@semantic-release/release-notes-generator": "10.0.3",
-        "@types/node": "18.11.10",
+        "@types/node": "18.11.17",
         "@types/node-fetch": "2.6.2",
         "@types/sinon": "10.0.13",
         "@types/tape": "4.13.2",
