@@ -40,7 +40,7 @@
         "@semantic-release/commit-analyzer": "9.0.2",
         "@semantic-release/exec": "6.0.3",
         "@semantic-release/git": "10.0.1",
-        "@semantic-release/github": "8.0.6",
+        "@semantic-release/github": "8.0.7",
         "@semantic-release/release-notes-generator": "10.0.3",
         "@types/node": "18.11.3",
         "@types/node-fetch": "2.6.2",
