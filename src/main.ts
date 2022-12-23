@@ -1,5 +1,6 @@
-import { platform } from 'os';
-import { chdir } from 'process';
+import { platform } from 'node:os';
+import { chdir } from 'node:process';
+import { unlinkSync } from 'node:fs';
 import { debug, error, setFailed, warning, info } from '@actions/core';
 import { exec } from '@actions/exec';
 import { context } from '@actions/github';
@@ -30,6 +31,17 @@ const SUPPORTED_GITHUB_EVENTS = [
   // PRs that were triggered on remote forks.
   'pull_request_target',
 ];
+
+const fileArtifacts = new Set<string>();
+
+async function downloadAndRecord(
+  url: string,
+  file: string,
+  mode?: number
+): Promise<void> {
+  await downloadToFile(url, file, mode);
+  fileArtifacts.add(file);
+}
 
 function prepareEnv() {
   const env = process.env as { [key: string]: string };
@@ -120,7 +132,7 @@ export function run(
 
     try {
       debug(`ℹ️ Downloading CC Reporter from ${downloadUrl} ...`);
-      await downloadToFile(downloadUrl, executable);
+      await downloadAndRecord(downloadUrl, executable);
       debug('✅ CC Reporter downloaded...');
     } catch (err) {
       error((err as Error).message);
@@ -141,7 +153,7 @@ export function run(
 
       try {
         debug(`ℹ️ Verifying CC Reporter checksum...`);
-        await downloadToFile(checksumUrl, checksumFilePath);
+        await downloadAndRecord(checksumUrl, checksumFilePath);
         const checksumVerified = await verifyChecksum(
           executable,
           checksumFilePath,
@@ -158,8 +170,8 @@ export function run(
 
       try {
         debug(`ℹ️ Verifying CC Reporter GPG signature...`);
-        await downloadToFile(signatureUrl, signatureFilePath);
-        await downloadToFile(
+        await downloadAndRecord(signatureUrl, signatureFilePath);
+        await downloadAndRecord(
           CODECLIMATE_GPG_PUBLIC_KEY_URL,
           ccPublicKeyFilePath
         );
@@ -353,14 +365,25 @@ if (require.main === module) {
     'verifyDownload',
     DEFAULT_VERIFY_DOWNLOAD
   );
-  run(
-    DOWNLOAD_URL,
-    EXECUTABLE,
-    coverageCommand,
-    workingDirectory,
-    codeClimateDebug,
-    coverageLocations,
-    coveragePrefix,
-    verifyDownload
-  );
+  try {
+    run(
+      DOWNLOAD_URL,
+      EXECUTABLE,
+      coverageCommand,
+      workingDirectory,
+      codeClimateDebug,
+      coverageLocations,
+      coveragePrefix,
+      verifyDownload
+    );
+  } catch (err) {
+    throw err;
+  } finally {
+    // Finally clean up all artifacts that we downloaded.
+    for (const artifact of fileArtifacts) {
+      try {
+        unlinkSync(artifact);
+      } catch {}
+    }
+  }
 }
