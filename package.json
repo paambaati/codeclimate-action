@@ -47,7 +47,7 @@
         "@types/sinon": "10.0.13",
         "@types/tape": "4.13.2",
         "nock": "13.2.9",
-        "prettier": "2.7.1",
+        "prettier": "2.8.1",
         "semantic-release-export-data": "1.0.1",
         "sinon": "14.0.1",
         "tape": "5.6.1",
