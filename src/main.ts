@@ -1,4 +1,4 @@
-import { platform } from 'node:os';
+import { platform, arch } from 'node:os';
 import { chdir } from 'node:process';
 import { unlinkSync } from 'node:fs';
 import { debug, error, setFailed, warning, info } from '@actions/core';
@@ -13,7 +13,7 @@ import {
 } from './utils';
 import type { ExecOptions } from '@actions/exec/lib/interfaces';
 
-const DOWNLOAD_URL = `https://codeclimate.com/downloads/test-reporter/test-reporter-latest-${platform()}-amd64`;
+const DOWNLOAD_URL = `https://codeclimate.com/downloads/test-reporter/test-reporter-latest-${platform()}-${arch()}`;
 const EXECUTABLE = './cc-reporter';
 export const CODECLIMATE_GPG_PUBLIC_KEY_ID =
   '9BD9E2DD46DA965A537E5B0A5CBF320243B6FD85' as const;
