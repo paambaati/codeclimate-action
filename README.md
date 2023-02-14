@@ -6,6 +6,10 @@
 
 A GitHub action that publishes your code coverage to [Code Climate](http://codeclimate.com/).
 
+> **Note**
+>
+> Please use a _specific_ version of this action – for example, `v3.2.0`, instead of using only major versions like `v3` or `v3.2` – these will **not** work!
+
 > **Warning**
 >
 > Please upgrade to v3.1.1 (or higher) immediately. v3.1.0 was recently broken inadverdently, and the only fix is to upgrade your action to v3.1.1 or higher. Please see [#626](https://github.com/paambaati/codeclimate-action/issues/626) for more details.
