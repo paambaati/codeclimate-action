@@ -1,4 +1,5 @@
 import { platform } from 'node:os';
+import { dirname, join } from 'node:path';
 import { chdir } from 'node:process';
 import { unlinkSync } from 'node:fs';
 import { debug, error, setFailed, warning, info } from '@actions/core';
@@ -24,6 +25,7 @@ const DEFAULT_WORKING_DIRECTORY = '';
 const DEFAULT_CODECLIMATE_DEBUG = 'false';
 const DEFAULT_COVERAGE_LOCATIONS = '';
 const DEFAULT_VERIFY_DOWNLOAD = 'true';
+const DEFAULT_PREFIX_COVERAGE_DIRECTORIES = 'false';
 
 const SUPPORTED_GITHUB_EVENTS = [
   // Regular PRs.
@@ -106,6 +108,7 @@ export function run(
   codeClimateDebug: string = DEFAULT_CODECLIMATE_DEBUG,
   coverageLocationsParam: string = DEFAULT_COVERAGE_LOCATIONS,
   coveragePrefix?: string,
+  prefixCoverageDirectories: string = DEFAULT_PREFIX_COVERAGE_DIRECTORIES,
   verifyDownload: string = DEFAULT_VERIFY_DOWNLOAD
 ): Promise<void> {
   return new Promise(async (resolve, reject) => {
@@ -258,8 +261,12 @@ export function run(
           `codeclimate.${i}.json`,
         ];
         if (codeClimateDebug === 'true') commands.push('--debug');
+
         if (coveragePrefix) {
           commands.push('--prefix', coveragePrefix);
+        } else if (prefixCoverageDirectories === 'true') {
+          const directory = join(dirname(location), '..');
+          commands.push('--prefix', directory);
         }
 
         parts.push(`codeclimate.${i}.json`);
@@ -365,6 +372,11 @@ if (require.main === module) {
     'verifyDownload',
     DEFAULT_VERIFY_DOWNLOAD
   );
+  const prefixCoverageDirectories = getOptionalString(
+    'prefixCoverageDirectories',
+    DEFAULT_PREFIX_COVERAGE_DIRECTORIES
+  );
+
   try {
     run(
       DOWNLOAD_URL,
@@ -374,6 +386,7 @@ if (require.main === module) {
       codeClimateDebug,
       coverageLocations,
       coveragePrefix,
+      prefixCoverageDirectories,
       verifyDownload
     );
   } catch (err) {
