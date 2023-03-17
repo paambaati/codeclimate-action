@@ -108,8 +108,8 @@ export function run(
   codeClimateDebug: string = DEFAULT_CODECLIMATE_DEBUG,
   coverageLocationsParam: string = DEFAULT_COVERAGE_LOCATIONS,
   coveragePrefix?: string,
-  prefixCoverageDirectories: string = DEFAULT_PREFIX_COVERAGE_DIRECTORIES,
-  verifyDownload: string = DEFAULT_VERIFY_DOWNLOAD
+  verifyDownload: string = DEFAULT_VERIFY_DOWNLOAD,
+  prefixCoverageDirectories: string = DEFAULT_PREFIX_COVERAGE_DIRECTORIES
 ): Promise<void> {
   return new Promise(async (resolve, reject) => {
     if (platform() === 'win32') {
@@ -386,8 +386,8 @@ if (require.main === module) {
       codeClimateDebug,
       coverageLocations,
       coveragePrefix,
-      prefixCoverageDirectories,
-      verifyDownload
+      verifyDownload,
+      prefixCoverageDirectories
     );
   } catch (err) {
     throw err;
