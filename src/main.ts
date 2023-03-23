@@ -13,8 +13,10 @@ import {
 } from './utils';
 import type { ExecOptions } from '@actions/exec/lib/interfaces';
 
-const DOWNLOAD_URL = `https://codeclimate.com/downloads/test-reporter/test-reporter-latest-${platform()}-amd64`;
-const EXECUTABLE = './cc-reporter';
+/** Canonical download URL for the official CodeClimate reporter. */
+export const DOWNLOAD_URL = `https://codeclimate.com/downloads/test-reporter/test-reporter-latest-${platform()}-amd64`;
+/** Local file name of the CodeClimate reporter. */
+export const EXECUTABLE = './cc-reporter';
 export const CODECLIMATE_GPG_PUBLIC_KEY_ID =
   '9BD9E2DD46DA965A537E5B0A5CBF320243B6FD85' as const;
 const CODECLIMATE_GPG_PUBLIC_KEY_URL =
@@ -32,15 +34,23 @@ const SUPPORTED_GITHUB_EVENTS = [
   'pull_request_target',
 ];
 
-const fileArtifacts = new Set<string>();
+/** Central data structure that holds a list of all downloaded file artifacts. */
+export const FILE_ARTIFACTS = new Set<string>();
 
-async function downloadAndRecord(
+/**
+ * Downloads a given URL to a given filename and then records it in the global artifacts data structure.
+ *
+ * @param url Fully qualified URL to download.
+ * @param file Local file path to save the downloaded content.
+ * @param mode (Optional) File mode.
+ */
+export async function downloadAndRecord(
   url: string,
   file: string,
   mode?: number
 ): Promise<void> {
   await downloadToFile(url, file, mode);
-  fileArtifacts.add(file);
+  FILE_ARTIFACTS.add(file);
 }
 
 function prepareEnv() {
@@ -63,6 +73,63 @@ function prepareEnv() {
   }
 
   return env;
+}
+
+/**
+ * Verifies SHA256 checksum and the GPG signature for the downloaded Reporter executable.
+ *
+ * @param downloadUrl (Optional) Canonical download URL for the CodeClimate reporter.
+ * @param executablePath (Optional) Local file name of the reporter executable.
+ * @param algorithm (Optional) Algorithm to verify checksum @default 'sha256'.
+ */
+export async function verifyChecksumAndSignature(
+  downloadUrl: string = DOWNLOAD_URL,
+  executablePath: string = EXECUTABLE,
+  algorithm: string = 'sha256'
+): Promise<void> {
+  const checksumUrl = `${downloadUrl}.${algorithm}`;
+  const checksumFilePath = `${executablePath}.${algorithm}`;
+  const signatureUrl = `${downloadUrl}.${algorithm}.sig`;
+  const signatureFilePath = `${executablePath}.${algorithm}.sig`;
+  const ccPublicKeyFilePath = 'public-key.asc';
+
+  try {
+    debug(`ℹ️ Verifying CC Reporter checksum...`);
+    await downloadAndRecord(checksumUrl, checksumFilePath);
+    const checksumVerified = await verifyChecksum(
+      executablePath,
+      checksumFilePath,
+      algorithm
+    );
+    if (!checksumVerified)
+      throw new Error('CC Reporter checksum does not match!');
+    debug('✅ CC Reported checksum verification completed...');
+  } catch (err) {
+    error((err as Error).message);
+    setFailed('🚨 CC Reporter checksum verfication failed!');
+    throw err;
+  }
+
+  try {
+    debug(`ℹ️ Verifying CC Reporter GPG signature...`);
+    await downloadAndRecord(signatureUrl, signatureFilePath);
+    await downloadAndRecord(
+      CODECLIMATE_GPG_PUBLIC_KEY_URL,
+      ccPublicKeyFilePath
+    );
+    const signatureVerified = await verifySignature(
+      checksumFilePath,
+      signatureFilePath,
+      ccPublicKeyFilePath
+    );
+    if (!signatureVerified)
+      throw new Error('CC Reporter GPG signature is invalid!');
+    debug('✅ CC Reported GPG signature verification completed...');
+  } catch (err) {
+    error((err as Error).message);
+    setFailed('🚨 CC Reporter GPG signature verfication failed!');
+    throw err;
+  }
 }
 
 async function getLocationLines(
@@ -145,49 +212,7 @@ export function run(
     }
 
     if (verifyDownload === 'true') {
-      const checksumUrl = `${downloadUrl}.sha256`;
-      const checksumFilePath = `${executable}.sha256`;
-      const signatureUrl = `${downloadUrl}.sha256.sig`;
-      const signatureFilePath = `${executable}.sha256.sig`;
-      const ccPublicKeyFilePath = 'public-key.asc';
-
-      try {
-        debug(`ℹ️ Verifying CC Reporter checksum...`);
-        await downloadAndRecord(checksumUrl, checksumFilePath);
-        const checksumVerified = await verifyChecksum(
-          executable,
-          checksumFilePath,
-          'sha256'
-        );
-        if (!checksumVerified)
-          throw new Error('CC Reporter checksum does not match!');
-        debug('✅ CC Reported checksum verification completed...');
-      } catch (err) {
-        error((err as Error).message);
-        setFailed('🚨 CC Reporter checksum verfication failed!');
-        return reject(err);
-      }
-
-      try {
-        debug(`ℹ️ Verifying CC Reporter GPG signature...`);
-        await downloadAndRecord(signatureUrl, signatureFilePath);
-        await downloadAndRecord(
-          CODECLIMATE_GPG_PUBLIC_KEY_URL,
-          ccPublicKeyFilePath
-        );
-        const signatureVerified = await verifySignature(
-          checksumFilePath,
-          signatureFilePath,
-          ccPublicKeyFilePath
-        );
-        if (!signatureVerified)
-          throw new Error('CC Reporter GPG signature is invalid!');
-        debug('✅ CC Reported GPG signature verification completed...');
-      } catch (err) {
-        error((err as Error).message);
-        setFailed('🚨 CC Reporter GPG signature verfication failed!');
-        return reject(err);
-      }
+      await verifyChecksumAndSignature(downloadUrl, executable);
     }
 
     const execOpts: ExecOptions = {
@@ -380,7 +405,7 @@ if (require.main === module) {
     throw err;
   } finally {
     // Finally clean up all artifacts that we downloaded.
-    for (const artifact of fileArtifacts) {
+    for (const artifact of FILE_ARTIFACTS) {
       try {
         unlinkSync(artifact);
       } catch {}
