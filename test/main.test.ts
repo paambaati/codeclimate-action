@@ -12,7 +12,7 @@ import {
   readFile,
   realpath as realpathCallback,
 } from 'node:fs';
-import { exec as pExec } from 'child_process';
+import { exec as pExec } from 'node:child_process';
 import { promisify } from 'util';
 import { CODECLIMATE_GPG_PUBLIC_KEY_ID, run } from '../src/main';
 import * as utils from '../src/utils';

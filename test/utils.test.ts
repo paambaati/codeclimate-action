@@ -1,8 +1,8 @@
 import test from 'tape';
 import nock from 'nock';
 import toReadableStream from 'to-readable-stream';
-import { stat as statCallback, unlinkSync } from 'fs';
-import { promisify } from 'util';
+import { stat as statCallback, unlinkSync } from 'node:fs';
+import { promisify } from 'node:util';
 import { areObjectsEqual, downloadToFile } from '../src/utils';
 
 const stat = promisify(statCallback);

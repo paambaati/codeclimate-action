@@ -1,5 +1,5 @@
 import test from 'tape';
-import { unlinkSync } from 'fs';
+import { unlinkSync } from 'node:fs';
 import { default as hookStd } from 'hook-std';
 import {
   downloadAndRecord,
