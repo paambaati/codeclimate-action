@@ -212,7 +212,11 @@ export function run(
     }
 
     if (verifyDownload === 'true') {
-      await verifyChecksumAndSignature(downloadUrl, executable);
+      try {
+        await verifyChecksumAndSignature(downloadUrl, executable);
+      } catch (err) {
+        return reject(err);
+      }
     }
 
     const execOpts: ExecOptions = {
