@@ -4,14 +4,14 @@ import toReadableStream from 'to-readable-stream';
 import { default as hookStd } from 'hook-std';
 import * as glob from '@actions/glob';
 import sinon from 'sinon';
-import { default as os, tmpdir } from 'os';
-import { join as joinPath } from 'path';
+import { default as os, tmpdir } from 'node:os';
+import { join as joinPath } from 'node:path';
 import {
   writeFileSync,
   unlinkSync,
   readFile,
   realpath as realpathCallback,
-} from 'fs';
+} from 'node:fs';
 import { exec as pExec } from 'child_process';
 import { promisify } from 'util';
 import { CODECLIMATE_GPG_PUBLIC_KEY_ID, run } from '../src/main';
@@ -514,7 +514,7 @@ test('🧪 run() should throw an error if run on Windows.', async (t) => {
   t.end();
 });
 
-test('🧪 run() should throw an error if the checksum verification fails.', async (t) => {
+test.only('🧪 run() should throw an error if the checksum verification fails.', async (t) => {
   t.plan(1);
   t.teardown(() => sandbox.restore());
   const filePath = './test.sh';
@@ -545,6 +545,7 @@ test('🧪 run() should throw an error if the checksum verification fails.', asy
       filePath,
       `echo 'coverage ok'`
     );
+    t.fail('should have thrown an error');
     stdHook.unhook();
   } catch (err) {
     stdHook.unhook();
