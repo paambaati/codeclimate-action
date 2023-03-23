@@ -514,7 +514,7 @@ test('🧪 run() should throw an error if run on Windows.', async (t) => {
   t.end();
 });
 
-test.only('🧪 run() should throw an error if the checksum verification fails.', async (t) => {
+test('🧪 run() should throw an error if the checksum verification fails.', async (t) => {
   t.plan(1);
   t.teardown(() => sandbox.restore());
   const filePath = './test.sh';
