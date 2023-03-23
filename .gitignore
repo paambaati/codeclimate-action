@@ -3,5 +3,5 @@ lib/
 node_modules/
 coverage/
 .nyc_output/
-
-
+test.sh
+test.sh.sha256
