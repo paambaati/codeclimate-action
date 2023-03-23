@@ -817,7 +817,6 @@ test('🧪 run() should throw an error if the after-build step throws an error.'
   t.end();
 });
 
-// TODO: @paambaati — Figure out why this test itself passes but why tape fails with exit code 1.
 test('🧪 run() should exit cleanly when the coverage command fails.', async (t) => {
   t.plan(1);
   t.teardown(() => sandbox.restore());
