@@ -12,7 +12,7 @@ jobs:
     - name: setup node.js
       uses: actions/setup-node@v3
       with:
-        node-version: 16
+        node-version: 18
         cache: 'npm'
 
     - name: install dependencies
@@ -23,9 +23,6 @@ jobs:
 
     - name: build typescript
       run: npm run build -- --noEmit
-
-    - name: run tests and instrument coverage
-      run: npm run coverage
 
     - name: check for unformatted sources
       run: |
@@ -42,8 +39,36 @@ jobs:
                  "and check in all changes" \
             && exit 1)
 
+  tests:
+    name: "Tests (${{ matrix.os.os-label }})"
+    strategy:
+      matrix:
+        os:
+          - { index: 1, os-name: 'ubuntu-latest', os-label: 'Linux' }
+          - { index: 2, os-name: 'macos-latest', os-label: 'macOS' }
+          # NOTE: Windows is not supported because CodeClimate does not publish a Windows build of the reporter (yet).
+    runs-on: ${{ matrix.os.os-name }}
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+    steps:
+    - name: checkout code
+      uses: actions/checkout@v3
+
+    - name: setup node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+        cache: 'npm'
+
+    - name: install dependencies
+      run: npm ci
+
+    - name: run tests and instrument coverage
+      run: npm run coverage
+
     - name: publish code coverage to code-climate (duh)
-      if: ${{ github.event_name == 'push' }}
+      if: ${{ github.event_name == 'push' && matrix.os.index == 1 }} # Push coverage only once inside the matrix.
       uses: paambaati/codeclimate-action@v3.2.0
       env:
         CC_TEST_REPORTER_ID: 3470adaf12ff7cecdfe5a968ae0e95d098b6ee58c340114e1e90d440ee9e66ab
