@@ -1,6 +1,6 @@
-import { platform } from 'node:os';
-import { chdir } from 'node:process';
-import { unlinkSync } from 'node:fs';
+import { platform } from 'os';
+import { chdir } from 'process';
+import { unlinkSync } from 'fs';
 import { debug, error, setFailed, warning, info } from '@actions/core';
 import { exec } from '@actions/exec';
 import { context } from '@actions/github';
