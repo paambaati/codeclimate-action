@@ -534,10 +534,10 @@ test('🧪 run() should throw an error if the checksum verification fails.', asy
       return toReadableStream(dummyChecksum);
     });
 
-  // let capturedOutput = '';
-  // const stdHook = hookStd((text: string) => {
-  //   capturedOutput += text;
-  // });
+  let capturedOutput = '';
+  const stdHook = hookStd((text: string) => {
+    capturedOutput += text;
+  });
 
   try {
     await run(
@@ -546,27 +546,25 @@ test('🧪 run() should throw an error if the checksum verification fails.', asy
       `echo 'coverage ok'`
     );
     t.fail('should have thrown an error');
-    // stdHook.unhook();
+    stdHook.unhook();
   } catch (err) {
-    t.pass('ok an error was thrown!');
-    t.comment(err);
-    // stdHook.unhook();
+    stdHook.unhook();
     // do nothing else, we expect this run command to fail.
   } finally {
     nock.cleanAll();
   }
 
-//   t.equal(
-//     capturedOutput,
-//     // prettier-ignore
-//     `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...
-// ::debug::✅ CC Reporter downloaded...
-// ::debug::ℹ️ Verifying CC Reporter checksum...
-// ::error::CC Reporter checksum does not match!
-// ::error::🚨 CC Reporter checksum verfication failed!
-// `,
-//     'should correctly throw the error.'
-//   );
+  t.equal(
+    capturedOutput,
+    // prettier-ignore
+    `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...
+::debug::✅ CC Reporter downloaded...
+::debug::ℹ️ Verifying CC Reporter checksum...
+::error::CC Reporter checksum does not match!
+::error::🚨 CC Reporter checksum verfication failed!
+`,
+    'should correctly throw the error.'
+  );
   unlinkSync(filePath);
   unlinkSync(`${filePath}.sha256`);
   nock.cleanAll();
