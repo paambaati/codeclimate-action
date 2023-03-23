@@ -40,7 +40,7 @@ jobs:
             && exit 1)
 
   tests:
-    name: "Tests"
+    name: "Tests (${{ matrix.os.os-label }})"
     strategy:
       matrix:
         os:
