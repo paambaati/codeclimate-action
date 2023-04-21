@@ -30,8 +30,7 @@ jobs:
         uses: pozetroninc/github-action-get-latest-release@master
         id: last-release
         with:
-          owner: paambaati
-          repo: codeclimate-action
+          repository: ${{ github.repository }}
           token: ${{ secrets.CUSTOM_GITHUB_PERSONAL_TOKEN }}
 
       - name: find next release version
@@ -39,6 +38,11 @@ jobs:
         run: npm_config_yes=true npx semantic-release --dry-run
         env:
           GITHUB_TOKEN: ${{ secrets.CUSTOM_GITHUB_PERSONAL_TOKEN }}
+
+      - name: print outputs
+        run: |
+          echo "Last release version = ${{ steps.last-release.outputs.release }}"
+          echo "Next release version = ${{ steps.next-release.outputs.new-release-version }}"
 
   release:
     name: Cut a release on GitHub
