@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       last-release-version: ${{ steps.last-release.outputs.release }}
-      new-release-version: ${{ steps.next-release.outputs.new-release-version }}
+      new-release-version: ${{ format('v{0}', steps.next-release.outputs.new-release-version) }}
     steps:
       - name: checkout code
         uses: actions/checkout@v3
@@ -43,6 +43,16 @@ jobs:
         run: |
           echo "Last release version = ${{ steps.last-release.outputs.release }}"
           echo "Next release version = ${{ steps.next-release.outputs.new-release-version }}"
+
+  debug:
+    name: Debug
+    runs-on: ubuntu-latest
+    needs: next-version
+    steps:
+      - name: print outputs
+        run: |
+          echo "Last release version = ${{ needs.next-version.outputs.last-release-version }}"
+          echo "Next release version = ${{ needs.next-version.outputs.new-release-version }}"
 
   release:
     name: Cut a release on GitHub
