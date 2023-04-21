@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Publish action
-        uses: technote-space/release-github-actions@v7
+        uses: technote-space/release-github-actions@v8
         with:
           GITHUB_TOKEN: ${{ secrets.CUSTOM_GITHUB_PERSONAL_TOKEN }}
           COMMIT_NAME: 'GP'
