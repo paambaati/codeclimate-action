@@ -15,7 +15,9 @@ import type { ExecOptions } from '@actions/exec/lib/interfaces';
 
 // REFER: https://docs.codeclimate.com/docs/configuring-test-coverage#locations-of-pre-built-binaries
 /** Canonical download URL for the official CodeClimate reporter. */
-export const DOWNLOAD_URL = `https://codeclimate.com/downloads/test-reporter/test-reporter-latest-${platform()}-${arch() === 'arm64' ? 'arm64' : 'amd64'}`;
+export const DOWNLOAD_URL = `https://codeclimate.com/downloads/test-reporter/test-reporter-latest-${platform()}-${
+  arch() === 'arm64' ? 'arm64' : 'amd64'
+}`;
 /** Local file name of the CodeClimate reporter. */
 export const EXECUTABLE = './cc-reporter';
 export const CODECLIMATE_GPG_PUBLIC_KEY_ID =
