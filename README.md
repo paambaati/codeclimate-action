@@ -8,7 +8,7 @@ A GitHub action that publishes your code coverage to [Code Climate](http://codec
 
 > **Note**
 >
-> Please use a _specific_ version of this action – for example, `v3.2.0`, instead of using only major versions like `v3` or `v3.2` – these will **not** work!
+> Please use a _specific_ version of this action – for example, `v4.0.0`, instead of using only major versions like `v4` or `v4.0` – these will **not** work!
 
 > **Warning**
 >
