@@ -1,3 +1,32 @@
+# [4.0.0](https://github.com/paambaati/codeclimate-action/compare/v3.1.0...v4.0.0) (2023-04-23)
+
+
+### Bug Fixes
+
+* **ci:** debug outputs ([11ed927](https://github.com/paambaati/codeclimate-action/commit/11ed9278d366c02ce89a0aa9c0266d01ed3fe78f))
+* **ci:** fix invalid YAML ([8f95f43](https://github.com/paambaati/codeclimate-action/commit/8f95f43e97f705d9dbb7e18d5586a16e8531d318))
+* **ci:** fix the tag detection logic for new releases ([f787a56](https://github.com/paambaati/codeclimate-action/commit/f787a56de16312cc3eeff8ed0117b9cc1339a2f3))
+* **ci:** rebuild and republish to use new branch and workflows ([0c99fb3](https://github.com/paambaati/codeclimate-action/commit/0c99fb3d11aa2bbf8bf94ed90bd4955348c6338b))
+* **ci:** republish so latest changes get applied ([8f00eaa](https://github.com/paambaati/codeclimate-action/commit/8f00eaacd9c46d0c7351c37ce64d6f2705ae93dc))
+* **ci:** republish so latest changes get applied ([fa71c1f](https://github.com/paambaati/codeclimate-action/commit/fa71c1ff7a91f7177d648c64b50c50dd9aa0d90e))
+* **ci:** set up correct (?) condition to trigger publish ([3e9c9ce](https://github.com/paambaati/codeclimate-action/commit/3e9c9cefc80813bd2d9fffeb4610778e0761f2f7))
+* **ci:** try once again to publish new version ([bcd27f6](https://github.com/paambaati/codeclimate-action/commit/bcd27f6c52b0b9daa097cb34b05c43e5040216b7))
+* **ci:** use the un-broken latest version of the workflow ([0fe0643](https://github.com/paambaati/codeclimate-action/commit/0fe06436de76fed68e37a8d6001f6ba46ba23f26))
+* **ci:** validate empty new release version ([2b9684a](https://github.com/paambaati/codeclimate-action/commit/2b9684a12a4089d77e5ab787677df4affaeb6ac0))
+* **core:** support ARM 64-bit environments ([ea13673](https://github.com/paambaati/codeclimate-action/commit/ea1367348928eca3a302fb3682b07c585841c39f))
+* **core:** support ARM 64-bit environments ([99e22b3](https://github.com/paambaati/codeclimate-action/commit/99e22b3d7de0c911c564cd391d4f9dae79ae176e))
+
+
+### Features
+
+* **core:** cleanup downloaded artifacts ([f331896](https://github.com/paambaati/codeclimate-action/commit/f3318964532e9a7bdf28c20830035973024c31bc)), closes [#639](https://github.com/paambaati/codeclimate-action/issues/639)
+* **core:** support fork PRs. ([70a75ac](https://github.com/paambaati/codeclimate-action/commit/70a75acf3c0eaae19bee5fb425f63e455356daf7)), closes [#627](https://github.com/paambaati/codeclimate-action/issues/627)
+
+
+### BREAKING CHANGES
+
+* **ci:** semantic-release and its process is fundamentally broken when the repo moved from master to main for its main branch. This is an attempt to try to unfuck the git log/ref notes
+
 # [3.2.0](https://github.com/paambaati/codeclimate-action/compare/v3.1.0...v3.2.0) (2022-10-21)
 
 
