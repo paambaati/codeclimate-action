@@ -17,3 +17,4 @@ updates:
   - dependency-name: to-readable-stream
     versions:
     - '3.x'
+    - '4.x'
