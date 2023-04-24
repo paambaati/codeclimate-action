@@ -44,7 +44,16 @@ export function downloadToFile(
 ): Promise<void> {
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await fetch(url, { timeout: 2 * 60 * 1000 }); // Timeout in 2 minutes.
+      const response = await fetch(url, {
+        redirect: 'follow',
+        follow: 5,
+        timeout: 2 * 60 * 1000, // Timeout in 2 minutes.
+      });
+      if (response.status < 200 || response.status > 299) {
+        throw new Error(
+          `Download failed with response status code ${response.status}`
+        );
+      }
       const writer = createWriteStream(file, { mode });
       response.body.pipe(writer);
       writer.on('close', () => {
