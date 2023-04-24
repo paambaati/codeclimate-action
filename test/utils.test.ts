@@ -2,6 +2,7 @@ import test from 'tape';
 import nock from 'nock';
 import toReadableStream from 'to-readable-stream';
 import { stat as statCallback, unlinkSync } from 'node:fs';
+import { platform } from 'node:os';
 import { promisify } from 'node:util';
 import { areObjectsEqual, downloadToFile } from '../src/utils';
 
@@ -47,8 +48,8 @@ echo "hello"
   const stats = await stat(filePath);
   t.equal(
     stats.mode,
-    33261,
-    'downloaded file should exist and have executable permissions.'
+    platform() === 'win32' ? 33206 : 33261,
+    'downloaded file should exist and have executable permissions on valid platforms.'
   );
   unlinkSync(filePath);
   nock.cleanAll();
