@@ -4,7 +4,7 @@ import toReadableStream from 'to-readable-stream';
 import { default as hookStd } from 'hook-std';
 import * as glob from '@actions/glob';
 import sinon from 'sinon';
-import { default as os, tmpdir } from 'node:os';
+import { default as os, tmpdir, EOL } from 'node:os';
 import { join as joinPath } from 'node:path';
 import {
   writeFileSync,
@@ -109,22 +109,23 @@ test('🧪 run() should run the CC reporter (happy path).', async (t) => {
 
   t.equal(
     capturedOutput,
-    // prettier-ignore
-    `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...
-::debug::✅ CC Reporter downloaded...
-::debug::ℹ️ Verifying CC Reporter checksum...
-::debug::✅ CC Reported checksum verification completed...
-::debug::ℹ️ Verifying CC Reporter GPG signature...
-::debug::✅ CC Reported GPG signature verification completed...
-[command]${DEFAULT_WORKDIR}/test.sh before-build\nbefore-build
-::debug::✅ CC Reporter before-build checkin completed...
-[command]${DEFAULT_ECHO} \'coverage ok\'
-\'coverage ok\'
-::debug::✅ Coverage run completed...
-[command]${DEFAULT_WORKDIR}/test.sh after-build --exit-code 0
-after-build --exit-code 0
-::debug::✅ CC Reporter after-build checkin completed!
-`,
+    [
+      `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...`,
+      `::debug::✅ CC Reporter downloaded...`,
+      `::debug::ℹ️ Verifying CC Reporter checksum...`,
+      `::debug::✅ CC Reported checksum verification completed...`,
+      `::debug::ℹ️ Verifying CC Reporter GPG signature...`,
+      `::debug::✅ CC Reported GPG signature verification completed...`,
+      `[command]${DEFAULT_WORKDIR}/test.sh before-build\nbefore-build`,
+      `::debug::✅ CC Reporter before-build checkin completed...`,
+      `[command]${DEFAULT_ECHO} 'coverage ok'`,
+      `'coverage ok'`,
+      `::debug::✅ Coverage run completed...`,
+      `[command]${DEFAULT_WORKDIR}/test.sh after-build --exit-code 0`,
+      `after-build --exit-code 0`,
+      `::debug::✅ CC Reporter after-build checkin completed!`,
+      ``,
+    ].join(EOL),
     'should execute all steps.'
   );
   unlinkSync(filePath);
@@ -173,18 +174,20 @@ test('🧪 run() should run the CC reporter without verification if configured.'
 
   t.equal(
     capturedOutput,
-    // prettier-ignore
-    `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...
-::debug::✅ CC Reporter downloaded...
-[command]${DEFAULT_WORKDIR}/test.sh before-build\nbefore-build
-::debug::✅ CC Reporter before-build checkin completed...
-[command]${DEFAULT_ECHO} \'coverage ok\'
-\'coverage ok\'
-::debug::✅ Coverage run completed...
-[command]${DEFAULT_WORKDIR}/test.sh after-build --exit-code 0
-after-build --exit-code 0
-::debug::✅ CC Reporter after-build checkin completed!
-`,
+    [
+      `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...`,
+      `::debug::✅ CC Reporter downloaded...`,
+      `[command]${DEFAULT_WORKDIR}/test.sh before-build`,
+      `before-build`,
+      `::debug::✅ CC Reporter before-build checkin completed...`,
+      `[command]${DEFAULT_ECHO} 'coverage ok'`,
+      `'coverage ok'`,
+      `::debug::✅ Coverage run completed...`,
+      `[command]${DEFAULT_WORKDIR}/test.sh after-build --exit-code 0`,
+      `after-build --exit-code 0`,
+      `::debug::✅ CC Reporter after-build checkin completed!`,
+      ``,
+    ].join(EOL),
     'should execute all steps (except verification).'
   );
   unlinkSync(filePath);
@@ -247,20 +250,22 @@ test('🧪 run() should run the CC reporter without a coverage command.', async 
 
   t.equal(
     capturedOutput,
-    // prettier-ignore
-    `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...
-::debug::✅ CC Reporter downloaded...
-::debug::ℹ️ Verifying CC Reporter checksum...
-::debug::✅ CC Reported checksum verification completed...
-::debug::ℹ️ Verifying CC Reporter GPG signature...
-::debug::✅ CC Reported GPG signature verification completed...
-[command]${DEFAULT_WORKDIR}/test.sh before-build\nbefore-build
-::debug::✅ CC Reporter before-build checkin completed...
-ℹ️ 'coverageCommand' not set, so skipping building coverage report!
-[command]${DEFAULT_WORKDIR}/test.sh after-build --exit-code 0
-after-build --exit-code 0
-::debug::✅ CC Reporter after-build checkin completed!
-`,
+    [
+      `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...`,
+      `::debug::✅ CC Reporter downloaded...`,
+      `::debug::ℹ️ Verifying CC Reporter checksum...`,
+      `::debug::✅ CC Reported checksum verification completed...`,
+      `::debug::ℹ️ Verifying CC Reporter GPG signature...`,
+      `::debug::✅ CC Reported GPG signature verification completed...`,
+      `[command]${DEFAULT_WORKDIR}/test.sh before-build`,
+      `before-build`,
+      `::debug::✅ CC Reporter before-build checkin completed...`,
+      `ℹ️ 'coverageCommand' not set, so skipping building coverage report!`,
+      `[command]${DEFAULT_WORKDIR}/test.sh after-build --exit-code 0`,
+      `after-build --exit-code 0`,
+      `::debug::✅ CC Reporter after-build checkin completed!`,
+      ``,
+    ].join(EOL),
     'should execute all steps (except running the coverage command).'
   );
   unlinkSync(filePath);
@@ -360,28 +365,29 @@ test('🧪 run() should convert patterns to locations.', async (t) => {
   );
   t.equal(
     capturedOutput,
-    // prettier-ignore
-    `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...
-::debug::✅ CC Reporter downloaded...
-::debug::ℹ️ Verifying CC Reporter checksum...
-::debug::✅ CC Reported checksum verification completed...
-::debug::ℹ️ Verifying CC Reporter GPG signature...
-::debug::✅ CC Reported GPG signature verification completed...
-[command]${DEFAULT_WORKDIR}/test.sh before-build
-before-build
-::debug::✅ CC Reporter before-build checkin completed...
-ℹ️ 'coverageCommand' not set, so skipping building coverage report!
-::debug::Parsing 2 coverage location(s) — ${DEFAULT_WORKDIR}/file-a.lcov:lcov,${DEFAULT_WORKDIR}/file-b.lcov:lcov (object)
-[command]${DEFAULT_WORKDIR}/test.sh format-coverage ${DEFAULT_WORKDIR}/file-a.lcov -t lcov -o codeclimate.0.json
-format-coverage ${DEFAULT_WORKDIR}/file-a.lcov -t lcov -o codeclimate.0.json
-[command]${DEFAULT_WORKDIR}/test.sh format-coverage ${DEFAULT_WORKDIR}/file-b.lcov -t lcov -o codeclimate.1.json
-format-coverage ${DEFAULT_WORKDIR}/file-b.lcov -t lcov -o codeclimate.1.json
-[command]${DEFAULT_WORKDIR}/test.sh sum-coverage codeclimate.0.json codeclimate.1.json -p 2 -o coverage.total.json
-sum-coverage codeclimate.0.json codeclimate.1.json -p 2 -o coverage.total.json
-[command]${DEFAULT_WORKDIR}/test.sh upload-coverage -i coverage.total.json
-upload-coverage -i coverage.total.json
-::debug::✅ CC Reporter upload coverage completed!
-`,
+    [
+      `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...`,
+      `::debug::✅ CC Reporter downloaded...`,
+      `::debug::ℹ️ Verifying CC Reporter checksum...`,
+      `::debug::✅ CC Reported checksum verification completed...`,
+      `::debug::ℹ️ Verifying CC Reporter GPG signature...`,
+      `::debug::✅ CC Reported GPG signature verification completed...`,
+      `[command]${DEFAULT_WORKDIR}/test.sh before-build`,
+      `before-build`,
+      `::debug::✅ CC Reporter before-build checkin completed...`,
+      `ℹ️ 'coverageCommand' not set, so skipping building coverage report!`,
+      `::debug::Parsing 2 coverage location(s) — ${DEFAULT_WORKDIR}/file-a.lcov:lcov,${DEFAULT_WORKDIR}/file-b.lcov:lcov (object)`,
+      `[command]${DEFAULT_WORKDIR}/test.sh format-coverage ${DEFAULT_WORKDIR}/file-a.lcov -t lcov -o codeclimate.0.json`,
+      `format-coverage ${DEFAULT_WORKDIR}/file-a.lcov -t lcov -o codeclimate.0.json`,
+      `[command]${DEFAULT_WORKDIR}/test.sh format-coverage ${DEFAULT_WORKDIR}/file-b.lcov -t lcov -o codeclimate.1.json`,
+      `format-coverage ${DEFAULT_WORKDIR}/file-b.lcov -t lcov -o codeclimate.1.json`,
+      `[command]${DEFAULT_WORKDIR}/test.sh sum-coverage codeclimate.0.json codeclimate.1.json -p 2 -o coverage.total.json`,
+      `sum-coverage codeclimate.0.json codeclimate.1.json -p 2 -o coverage.total.json`,
+      `[command]${DEFAULT_WORKDIR}/test.sh upload-coverage -i coverage.total.json`,
+      `upload-coverage -i coverage.total.json`,
+      `::debug::✅ CC Reporter upload coverage completed!`,
+      ``,
+    ].join(EOL),
     'should execute all steps (except running the coverage command).'
   );
   unlinkSync(filePath);
@@ -467,25 +473,26 @@ test('🧪 run() should correctly switch the working directory if given.', async
 
   t.equal(
     capturedOutput,
-    // prettier-ignore
-    `::debug::Changing working directory to ${CUSTOM_WORKDIR}
-::debug::✅ Changing working directory completed...
-::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...
-::debug::✅ CC Reporter downloaded...
-::debug::ℹ️ Verifying CC Reporter checksum...
-::debug::✅ CC Reported checksum verification completed...
-::debug::ℹ️ Verifying CC Reporter GPG signature...
-::debug::✅ CC Reported GPG signature verification completed...
-[command]${CUSTOM_WORKDIR}/test.sh before-build
-before-build
-::debug::✅ CC Reporter before-build checkin completed...
-[command]${DEFAULT_ECHO} 'coverage ok'
-'coverage ok'
-::debug::✅ Coverage run completed...
-[command]${CUSTOM_WORKDIR}/test.sh after-build --exit-code 0
-after-build --exit-code 0
-::debug::✅ CC Reporter after-build checkin completed!
-`,
+    [
+      `::debug::Changing working directory to ${CUSTOM_WORKDIR}`,
+      `::debug::✅ Changing working directory completed...`,
+      `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...`,
+      `::debug::✅ CC Reporter downloaded...`,
+      `::debug::ℹ️ Verifying CC Reporter checksum...`,
+      `::debug::✅ CC Reported checksum verification completed...`,
+      `::debug::ℹ️ Verifying CC Reporter GPG signature...`,
+      `::debug::✅ CC Reported GPG signature verification completed...`,
+      `[command]${CUSTOM_WORKDIR}/test.sh before-build`,
+      `before-build`,
+      `::debug::✅ CC Reporter before-build checkin completed...`,
+      `[command]${DEFAULT_ECHO} 'coverage ok'`,
+      `'coverage ok'`,
+      `::debug::✅ Coverage run completed...`,
+      `[command]${CUSTOM_WORKDIR}/test.sh after-build --exit-code 0`,
+      `after-build --exit-code 0`,
+      `::debug::✅ CC Reporter after-build checkin completed!`,
+      ``,
+    ].join(EOL),
     'should execute all steps.'
   );
   unlinkSync(filePath);
@@ -536,13 +543,14 @@ test('🧪 run() should throw an error if the checksum verification fails.', asy
 
   t.equal(
     capturedOutput,
-    // prettier-ignore
-    `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...
-::debug::✅ CC Reporter downloaded...
-::debug::ℹ️ Verifying CC Reporter checksum...
-::error::CC Reporter checksum does not match!
-::error::🚨 CC Reporter checksum verfication failed!
-`,
+    [
+      `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...`,
+      `::debug::✅ CC Reporter downloaded...`,
+      `::debug::ℹ️ Verifying CC Reporter checksum...`,
+      `::error::CC Reporter checksum does not match!`,
+      `::error::🚨 CC Reporter checksum verfication failed!`,
+      ``,
+    ].join(EOL),
     'should correctly throw the error.'
   );
   unlinkSync(filePath);
@@ -611,15 +619,16 @@ test('🧪 run() should throw an error if the GPG signature verification fails.'
 
   t.equal(
     capturedOutput,
-    // prettier-ignore
-    `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...
-::debug::✅ CC Reporter downloaded...
-::debug::ℹ️ Verifying CC Reporter checksum...
-::debug::✅ CC Reported checksum verification completed...
-::debug::ℹ️ Verifying CC Reporter GPG signature...
-::error::CC Reporter GPG signature is invalid!
-::error::🚨 CC Reporter GPG signature verfication failed!
-`,
+    [
+      `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...`,
+      `::debug::✅ CC Reporter downloaded...`,
+      `::debug::ℹ️ Verifying CC Reporter checksum...`,
+      `::debug::✅ CC Reported checksum verification completed...`,
+      `::debug::ℹ️ Verifying CC Reporter GPG signature...`,
+      `::error::CC Reporter GPG signature is invalid!`,
+      `::error::🚨 CC Reporter GPG signature verfication failed!`,
+      ``,
+    ].join(EOL),
     'should correctly throw the error.'
   );
   unlinkSync(filePath);
@@ -690,17 +699,18 @@ test('🧪 run() should throw an error if the before-build step throws an error.
 
   t.equal(
     capturedOutput,
-    // prettier-ignore
-    `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...
-::debug::✅ CC Reporter downloaded...
-::debug::ℹ️ Verifying CC Reporter checksum...
-::debug::✅ CC Reported checksum verification completed...
-::debug::ℹ️ Verifying CC Reporter GPG signature...
-::debug::✅ CC Reported GPG signature verification completed...
-[command]${DEFAULT_WORKDIR}/test.sh before-build
-::error::The process '${DEFAULT_WORKDIR}/test.sh' failed with exit code 69
-::error::🚨 CC Reporter before-build checkin failed!
-`,
+    [
+      `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...`,
+      `::debug::✅ CC Reporter downloaded...`,
+      `::debug::ℹ️ Verifying CC Reporter checksum...`,
+      `::debug::✅ CC Reported checksum verification completed...`,
+      `::debug::ℹ️ Verifying CC Reporter GPG signature...`,
+      `::debug::✅ CC Reported GPG signature verification completed...`,
+      `[command]${DEFAULT_WORKDIR}/test.sh before-build`,
+      `::error::The process '${DEFAULT_WORKDIR}/test.sh' failed with exit code 69`,
+      `::error::🚨 CC Reporter before-build checkin failed!`,
+      ``,
+    ].join(EOL),
     'should correctly throw the error.'
   );
   unlinkSync(filePath);
@@ -771,22 +781,23 @@ test('🧪 run() should throw an error if the after-build step throws an error.'
 
   t.equal(
     capturedOutput,
-    // prettier-ignore
-    `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...
-::debug::✅ CC Reporter downloaded...
-::debug::ℹ️ Verifying CC Reporter checksum...
-::debug::✅ CC Reported checksum verification completed...
-::debug::ℹ️ Verifying CC Reporter GPG signature...
-::debug::✅ CC Reported GPG signature verification completed...
-[command]${DEFAULT_WORKDIR}/test.sh before-build
-::debug::✅ CC Reporter before-build checkin completed...
-[command]${DEFAULT_ECHO} 'coverage ok'
-'coverage ok'
-::debug::✅ Coverage run completed...
-[command]${DEFAULT_WORKDIR}/test.sh after-build --exit-code 0
-::error::The process '${DEFAULT_WORKDIR}/test.sh' failed with exit code 69
-::error::🚨 CC Reporter after-build checkin failed!
-`,
+    [
+      `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...`,
+      `::debug::✅ CC Reporter downloaded...`,
+      `::debug::ℹ️ Verifying CC Reporter checksum...`,
+      `::debug::✅ CC Reported checksum verification completed...`,
+      `::debug::ℹ️ Verifying CC Reporter GPG signature...`,
+      `::debug::✅ CC Reported GPG signature verification completed...`,
+      `[command]${DEFAULT_WORKDIR}/test.sh before-build`,
+      `::debug::✅ CC Reporter before-build checkin completed...`,
+      `[command]${DEFAULT_ECHO} 'coverage ok'`,
+      `'coverage ok'`,
+      `::debug::✅ Coverage run completed...`,
+      `[command]${DEFAULT_WORKDIR}/test.sh after-build --exit-code 0`,
+      `::error::The process '${DEFAULT_WORKDIR}/test.sh' failed with exit code 69`,
+      `::error::🚨 CC Reporter after-build checkin failed!`,
+      ``,
+    ].join(EOL),
     'should correctly throw the error.'
   );
   unlinkSync(filePath);
@@ -853,19 +864,20 @@ test('🧪 run() should exit cleanly when the coverage command fails.', async (t
     stdHook.unhook();
     t.equal(
       capturedOutput,
-      // prettier-ignore
-      `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...
-::debug::✅ CC Reporter downloaded...
-::debug::ℹ️ Verifying CC Reporter checksum...
-::debug::✅ CC Reported checksum verification completed...
-::debug::ℹ️ Verifying CC Reporter GPG signature...
-::debug::✅ CC Reported GPG signature verification completed...
-[command]${DEFAULT_WORKDIR}/test.sh before-build
-before-build
-::debug::✅ CC Reporter before-build checkin completed...
-::error::Unable to locate executable file: ${COVERAGE_COMMAND}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also check the file mode to verify the file is executable.
-::error::🚨 Coverage run failed!
-`,
+      [
+        `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...`,
+        `::debug::✅ CC Reporter downloaded...`,
+        `::debug::ℹ️ Verifying CC Reporter checksum...`,
+        `::debug::✅ CC Reported checksum verification completed...`,
+        `::debug::ℹ️ Verifying CC Reporter GPG signature...`,
+        `::debug::✅ CC Reported GPG signature verification completed...`,
+        `[command]${DEFAULT_WORKDIR}/test.sh before-build`,
+        `before-build`,
+        `::debug::✅ CC Reporter before-build checkin completed...`,
+        `::error::Unable to locate executable file: ${COVERAGE_COMMAND}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also check the file mode to verify the file is executable.`,
+        `::error::🚨 Coverage run failed!`,
+        ``,
+      ].join(EOL),
       'should fail correctly on wrong/invalid coverage command.'
     );
   } finally {

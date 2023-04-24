@@ -1,5 +1,6 @@
 import test from 'tape';
 import { unlinkSync } from 'node:fs';
+import { EOL } from 'node:os';
 import { default as hookStd } from 'hook-std';
 import {
   downloadAndRecord,
@@ -33,12 +34,13 @@ test('🧪 verifyChecksumAndSignature() should download the CC reporter and pass
 
   t.equal(
     capturedOutput,
-    // prettier-ignore
-    `::debug::ℹ️ Verifying CC Reporter checksum...
-::debug::✅ CC Reported checksum verification completed...
-::debug::ℹ️ Verifying CC Reporter GPG signature...
-::debug::✅ CC Reported GPG signature verification completed...
-`,
+    [
+      `::debug::ℹ️ Verifying CC Reporter checksum...`,
+      `::debug::✅ CC Reported checksum verification completed...`,
+      `::debug::ℹ️ Verifying CC Reporter GPG signature...`,
+      `::debug::✅ CC Reported GPG signature verification completed...`,
+      ``,
+    ].join(EOL),
     'should download the reporter and correctly pass checksum and signature verification steps.'
   );
   t.end();
