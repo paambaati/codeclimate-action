@@ -31,18 +31,23 @@ const realpath = promisify(realpathCallback);
 const readFileAsync = promisify(readFile);
 
 const DEFAULT_WORKDIR = process.cwd();
-let DEFAULT_ECHO = '/bin/echo';
+let DEFAULT_ECHO = os.platform() === 'win32' ? '' : '/bin/echo';
 
 const sandbox = sinon.createSandbox();
 
 test('🛠 setup', (t) => {
   nock.disableNetConnect();
   if (!nock.isActive()) nock.activate();
-  pExec('which echo', (err, stdout, stderr) => {
-    if (err || stderr) t.fail(err?.message || stderr);
-    DEFAULT_ECHO = stdout.trim(); // Finds system default `echo`.
+  // Try to detect and set `echo` only on *nix systems.
+  if (os.platform() !== 'win32') {
+    pExec('which echo', (err, stdout, stderr) => {
+      if (err || stderr) t.fail(err?.message || stderr);
+      DEFAULT_ECHO = stdout.trim(); // Finds system default `echo`.
+      t.end();
+    });
+  } else {
     t.end();
-  });
+  }
 });
 
 test('🧪 run() should run the CC reporter (happy path).', async (t) => {
@@ -486,31 +491,6 @@ after-build --exit-code 0
   unlinkSync(filePath);
   nock.cleanAll();
   process.chdir(DEFAULT_WORKDIR);
-  t.end();
-});
-
-test('🧪 run() should throw an error if run on Windows.', async (t) => {
-  t.plan(1);
-  t.teardown(() => sandbox.restore());
-
-  sandbox.stub(os, 'platform').returns('win32');
-
-  const stdHook = hookStd(() => {});
-
-  try {
-    await run('http://localhost.test/dummy-cc-reporter', undefined);
-    t.fail('should actually throw an error and not succeed');
-  } catch (err) {
-    t.equal(
-      (err as Error).message,
-      'CC Reporter is not supported on Windows!',
-      'should return the correct error message.'
-    );
-  } finally {
-    stdHook.unhook();
-  }
-
-  stdHook.unhook();
   t.end();
 });
 
