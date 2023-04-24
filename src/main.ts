@@ -15,9 +15,9 @@ import type { ExecOptions } from '@actions/exec/lib/interfaces';
 
 // REFER: https://docs.codeclimate.com/docs/configuring-test-coverage#locations-of-pre-built-binaries
 /** Canonical download URL for the official CodeClimate reporter. */
-export const DOWNLOAD_URL = `https://codeclimate.com/downloads/test-reporter/test-reporter-latest-${platform()}-${
-  arch() === 'arm64' ? 'arm64' : 'amd64'
-}`;
+export const DOWNLOAD_URL = `https://codeclimate.com/downloads/test-reporter/test-reporter-latest-${
+  platform() === 'win32' ? 'windows' : platform()
+}-${arch() === 'arm64' ? 'arm64' : 'amd64'}`;
 /** Local file name of the CodeClimate reporter. */
 export const EXECUTABLE = './cc-reporter';
 export const CODECLIMATE_GPG_PUBLIC_KEY_ID =
@@ -179,13 +179,6 @@ export function run(
   verifyDownload: string = DEFAULT_VERIFY_DOWNLOAD
 ): Promise<void> {
   return new Promise(async (resolve, reject) => {
-    if (platform() === 'win32') {
-      const err = new Error('CC Reporter is not supported on Windows!');
-      error(err.message);
-      setFailed('🚨 CodeClimate Reporter will not run on Windows!');
-      return reject(err);
-    }
-
     let lastExitCode = 1;
     if (workingDirectory) {
       debug(`Changing working directory to ${workingDirectory}`);
