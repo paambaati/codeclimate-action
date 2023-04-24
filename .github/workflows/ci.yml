@@ -49,7 +49,7 @@ jobs:
           - { index: 3, os-name: 'windows-latest', os-label: 'Windows' }
     runs-on: ${{ matrix.os.os-name }}
     concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}
+      group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.os.os-name }}
       cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
     steps:
     - name: checkout code
