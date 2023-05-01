@@ -366,7 +366,7 @@ test('🧪 run() should convert patterns to locations.', async (t) => {
       '',
       '',
       'false',
-      filePattern
+      PLATFORM === 'win32' ? `"${filePattern}"` : filePattern
     );
     stdHook.unhook();
   } catch (err) {
