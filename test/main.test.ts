@@ -427,7 +427,7 @@ test('🧪 run() should convert patterns to locations.', async (t) => {
 test('🧪 run() should correctly switch the working directory if given.', async (t) => {
   t.plan(1);
   t.teardown(() => sandbox.restore());
-  const filePath = './test.sh';
+  const filePath = `./test.${EXE_EXT}`;
   nock('http://localhost.test')
     .get('/dummy-cc-reporter')
     .reply(200, async () => {
