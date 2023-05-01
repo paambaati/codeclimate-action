@@ -594,7 +594,7 @@ test('🧪 run() should throw an error if the GPG signature verification fails.'
     .get('/dummy-cc-reporter')
     .reply(200, async () => {
       const dummyReporterFile =
-        './test/fixtures/dummy-cc-reporter-before-build-error.sh';
+        `./test/fixtures/dummy-cc-reporter-before-build-error.${EXE_EXT}`;
       const dummyReporter = await readFileAsync(dummyReporterFile);
       return toReadableStream(dummyReporter);
     });
