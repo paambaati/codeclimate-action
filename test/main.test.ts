@@ -578,7 +578,7 @@ test('🧪 run() should throw an error if the checksum verification fails.', asy
       `::error::🚨 CC Reporter checksum verfication failed!`,
       ``,
     ].join(EOL),
-    'should correctly throw the error.'
+    'should correctly throw the error if the checksum verification fails.'
   );
   unlinkSync(filePath);
   unlinkSync(`${filePath}.sha256`);
@@ -655,7 +655,7 @@ test('🧪 run() should throw an error if the GPG signature verification fails.'
       `::error::🚨 CC Reporter GPG signature verfication failed!`,
       ``,
     ].join(EOL),
-    'should correctly throw the error.'
+    'should correctly throw the error if the GPG signature verification fails.'
   );
   unlinkSync(filePath);
   unlinkSync(`${filePath}.sha256`);
@@ -738,7 +738,7 @@ test('🧪 run() should throw an error if the before-build step throws an error.
       `::error::🚨 CC Reporter before-build checkin failed!`,
       ``,
     ].join(EOL),
-    'should correctly throw the error.'
+    'should correctly throw the error if the before-build step throws an error.'
   );
   unlinkSync(filePath);
   unlinkSync(`${filePath}.sha256`);
@@ -828,7 +828,7 @@ test('🧪 run() should throw an error if the after-build step throws an error.'
       `::error::🚨 CC Reporter after-build checkin failed!`,
       ``,
     ].join(EOL),
-    'should correctly throw the error.'
+    'should correctly throw the error if the after-build step throws an error.'
   );
   unlinkSync(filePath);
   unlinkSync(`${filePath}.sha256`);
