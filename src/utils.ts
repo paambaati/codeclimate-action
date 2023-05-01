@@ -51,7 +51,7 @@ export function downloadToFile(
       });
       if (response.status < 200 || response.status > 299) {
         throw new Error(
-          `Download failed with response status code ${response.status}`
+          `Download of '${url}' failed with response status code ${response.status}`
         );
       }
       const writer = createWriteStream(file, { mode });
