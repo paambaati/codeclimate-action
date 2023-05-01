@@ -593,8 +593,7 @@ test('🧪 run() should throw an error if the GPG signature verification fails.'
   nock('http://localhost.test')
     .get('/dummy-cc-reporter')
     .reply(200, async () => {
-      const dummyReporterFile =
-        `./test/fixtures/dummy-cc-reporter-before-build-error.${EXE_EXT}`;
+      const dummyReporterFile = `./test/fixtures/dummy-cc-reporter-before-build-error.${EXE_EXT}`;
       const dummyReporter = await readFileAsync(dummyReporterFile);
       return toReadableStream(dummyReporter);
     });
