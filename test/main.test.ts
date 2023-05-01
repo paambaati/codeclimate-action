@@ -30,8 +30,14 @@ import * as utils from '../src/utils';
 const realpath = promisify(realpathCallback);
 const readFileAsync = promisify(readFile);
 
+const PLATFORM = os.platform();
+const EXE_EXT = PLATFORM === 'win32' ? 'bat' : ('sh' as const);
 const DEFAULT_WORKDIR = process.cwd();
-let DEFAULT_ECHO = os.platform() === 'win32' ? '' : '/bin/echo';
+const EXE_PATH_PREFIX =
+  PLATFORM === 'win32'
+    ? 'C:\\WINDOWS\\system32\\cmd.exe /D /S /C'
+    : ('' as const);
+let ECHO_CMD = PLATFORM === 'win32' ? `${EXE_PATH_PREFIX} echo` : '/bin/echo';
 
 const sandbox = sinon.createSandbox();
 
@@ -39,10 +45,10 @@ test('🛠 setup', (t) => {
   nock.disableNetConnect();
   if (!nock.isActive()) nock.activate();
   // Try to detect and set `echo` only on *nix systems.
-  if (os.platform() !== 'win32') {
+  if (PLATFORM !== 'win32') {
     pExec('which echo', (err, stdout, stderr) => {
       if (err || stderr) t.fail(err?.message || stderr);
-      DEFAULT_ECHO = stdout.trim(); // Finds system default `echo`.
+      ECHO_CMD = stdout.trim(); // Finds system default `echo`.
       t.end();
     });
   } else {
@@ -53,11 +59,11 @@ test('🛠 setup', (t) => {
 test('🧪 run() should run the CC reporter (happy path).', async (t) => {
   t.plan(1);
   t.teardown(() => sandbox.restore());
-  const filePath = './test.sh';
+  const filePath = `./test.${EXE_EXT}`;
   nock('http://localhost.test')
     .get('/dummy-cc-reporter')
     .reply(200, async () => {
-      const dummyReporterFile = './test/fixtures/dummy-cc-reporter.sh';
+      const dummyReporterFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}`;
       const dummyReporter = await readFileAsync(dummyReporterFile);
       return toReadableStream(dummyReporter);
     });
@@ -65,7 +71,7 @@ test('🧪 run() should run the CC reporter (happy path).', async (t) => {
   nock('http://localhost.test')
     .get('/dummy-cc-reporter.sha256')
     .reply(200, async () => {
-      const checksumFile = `./test/fixtures/dummy-cc-reporter.sha256`;
+      const checksumFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}.sha256`;
       const checksum = await readFileAsync(checksumFile);
       return toReadableStream(checksum);
     });
@@ -73,7 +79,7 @@ test('🧪 run() should run the CC reporter (happy path).', async (t) => {
   nock('http://localhost.test')
     .get('/dummy-cc-reporter.sha256.sig')
     .reply(200, async () => {
-      const signatureFile = `./test/fixtures/dummy-cc-reporter.sha256.sig`;
+      const signatureFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}.sha256.sig`;
       const signature = await readFileAsync(signatureFile);
       return toReadableStream(signature);
     });
@@ -86,6 +92,9 @@ test('🧪 run() should run the CC reporter (happy path).', async (t) => {
       return toReadableStream(publicKey);
     });
 
+  // We always allow `verifySignature()` to return `true`
+  // because we don't have access to the private key (obviously)
+  // and so cannot create correct signatures for fixtures anyways.
   sandbox.stub(utils, 'verifySignature').resolves(true);
 
   let capturedOutput = '';
@@ -97,7 +106,7 @@ test('🧪 run() should run the CC reporter (happy path).', async (t) => {
     await run(
       'http://localhost.test/dummy-cc-reporter',
       filePath,
-      `echo 'coverage ok'`
+      `${ECHO_CMD} 'coverage ok'`
     );
     stdHook.unhook();
   } catch (err) {
@@ -116,17 +125,22 @@ test('🧪 run() should run the CC reporter (happy path).', async (t) => {
       `::debug::✅ CC Reported checksum verification completed...`,
       `::debug::ℹ️ Verifying CC Reporter GPG signature...`,
       `::debug::✅ CC Reported GPG signature verification completed...`,
-      `[command]${DEFAULT_WORKDIR}/test.sh before-build\nbefore-build`,
+      PLATFORM === 'win32'
+        ? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} before-build"`
+        : `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} before-build`,
+      `before-build`,
       `::debug::✅ CC Reporter before-build checkin completed...`,
-      `[command]${DEFAULT_ECHO} 'coverage ok'`,
+      `[command]${ECHO_CMD} 'coverage ok'`,
       `'coverage ok'`,
       `::debug::✅ Coverage run completed...`,
-      `[command]${DEFAULT_WORKDIR}/test.sh after-build --exit-code 0`,
+      PLATFORM === 'win32'
+        ? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} after-build --exit-code 0"`
+        : `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} after-build --exit-code 0`,
       `after-build --exit-code 0`,
       `::debug::✅ CC Reporter after-build checkin completed!`,
       ``,
     ].join(EOL),
-    'should execute all steps.'
+    'should execute all steps in happy path.'
   );
   unlinkSync(filePath);
   unlinkSync(`${filePath}.sha256`);
@@ -139,11 +153,11 @@ test('🧪 run() should run the CC reporter (happy path).', async (t) => {
 test('🧪 run() should run the CC reporter without verification if configured.', async (t) => {
   t.plan(1);
   t.teardown(() => sandbox.restore());
-  const filePath = './test.sh';
+  const filePath = `./test.${EXE_EXT}`;
   nock('http://localhost.test')
     .get('/dummy-cc-reporter')
     .reply(200, async () => {
-      const dummyReporterFile = './test/fixtures/dummy-cc-reporter.sh';
+      const dummyReporterFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}`;
       const dummyReporter = await readFileAsync(dummyReporterFile);
       return toReadableStream(dummyReporter);
     });
@@ -157,7 +171,7 @@ test('🧪 run() should run the CC reporter without verification if configured.'
     await run(
       'http://localhost.test/dummy-cc-reporter',
       filePath,
-      `echo 'coverage ok'`,
+      `${ECHO_CMD} 'coverage ok'`,
       undefined,
       undefined,
       undefined,
@@ -177,13 +191,17 @@ test('🧪 run() should run the CC reporter without verification if configured.'
     [
       `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...`,
       `::debug::✅ CC Reporter downloaded...`,
-      `[command]${DEFAULT_WORKDIR}/test.sh before-build`,
+      PLATFORM === 'win32'
+        ? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} before-build"`
+        : `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} before-build`,
       `before-build`,
       `::debug::✅ CC Reporter before-build checkin completed...`,
-      `[command]${DEFAULT_ECHO} 'coverage ok'`,
+      `[command]${ECHO_CMD} 'coverage ok'`,
       `'coverage ok'`,
       `::debug::✅ Coverage run completed...`,
-      `[command]${DEFAULT_WORKDIR}/test.sh after-build --exit-code 0`,
+      PLATFORM === 'win32'
+        ? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} after-build --exit-code 0"`
+        : `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} after-build --exit-code 0`,
       `after-build --exit-code 0`,
       `::debug::✅ CC Reporter after-build checkin completed!`,
       ``,
@@ -198,11 +216,11 @@ test('🧪 run() should run the CC reporter without verification if configured.'
 test('🧪 run() should run the CC reporter without a coverage command.', async (t) => {
   t.plan(1);
   t.teardown(() => sandbox.restore());
-  const filePath = './test.sh';
+  const filePath = `./test.${EXE_EXT}`;
   nock('http://localhost.test')
     .get('/dummy-cc-reporter')
     .reply(200, async () => {
-      const dummyReporterFile = './test/fixtures/dummy-cc-reporter.sh';
+      const dummyReporterFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}`;
       const dummyReporter = await readFileAsync(dummyReporterFile);
       return toReadableStream(dummyReporter);
     });
@@ -210,7 +228,7 @@ test('🧪 run() should run the CC reporter without a coverage command.', async 
   nock('http://localhost.test')
     .get('/dummy-cc-reporter.sha256')
     .reply(200, async () => {
-      const checksumFile = `./test/fixtures/dummy-cc-reporter.sha256`;
+      const checksumFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}.sha256`;
       const checksum = await readFileAsync(checksumFile);
       return toReadableStream(checksum);
     });
@@ -218,7 +236,7 @@ test('🧪 run() should run the CC reporter without a coverage command.', async 
   nock('http://localhost.test')
     .get('/dummy-cc-reporter.sha256.sig')
     .reply(200, async () => {
-      const signatureFile = `./test/fixtures/dummy-cc-reporter.sha256.sig`;
+      const signatureFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}.sha256.sig`;
       const signature = await readFileAsync(signatureFile);
       return toReadableStream(signature);
     });
@@ -257,11 +275,15 @@ test('🧪 run() should run the CC reporter without a coverage command.', async 
       `::debug::✅ CC Reported checksum verification completed...`,
       `::debug::ℹ️ Verifying CC Reporter GPG signature...`,
       `::debug::✅ CC Reported GPG signature verification completed...`,
-      `[command]${DEFAULT_WORKDIR}/test.sh before-build`,
+      PLATFORM === 'win32'
+        ? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} before-build"`
+        : `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} before-build`,
       `before-build`,
       `::debug::✅ CC Reporter before-build checkin completed...`,
       `ℹ️ 'coverageCommand' not set, so skipping building coverage report!`,
-      `[command]${DEFAULT_WORKDIR}/test.sh after-build --exit-code 0`,
+      PLATFORM === 'win32'
+        ? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} after-build --exit-code 0"`
+        : `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} after-build --exit-code 0`,
       `after-build --exit-code 0`,
       `::debug::✅ CC Reporter after-build checkin completed!`,
       ``,
@@ -290,11 +312,11 @@ test('🧪 run() should convert patterns to locations.', async (t) => {
     getSearchPaths: sandbox.spy(),
     globGenerator: sandbox.spy(),
   });
-  const filePath = './test.sh';
+  const filePath = `./test.${EXE_EXT}`;
   nock('http://localhost.test')
     .get('/dummy-cc-reporter')
     .reply(200, async () => {
-      const dummyReporterFile = './test/fixtures/dummy-cc-reporter.sh';
+      const dummyReporterFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}`;
       const dummyReporter = await readFileAsync(dummyReporterFile);
       return toReadableStream(dummyReporter);
     });
@@ -302,7 +324,7 @@ test('🧪 run() should convert patterns to locations.', async (t) => {
   nock('http://localhost.test')
     .get('/dummy-cc-reporter.sha256')
     .reply(200, async () => {
-      const checksumFile = `./test/fixtures/dummy-cc-reporter.sha256`;
+      const checksumFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}.sha256`;
       const checksum = await readFileAsync(checksumFile);
       return toReadableStream(checksum);
     });
@@ -310,7 +332,7 @@ test('🧪 run() should convert patterns to locations.', async (t) => {
   nock('http://localhost.test')
     .get('/dummy-cc-reporter.sha256.sig')
     .reply(200, async () => {
-      const signatureFile = `./test/fixtures/dummy-cc-reporter.sha256.sig`;
+      const signatureFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}.sha256.sig`;
       const signature = await readFileAsync(signatureFile);
       return toReadableStream(signature);
     });
@@ -326,8 +348,8 @@ test('🧪 run() should convert patterns to locations.', async (t) => {
   sandbox.stub(utils, 'verifySignature').resolves(true);
 
   const filePattern = `${DEFAULT_WORKDIR}/*.lcov:lcov`;
-  const fileA = 'file-a.lcov';
-  const fileB = 'file-b.lcov';
+  const fileA = 'file-a.lcov' as const;
+  const fileB = 'file-b.lcov' as const;
 
   writeFileSync(fileA, 'file a content');
   writeFileSync(fileB, 'file b content');
@@ -372,7 +394,9 @@ test('🧪 run() should convert patterns to locations.', async (t) => {
       `::debug::✅ CC Reported checksum verification completed...`,
       `::debug::ℹ️ Verifying CC Reporter GPG signature...`,
       `::debug::✅ CC Reported GPG signature verification completed...`,
-      `[command]${DEFAULT_WORKDIR}/test.sh before-build`,
+      PLATFORM === 'win32'
+        ? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} before-build"`
+        : `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} before-build`,
       `before-build`,
       `::debug::✅ CC Reporter before-build checkin completed...`,
       `ℹ️ 'coverageCommand' not set, so skipping building coverage report!`,
@@ -409,7 +433,7 @@ test('🧪 run() should correctly switch the working directory if given.', async
     .reply(200, async () => {
       const dummyReporterFile = joinPath(
         __dirname,
-        './fixtures/dummy-cc-reporter.sh'
+        `./fixtures/dummy-cc-reporter.${EXE_EXT}`
       );
       const dummyReporter = await readFileAsync(dummyReporterFile);
       return toReadableStream(dummyReporter);
@@ -420,7 +444,7 @@ test('🧪 run() should correctly switch the working directory if given.', async
     .reply(200, async () => {
       const checksumFile = joinPath(
         __dirname,
-        './fixtures/dummy-cc-reporter.sha256'
+        `./fixtures/dummy-cc-reporter.${EXE_EXT}.sha256`
       );
       const checksum = await readFileAsync(checksumFile);
       return toReadableStream(checksum);
@@ -431,7 +455,7 @@ test('🧪 run() should correctly switch the working directory if given.', async
     .reply(200, async () => {
       const signatureFile = joinPath(
         __dirname,
-        './fixtures/dummy-cc-reporter.sha256.sig'
+        `./fixtures/dummy-cc-reporter.${EXE_EXT}.sha256.sig`
       );
       const signature = await readFileAsync(signatureFile);
       return toReadableStream(signature);
@@ -460,7 +484,7 @@ test('🧪 run() should correctly switch the working directory if given.', async
     await run(
       'http://localhost.test/dummy-cc-reporter',
       filePath,
-      `echo 'coverage ok'`,
+      `${ECHO_CMD} 'coverage ok'`,
       CUSTOM_WORKDIR
     );
     stdHook.unhook();
@@ -482,18 +506,22 @@ test('🧪 run() should correctly switch the working directory if given.', async
       `::debug::✅ CC Reported checksum verification completed...`,
       `::debug::ℹ️ Verifying CC Reporter GPG signature...`,
       `::debug::✅ CC Reported GPG signature verification completed...`,
-      `[command]${CUSTOM_WORKDIR}/test.sh before-build`,
+      PLATFORM === 'win32'
+        ? `[command]${EXE_PATH_PREFIX} "${CUSTOM_WORKDIR}\\test.${EXE_EXT} before-build"`
+        : `[command]${CUSTOM_WORKDIR}/test.${EXE_EXT} before-build`,
       `before-build`,
       `::debug::✅ CC Reporter before-build checkin completed...`,
-      `[command]${DEFAULT_ECHO} 'coverage ok'`,
+      `[command]${ECHO_CMD} 'coverage ok'`,
       `'coverage ok'`,
       `::debug::✅ Coverage run completed...`,
-      `[command]${CUSTOM_WORKDIR}/test.sh after-build --exit-code 0`,
+      PLATFORM === 'win32'
+        ? `[command]${EXE_PATH_PREFIX} "${CUSTOM_WORKDIR}\\test.${EXE_EXT} after-build --exit-code 0"`
+        : `[command]${CUSTOM_WORKDIR}/test.${EXE_EXT} after-build --exit-code 0`,
       `after-build --exit-code 0`,
       `::debug::✅ CC Reporter after-build checkin completed!`,
       ``,
     ].join(EOL),
-    'should execute all steps.'
+    'should execute all steps when custom working directory is given.'
   );
   unlinkSync(filePath);
   nock.cleanAll();
@@ -504,18 +532,17 @@ test('🧪 run() should correctly switch the working directory if given.', async
 test('🧪 run() should throw an error if the checksum verification fails.', async (t) => {
   t.plan(1);
   t.teardown(() => sandbox.restore());
-  const filePath = './test.sh';
+  const filePath = `./test.${EXE_EXT}`;
   nock('http://localhost.test')
     .get('/dummy-cc-reporter')
     .reply(200, async () => {
-      const dummyReporterFile =
-        './test/fixtures/dummy-cc-reporter-before-build-error.sh';
+      const dummyReporterFile = `./test/fixtures/dummy-cc-reporter-before-build-error.${EXE_EXT}`;
       const dummyReporter = await readFileAsync(dummyReporterFile);
       return toReadableStream(dummyReporter);
     });
 
   nock('http://localhost.test')
-    .get('/dummy-cc-reporter.sha256')
+    .get(`/dummy-cc-reporter.sha256`)
     .reply(200, () => {
       const dummyChecksum = 'lolno';
       return toReadableStream(dummyChecksum);
@@ -530,7 +557,7 @@ test('🧪 run() should throw an error if the checksum verification fails.', asy
     await run(
       'http://localhost.test/dummy-cc-reporter',
       filePath,
-      `echo 'coverage ok'`
+      `${ECHO_CMD} 'coverage ok'`
     );
     t.fail('should have thrown an error');
     stdHook.unhook();
@@ -575,7 +602,7 @@ test('🧪 run() should throw an error if the GPG signature verification fails.'
   nock('http://localhost.test')
     .get('/dummy-cc-reporter.sha256')
     .reply(200, async () => {
-      const checksumFile = `./test/fixtures/dummy-cc-reporter-before-build-error.sha256`;
+      const checksumFile = `./test/fixtures/dummy-cc-reporter-before-build-error.${EXE_EXT}.sha256`;
       const checksum = await readFileAsync(checksumFile);
       return toReadableStream(checksum);
     });
@@ -583,7 +610,7 @@ test('🧪 run() should throw an error if the GPG signature verification fails.'
   nock('http://localhost.test')
     .get('/dummy-cc-reporter.sha256.sig')
     .reply(200, async () => {
-      const signatureFile = `./test/fixtures/dummy-cc-reporter.sha256.sig`;
+      const signatureFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}.sha256.sig`;
       const signature = await readFileAsync(signatureFile);
       return toReadableStream(signature);
     });
@@ -642,12 +669,11 @@ test('🧪 run() should throw an error if the GPG signature verification fails.'
 test('🧪 run() should throw an error if the before-build step throws an error.', async (t) => {
   t.plan(1);
   t.teardown(() => sandbox.restore());
-  const filePath = './test.sh';
+  const filePath = `./test.${EXE_EXT}`;
   nock('http://localhost.test')
     .get('/dummy-cc-reporter')
     .reply(200, async () => {
-      const dummyReporterFile =
-        './test/fixtures/dummy-cc-reporter-before-build-error.sh';
+      const dummyReporterFile = `./test/fixtures/dummy-cc-reporter-before-build-error.${EXE_EXT}`;
       const dummyReporter = await readFileAsync(dummyReporterFile);
       return toReadableStream(dummyReporter);
     });
@@ -655,7 +681,7 @@ test('🧪 run() should throw an error if the before-build step throws an error.
   nock('http://localhost.test')
     .get('/dummy-cc-reporter.sha256')
     .reply(200, async () => {
-      const checksumFile = `./test/fixtures/dummy-cc-reporter-before-build-error.sha256`;
+      const checksumFile = `./test/fixtures/dummy-cc-reporter-before-build-error.${EXE_EXT}.sha256`;
       const checksum = await readFileAsync(checksumFile);
       return toReadableStream(checksum);
     });
@@ -663,7 +689,7 @@ test('🧪 run() should throw an error if the before-build step throws an error.
   nock('http://localhost.test')
     .get('/dummy-cc-reporter.sha256.sig')
     .reply(200, async () => {
-      const signatureFile = `./test/fixtures/dummy-cc-reporter.sha256.sig`;
+      const signatureFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}.sha256.sig`;
       const signature = await readFileAsync(signatureFile);
       return toReadableStream(signature);
     });
@@ -687,7 +713,7 @@ test('🧪 run() should throw an error if the before-build step throws an error.
     await run(
       'http://localhost.test/dummy-cc-reporter',
       filePath,
-      `echo 'coverage ok'`
+      `${ECHO_CMD} 'coverage ok'`
     );
     stdHook.unhook();
   } catch (err) {
@@ -706,8 +732,10 @@ test('🧪 run() should throw an error if the before-build step throws an error.
       `::debug::✅ CC Reported checksum verification completed...`,
       `::debug::ℹ️ Verifying CC Reporter GPG signature...`,
       `::debug::✅ CC Reported GPG signature verification completed...`,
-      `[command]${DEFAULT_WORKDIR}/test.sh before-build`,
-      `::error::The process '${DEFAULT_WORKDIR}/test.sh' failed with exit code 69`,
+      PLATFORM === 'win32'
+        ? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} before-build"`
+        : `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} before-build`,
+      `::error::The process '${DEFAULT_WORKDIR}/test.${EXE_EXT}' failed with exit code 69`,
       `::error::🚨 CC Reporter before-build checkin failed!`,
       ``,
     ].join(EOL),
@@ -724,12 +752,11 @@ test('🧪 run() should throw an error if the before-build step throws an error.
 test('🧪 run() should throw an error if the after-build step throws an error.', async (t) => {
   t.plan(1);
   t.teardown(() => sandbox.restore());
-  const filePath = './test.sh';
+  const filePath = `./test.${EXE_EXT}`;
   nock('http://localhost.test')
     .get('/dummy-cc-reporter')
     .reply(200, async () => {
-      const dummyReporterFile =
-        './test/fixtures/dummy-cc-reporter-after-build-error.sh';
+      const dummyReporterFile = `./test/fixtures/dummy-cc-reporter-after-build-error.${EXE_EXT}`;
       const dummyReporter = await readFileAsync(dummyReporterFile);
       return toReadableStream(dummyReporter);
     });
@@ -737,7 +764,7 @@ test('🧪 run() should throw an error if the after-build step throws an error.'
   nock('http://localhost.test')
     .get('/dummy-cc-reporter.sha256')
     .reply(200, async () => {
-      const checksumFile = `./test/fixtures/dummy-cc-reporter-after-build-error.sha256`;
+      const checksumFile = `./test/fixtures/dummy-cc-reporter-after-build-error.${EXE_EXT}.sha256`;
       const checksum = await readFileAsync(checksumFile);
       return toReadableStream(checksum);
     });
@@ -745,7 +772,7 @@ test('🧪 run() should throw an error if the after-build step throws an error.'
   nock('http://localhost.test')
     .get('/dummy-cc-reporter.sha256.sig')
     .reply(200, async () => {
-      const signatureFile = `./test/fixtures/dummy-cc-reporter.sha256.sig`;
+      const signatureFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}.sha256.sig`;
       const signature = await readFileAsync(signatureFile);
       return toReadableStream(signature);
     });
@@ -769,7 +796,7 @@ test('🧪 run() should throw an error if the after-build step throws an error.'
     await run(
       'http://localhost.test/dummy-cc-reporter',
       filePath,
-      `echo 'coverage ok'`
+      `${ECHO_CMD} 'coverage ok'`
     );
     stdHook.unhook();
   } catch (err) {
@@ -788,13 +815,17 @@ test('🧪 run() should throw an error if the after-build step throws an error.'
       `::debug::✅ CC Reported checksum verification completed...`,
       `::debug::ℹ️ Verifying CC Reporter GPG signature...`,
       `::debug::✅ CC Reported GPG signature verification completed...`,
-      `[command]${DEFAULT_WORKDIR}/test.sh before-build`,
+      PLATFORM === 'win32'
+        ? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} before-build"`
+        : `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} before-build`,
       `::debug::✅ CC Reporter before-build checkin completed...`,
-      `[command]${DEFAULT_ECHO} 'coverage ok'`,
+      `[command]${ECHO_CMD} 'coverage ok'`,
       `'coverage ok'`,
       `::debug::✅ Coverage run completed...`,
-      `[command]${DEFAULT_WORKDIR}/test.sh after-build --exit-code 0`,
-      `::error::The process '${DEFAULT_WORKDIR}/test.sh' failed with exit code 69`,
+      PLATFORM === 'win32'
+        ? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} after-build --exit-code 0"`
+        : `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} after-build --exit-code 0`,
+      `::error::The process '${DEFAULT_WORKDIR}/test.${EXE_EXT}' failed with exit code 69`,
       `::error::🚨 CC Reporter after-build checkin failed!`,
       ``,
     ].join(EOL),
@@ -812,11 +843,11 @@ test('🧪 run() should exit cleanly when the coverage command fails.', async (t
   t.plan(1);
   t.teardown(() => sandbox.restore());
   const COVERAGE_COMMAND = 'wololololo'; // Random command that doesn't exist (and so should fail).
-  const filePath = './test.sh';
+  const filePath = `./test.${EXE_EXT}`;
   nock('http://localhost.test')
     .get('/dummy-cc-reporter')
     .reply(200, async () => {
-      const dummyReporterFile = './test/fixtures/dummy-cc-reporter.sh';
+      const dummyReporterFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}`;
       const dummyReporter = await readFileAsync(dummyReporterFile);
       return toReadableStream(dummyReporter);
     });
@@ -824,7 +855,7 @@ test('🧪 run() should exit cleanly when the coverage command fails.', async (t
   nock('http://localhost.test')
     .get('/dummy-cc-reporter.sha256')
     .reply(200, async () => {
-      const checksumFile = `./test/fixtures/dummy-cc-reporter.sha256`;
+      const checksumFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}.sha256`;
       const checksum = await readFileAsync(checksumFile);
       return toReadableStream(checksum);
     });
@@ -832,7 +863,7 @@ test('🧪 run() should exit cleanly when the coverage command fails.', async (t
   nock('http://localhost.test')
     .get('/dummy-cc-reporter.sha256.sig')
     .reply(200, async () => {
-      const signatureFile = `./test/fixtures/dummy-cc-reporter.sha256.sig`;
+      const signatureFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}.sha256.sig`;
       const signature = await readFileAsync(signatureFile);
       return toReadableStream(signature);
     });
@@ -871,7 +902,9 @@ test('🧪 run() should exit cleanly when the coverage command fails.', async (t
         `::debug::✅ CC Reported checksum verification completed...`,
         `::debug::ℹ️ Verifying CC Reporter GPG signature...`,
         `::debug::✅ CC Reported GPG signature verification completed...`,
-        `[command]${DEFAULT_WORKDIR}/test.sh before-build`,
+        PLATFORM === 'win32'
+          ? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} before-build"`
+          : `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} before-build`,
         `before-build`,
         `::debug::✅ CC Reporter before-build checkin completed...`,
         `::error::Unable to locate executable file: ${COVERAGE_COMMAND}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also check the file mode to verify the file is executable.`,
