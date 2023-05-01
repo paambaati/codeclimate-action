@@ -401,13 +401,13 @@ test('🧪 run() should convert patterns to locations.', async (t) => {
       `::debug::✅ CC Reporter before-build checkin completed...`,
       `ℹ️ 'coverageCommand' not set, so skipping building coverage report!`,
       `::debug::Parsing 2 coverage location(s) — ${DEFAULT_WORKDIR}/file-a.lcov:lcov,${DEFAULT_WORKDIR}/file-b.lcov:lcov (object)`,
-      `[command]${DEFAULT_WORKDIR}/test.sh format-coverage ${DEFAULT_WORKDIR}/file-a.lcov -t lcov -o codeclimate.0.json`,
+      `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} format-coverage ${DEFAULT_WORKDIR}/file-a.lcov -t lcov -o codeclimate.0.json`,
       `format-coverage ${DEFAULT_WORKDIR}/file-a.lcov -t lcov -o codeclimate.0.json`,
-      `[command]${DEFAULT_WORKDIR}/test.sh format-coverage ${DEFAULT_WORKDIR}/file-b.lcov -t lcov -o codeclimate.1.json`,
+      `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} format-coverage ${DEFAULT_WORKDIR}/file-b.lcov -t lcov -o codeclimate.1.json`,
       `format-coverage ${DEFAULT_WORKDIR}/file-b.lcov -t lcov -o codeclimate.1.json`,
-      `[command]${DEFAULT_WORKDIR}/test.sh sum-coverage codeclimate.0.json codeclimate.1.json -p 2 -o coverage.total.json`,
+      `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} sum-coverage codeclimate.0.json codeclimate.1.json -p 2 -o coverage.total.json`,
       `sum-coverage codeclimate.0.json codeclimate.1.json -p 2 -o coverage.total.json`,
-      `[command]${DEFAULT_WORKDIR}/test.sh upload-coverage -i coverage.total.json`,
+      `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} upload-coverage -i coverage.total.json`,
       `upload-coverage -i coverage.total.json`,
       `::debug::✅ CC Reporter upload coverage completed!`,
       ``,
@@ -589,7 +589,7 @@ test('🧪 run() should throw an error if the checksum verification fails.', asy
 test('🧪 run() should throw an error if the GPG signature verification fails.', async (t) => {
   t.plan(1);
   t.teardown(() => sandbox.restore());
-  const filePath = './test.sh';
+  const filePath = `./test.${EXE_EXT}`;
   nock('http://localhost.test')
     .get('/dummy-cc-reporter')
     .reply(200, async () => {
