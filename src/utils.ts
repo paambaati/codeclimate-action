@@ -129,7 +129,7 @@ export async function verifyChecksum(
   const declaredChecksum = declaredChecksumFileContents
     .toString()
     .trim()
-    .split(' ')[0];
+    .split(/\s+/)[0];
   try {
     return timingSafeEqual(
       Buffer.from(binaryChecksum),
