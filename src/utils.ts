@@ -115,7 +115,7 @@ export async function getFileChecksum(
  * Note that the checksum file is of the format `<checksum> <filename>`.
  *
  * @param originalFile Original file for which the checksum was generated.
- * @param checksumFile Checksum file.
+ * @param checksumFile Checksum file. Note that the checksum file has to be of the format <filename> <checksum>
  * @param algorithm (Optional) Hashing algorithm. @default `sha256`
  * @returns Returns `true` if checksums match, `false` if they don't.
  */
