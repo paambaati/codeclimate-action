@@ -434,29 +434,29 @@ test('🧪 run() should convert patterns to locations.', async (t) => {
         ? `::debug::Parsing 2 coverage location(s) — ${DEFAULT_WORKDIR}\\file-a.lcov:lcov,${DEFAULT_WORKDIR}\\file-b.lcov:lcov (object)`
         : `::debug::Parsing 2 coverage location(s) — ${DEFAULT_WORKDIR}/file-a.lcov:lcov,${DEFAULT_WORKDIR}/file-b.lcov:lcov (object)`,
       PLATFORM === 'win32'
-        ? `[command]${DEFAULT_WORKDIR}\\test.${EXE_EXT} format-coverage ${DEFAULT_WORKDIR}\\file-a.lcov -t lcov -o codeclimate.0.json`
+        ? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} format-coverage ${DEFAULT_WORKDIR}\\file-a.lcov -t lcov -o codeclimate.0.json"`
         : `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} format-coverage ${DEFAULT_WORKDIR}/file-a.lcov -t lcov -o codeclimate.0.json`,
       PLATFORM === 'win32'
         ? `format-coverage ${DEFAULT_WORKDIR}\\file-a.lcov -t lcov -o codeclimate.0.json`
         : `format-coverage ${DEFAULT_WORKDIR}/file-a.lcov -t lcov -o codeclimate.0.json`,
       PLATFORM === 'win32'
-        ? `[command]${DEFAULT_WORKDIR}\\test.${EXE_EXT} format-coverage ${DEFAULT_WORKDIR}\\file-b.lcov -t lcov -o codeclimate.1.json`
+        ? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} format-coverage ${DEFAULT_WORKDIR}\\file-b.lcov -t lcov -o codeclimate.1.json"`
         : `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} format-coverage ${DEFAULT_WORKDIR}/file-b.lcov -t lcov -o codeclimate.1.json`,
       PLATFORM === 'win32'
         ? `format-coverage ${DEFAULT_WORKDIR}\\file-b.lcov -t lcov -o codeclimate.1.json`
         : `format-coverage ${DEFAULT_WORKDIR}/file-b.lcov -t lcov -o codeclimate.1.json`,
       PLATFORM === 'win32'
-        ? `[command]${DEFAULT_WORKDIR}\\test.${EXE_EXT} sum-coverage codeclimate.0.json codeclimate.1.json -p 2 -o coverage.total.json`
+        ? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} sum-coverage codeclimate.0.json codeclimate.1.json -p 2 -o coverage.total.json"`
         : `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} sum-coverage codeclimate.0.json codeclimate.1.json -p 2 -o coverage.total.json`,
       `sum-coverage codeclimate.0.json codeclimate.1.json -p 2 -o coverage.total.json`,
       PLATFORM === 'win32'
-        ? `[command]${DEFAULT_WORKDIR}\\test.${EXE_EXT} upload-coverage -i coverage.total.json`
+        ? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} upload-coverage -i coverage.total.json"`
         : `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} upload-coverage -i coverage.total.json`,
       `upload-coverage -i coverage.total.json`,
       `::debug::✅ CC Reporter upload coverage completed!`,
       ``,
     ].join(EOL),
-    'should execute all steps (except running the coverage command).'
+    'should execute all steps (including uploading globbed coverage files).'
   );
   unlinkSync(filePath);
   unlinkSync(`${filePath}.sha256`);
