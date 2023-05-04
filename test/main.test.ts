@@ -59,24 +59,29 @@ test('🛠 setup', (t) => {
 });
 
 test('📝 check if all fixtures have the correct checksums', async (t) => {
-    const path = './test/fixtures' as const;
-    const files = await readdir(path);
-    const checks: Array<{ fixture: string, verified: Promise<boolean>}> = [];
-    const fixtures = files.filter(file => extname(file) === '.sh' || extname(file) === '.bat')
-    for (const fixture of fixtures) {
-      const filePath = joinPath(path, fixture);
-        checks.push({
-          fixture: filePath,
-          verified: utils.verifyChecksum(filePath, `${filePath}.sha256`)
-        })
-    }
-    t.plan(checks.length);
-    const results = await Promise.all(checks.map(c => c.verified));
-    results.forEach((result, index) => {
-      t.ok(result, `checksum file for fixture ${checks[index].fixture} should be verifiable`)
-    })
-    t.end();
-})
+  const path = './test/fixtures' as const;
+  const files = await readdir(path);
+  const checks: Array<{ fixture: string; verified: Promise<boolean> }> = [];
+  const fixtures = files.filter(
+    (file) => extname(file) === '.sh' || extname(file) === '.bat'
+  );
+  for (const fixture of fixtures) {
+    const filePath = joinPath(path, fixture);
+    checks.push({
+      fixture: filePath,
+      verified: utils.verifyChecksum(filePath, `${filePath}.sha256`),
+    });
+  }
+  t.plan(checks.length);
+  const results = await Promise.all(checks.map((c) => c.verified));
+  results.forEach((result, index) => {
+    t.ok(
+      result,
+      `checksum file for fixture ${checks[index].fixture} should be verifiable`
+    );
+  });
+  t.end();
+});
 
 test('🧪 run() should run the CC reporter (happy path).', async (t) => {
   t.plan(1);
