@@ -5,13 +5,14 @@ import { default as hookStd } from 'hook-std';
 import * as glob from '@actions/glob';
 import sinon from 'sinon';
 import { default as os, tmpdir, EOL } from 'node:os';
-import { join as joinPath } from 'node:path';
+import { join as joinPath, extname } from 'node:path';
 import {
   writeFileSync,
   unlinkSync,
   readFile,
   realpath as realpathCallback,
 } from 'node:fs';
+import { readdir } from 'node:fs/promises';
 import { exec as pExec } from 'node:child_process';
 import { promisify } from 'util';
 import { CODECLIMATE_GPG_PUBLIC_KEY_ID, run } from '../src/main';
@@ -42,6 +43,7 @@ let ECHO_CMD = PLATFORM === 'win32' ? `${EXE_PATH_PREFIX} echo` : '/bin/echo';
 const sandbox = sinon.createSandbox();
 
 test('🛠 setup', (t) => {
+  t.plan(0);
   nock.disableNetConnect();
   if (!nock.isActive()) nock.activate();
   // Try to detect and set `echo` only on *nix systems.
@@ -55,6 +57,26 @@ test('🛠 setup', (t) => {
     t.end();
   }
 });
+
+test('📝 check if all fixtures have the correct checksums', async (t) => {
+    const path = './test/fixtures' as const;
+    const files = await readdir(path);
+    const checks: Array<{ fixture: string, verified: Promise<boolean>}> = [];
+    const fixtures = files.filter(file => extname(file) === '.sh' || extname(file) === '.bat')
+    for (const fixture of fixtures) {
+      const filePath = joinPath(path, fixture);
+        checks.push({
+          fixture: filePath,
+          verified: utils.verifyChecksum(filePath, `${filePath}.sha256`)
+        })
+    }
+    t.plan(checks.length);
+    const results = await Promise.all(checks.map(c => c.verified));
+    results.forEach((result, index) => {
+      t.ok(result, `checksum file for fixture ${checks[index].fixture} should be verifiable`)
+    })
+    t.end();
+})
 
 test('🧪 run() should run the CC reporter (happy path).', async (t) => {
   t.plan(1);
@@ -347,7 +369,10 @@ test('🧪 run() should convert patterns to locations.', async (t) => {
 
   sandbox.stub(utils, 'verifySignature').resolves(true);
 
-  const filePattern = `${DEFAULT_WORKDIR}/*.lcov:lcov`;
+  const filePattern =
+    PLATFORM === 'win32'
+      ? `${DEFAULT_WORKDIR}\\*.lcov:lcov`
+      : `${DEFAULT_WORKDIR}/*.lcov:lcov`;
   const fileA = 'file-a.lcov' as const;
   const fileB = 'file-b.lcov' as const;
 
@@ -366,7 +391,7 @@ test('🧪 run() should convert patterns to locations.', async (t) => {
       '',
       '',
       'false',
-      PLATFORM === 'win32' ? `"${filePattern}"` : filePattern
+      filePattern
     );
     stdHook.unhook();
   } catch (err) {
@@ -521,7 +546,7 @@ test('🧪 run() should correctly switch the working directory if given.', async
       `::debug::ℹ️ Verifying CC Reporter GPG signature...`,
       `::debug::✅ CC Reported GPG signature verification completed...`,
       PLATFORM === 'win32'
-        ? `[command]${EXE_PATH_PREFIX} "${CUSTOM_WORKDIR}\\test.${EXE_EXT} before-build"`
+        ? `[command]${EXE_PATH_PREFIX} ""${CUSTOM_WORKDIR}\\test.${EXE_EXT}" before-build"`
         : `[command]${CUSTOM_WORKDIR}/test.${EXE_EXT} before-build`,
       `before-build`,
       `::debug::✅ CC Reporter before-build checkin completed...`,
@@ -529,7 +554,7 @@ test('🧪 run() should correctly switch the working directory if given.', async
       `'coverage ok'`,
       `::debug::✅ Coverage run completed...`,
       PLATFORM === 'win32'
-        ? `[command]${EXE_PATH_PREFIX} "${CUSTOM_WORKDIR}\\test.${EXE_EXT} after-build --exit-code 0"`
+        ? `[command]${EXE_PATH_PREFIX} ""${CUSTOM_WORKDIR}\\test.${EXE_EXT}" after-build --exit-code 0"`
         : `[command]${CUSTOM_WORKDIR}/test.${EXE_EXT} after-build --exit-code 0`,
       `after-build --exit-code 0`,
       `::debug::✅ CC Reporter after-build checkin completed!`,
@@ -920,7 +945,9 @@ test('🧪 run() should exit cleanly when the coverage command fails.', async (t
           : `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} before-build`,
         `before-build`,
         `::debug::✅ CC Reporter before-build checkin completed...`,
-        `::error::Unable to locate executable file: ${COVERAGE_COMMAND}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also check the file mode to verify the file is executable.`,
+        PLATFORM === 'win32'
+          ? `::error::Unable to locate executable file: ${COVERAGE_COMMAND}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also verify the file has a valid extension for an executable file.`
+          : `::error::Unable to locate executable file: ${COVERAGE_COMMAND}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also check the file mode to verify the file is executable.`,
         `::error::🚨 Coverage run failed!`,
         ``,
       ].join(EOL),
