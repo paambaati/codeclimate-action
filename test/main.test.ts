@@ -58,12 +58,12 @@ test('🛠 setup', (t) => {
   }
 });
 
-test('📝 check if all fixtures have the correct checksums', async (t) => {
+test('📝 check if all fixtures have the correct checksums on their own platforms', async (t) => {
   const path = './test/fixtures' as const;
   const files = await readdir(path);
   const checks: Array<{ fixture: string; verified: Promise<boolean> }> = [];
-  const fixtures = files.filter(
-    (file) => extname(file) === '.sh' || extname(file) === '.bat'
+  const fixtures = files.filter((file) =>
+    PLATFORM === 'win32' ? extname(file) === '.bat' : extname(file) === '.sh'
   );
   for (const fixture of fixtures) {
     const filePath = joinPath(path, fixture);
