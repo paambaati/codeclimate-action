@@ -388,9 +388,11 @@ test('🧪 run() should convert patterns to locations.', async (t) => {
     nock.cleanAll();
   }
 
-  t.deepEquals(
+  t.equal(
     (glob.create as unknown as sinon.SinonSpy).firstCall.firstArg,
-    `${DEFAULT_WORKDIR}/*.lcov`,
+    PLATFORM === 'win32'
+      ? `${DEFAULT_WORKDIR}\\*.lcov`
+      : `${DEFAULT_WORKDIR}/*.lcov`,
     'should create a globber with given pattern.'
   );
   t.true(
