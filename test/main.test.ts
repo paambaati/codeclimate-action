@@ -544,7 +544,7 @@ test('🧪 run() should correctly switch the working directory if given.', async
       `'coverage ok'`,
       `::debug::✅ Coverage run completed...`,
       PLATFORM === 'win32'
-        ? `[command]${EXE_PATH_PREFIX} "${CUSTOM_WORKDIR}\\test.${EXE_EXT} after-build --exit-code 0"`
+        ? `[command]${EXE_PATH_PREFIX} "${CUSTOM_WORKDIR}\\test.${EXE_EXT}" after-build --exit-code 0"`
         : `[command]${CUSTOM_WORKDIR}/test.${EXE_EXT} after-build --exit-code 0`,
       `after-build --exit-code 0`,
       `::debug::✅ CC Reporter after-build checkin completed!`,
@@ -858,7 +858,9 @@ test('🧪 run() should throw an error if the after-build step throws an error.'
       PLATFORM === 'win32'
         ? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} after-build --exit-code 0"`
         : `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} after-build --exit-code 0`,
-      `::error::The process '${DEFAULT_WORKDIR}/test.${EXE_EXT}' failed with exit code 69`,
+      PLATFORM === 'win32'
+        ? `::error::The process '${DEFAULT_WORKDIR}\\test.${EXE_EXT}' failed with exit code 69`
+        : `::error::The process '${DEFAULT_WORKDIR}/test.${EXE_EXT}' failed with exit code 69`,
       `::error::🚨 CC Reporter after-build checkin failed!`,
       ``,
     ].join(EOL),
