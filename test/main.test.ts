@@ -536,7 +536,7 @@ test('🧪 run() should correctly switch the working directory if given.', async
       `::debug::ℹ️ Verifying CC Reporter GPG signature...`,
       `::debug::✅ CC Reported GPG signature verification completed...`,
       PLATFORM === 'win32'
-        ? `[command]${EXE_PATH_PREFIX} "${CUSTOM_WORKDIR}\\test.${EXE_EXT}" before-build"`
+        ? `[command]${EXE_PATH_PREFIX} "${CUSTOM_WORKDIR}\\test.${EXE_EXT} before-build"`
         : `[command]${CUSTOM_WORKDIR}/test.${EXE_EXT} before-build`,
       `before-build`,
       `::debug::✅ CC Reporter before-build checkin completed...`,
