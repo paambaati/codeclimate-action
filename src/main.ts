@@ -8,6 +8,7 @@ import * as glob from '@actions/glob';
 import {
   downloadToFile,
   getOptionalString,
+  parsePathAndFormat,
   verifyChecksum,
   verifySignature,
 } from './utils';
@@ -144,18 +145,8 @@ async function getLocationLines(
     .filter((pat) => pat)
     .map((pat) => pat.trim());
 
-  const patternsAndFormats = coverageLocationPatternsLines.map((line) => {
-    let lineParts = line.split(':');
-    // On Windows, if the glob received an absolute path, the path will
-    // include the Drive letter and the path – for example, `C:\Users\gp\projects\cc\*.lcov:lcov`
-    // which leads to 2 colons. So we handle this special case.
-    if (PLATFORM === 'win32' && (line.match(/:/g) || []).length > 1) {
-      lineParts = [lineParts.slice(0, -1).join(':'), lineParts.slice(-1)[0]];
-    }
-    const format = lineParts.slice(-1)[0];
-    const pattern = lineParts.slice(0, -1)[0];
-    return { format, pattern };
-  });
+  const patternsAndFormats =
+    coverageLocationPatternsLines.map(parsePathAndFormat);
 
   const pathsWithFormat = await Promise.all(
     patternsAndFormats.map(async ({ format, pattern }) => {
@@ -267,7 +258,9 @@ export function run(
       // Run format-coverage on each location.
       const parts: Array<string> = [];
       for (const i in coverageLocations) {
-        const [location, type] = coverageLocations[i].split(':');
+        const { format: type, pattern: location } = parsePathAndFormat(
+          coverageLocations[i]
+        );
         if (!type) {
           const err = new Error(`Invalid formatter type ${type}`);
           debug(
