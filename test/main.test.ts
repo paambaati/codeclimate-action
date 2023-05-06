@@ -5,7 +5,7 @@ import { default as hookStd } from 'hook-std';
 import * as glob from '@actions/glob';
 import sinon from 'sinon';
 import { default as os, tmpdir, EOL } from 'node:os';
-import { join as joinPath, extname } from 'node:path';
+import { join as joinPath } from 'node:path';
 import {
   writeFileSync,
   unlinkSync,
