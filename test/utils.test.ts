@@ -4,7 +4,11 @@ import toReadableStream from 'to-readable-stream';
 import { stat as statCallback, unlinkSync } from 'node:fs';
 import { platform } from 'node:os';
 import { promisify } from 'node:util';
-import { areObjectsEqual, downloadToFile } from '../src/utils';
+import {
+  areObjectsEqual,
+  downloadToFile,
+  parsePathAndFormat,
+} from '../src/utils';
 
 const stat = promisify(statCallback);
 
@@ -53,7 +57,77 @@ echo "hello"
   );
   unlinkSync(filePath);
   nock.cleanAll();
+  t.end();
 });
+
+test(
+  '🧪 parsePathAndFormat() should correctly parse path patterns and formats correctly on Windows.',
+  {
+    skip: platform() !== 'win32',
+  },
+  async (t) => {
+    t.plan(1);
+    const fixture =
+      'C:\\Users\\gp\\Projects\\codeclimate-action\\test\\*.lcov:lcov' as const;
+    const expected = {
+      format: 'lcov',
+      pattern: 'C:\\Users\\gp\\Projects\\codeclimate-action\\test\\*.lcov',
+    };
+    const result = parsePathAndFormat(fixture);
+    t.deepEqual(
+      result,
+      expected,
+      'path patterns and formats should be correctly parsed on Windows'
+    );
+    t.end();
+  }
+);
+
+test(
+  '🧪 parsePathAndFormat() should correctly parse path patterns and formats correctly on macOS.',
+  {
+    skip: platform() !== 'darwin',
+  },
+  async (t) => {
+    t.plan(1);
+    const fixture =
+      '/Users/gp/Projects/codeclimate-action/test/*.lcov:lcov' as const;
+    const expected = {
+      format: 'lcov',
+      pattern: '/Users/gp/Projects/codeclimate-action/test/*.lcov',
+    };
+    const result = parsePathAndFormat(fixture);
+    t.deepEqual(
+      result,
+      expected,
+      'path patterns and formats should be correctly parsed on macOS'
+    );
+    t.end();
+  }
+);
+
+test(
+  '🧪 parsePathAndFormat() should correctly parse path patterns and formats correctly on Linux.',
+  {
+    skip: platform() !== 'linux',
+  },
+  async (t) => {
+    t.plan(1);
+    const fixture =
+      '/Users/gp/Projects/codeclimate-action/test/*.lcov:lcov' as const;
+    const expected = {
+      format: 'lcov',
+      pattern: '/Users/gp/Projects/codeclimate-action/test/*.lcov',
+    };
+    const result = parsePathAndFormat(fixture);
+    t.deepEqual(
+      result,
+      expected,
+      'path patterns and formats should be correctly parsed on Linux'
+    );
+    t.end();
+  }
+);
 
 test('💣 teardown', (t) => {
   nock.restore();
