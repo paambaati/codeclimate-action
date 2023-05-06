@@ -1,5 +1,6 @@
 import { createHash, timingSafeEqual } from 'crypto';
 import { readFile, createWriteStream } from 'fs';
+import { platform } from 'os';
 import { promisify } from 'util';
 import { getInput } from '@actions/core';
 import fetch from 'node-fetch';
@@ -179,4 +180,50 @@ export async function verifySignature(
   } catch {
     return false;
   }
+}
+
+/**
+ * Parses a given coverage config line that looks like this –
+ *
+ * ```
+ * /Users/gp/projects/cc/*.lcov:lcov
+ * ```
+ *
+ * or –
+ *
+ * ```
+ * D:\Users\gp\projects\cc\*.lcov:lcov
+ * ```
+ *
+ * into –
+ *
+ * ```json
+ * { "format": "lcov", "pattern": "/Users/gp/projects/cc/*.lcov" }
+ * ```
+ *
+ * or –
+ *
+ * ```json
+ * { "format": "lcov", "pattern": "D:\Users\gp\projects\cc\*.lcov" }
+ * ```
+ * @param coverageConfigLine
+ * @returns
+ */
+export function parsePathAndFormat(coverageConfigLine: string): {
+  format: string;
+  pattern: string;
+} {
+  let lineParts = coverageConfigLine.split(':');
+  // On Windows, if the glob received an absolute path, the path will
+  // include the Drive letter and the path – for example, `C:\Users\gp\projects\cc\*.lcov:lcov`
+  // which leads to 2 colons. So we handle this special case.
+  if (
+    platform() === 'win32' &&
+    (coverageConfigLine.match(/:/g) || []).length > 1
+  ) {
+    lineParts = [lineParts.slice(0, -1).join(':'), lineParts.slice(-1)[0]];
+  }
+  const format = lineParts.slice(-1)[0];
+  const pattern = lineParts.slice(0, -1)[0];
+  return { format, pattern };
 }
