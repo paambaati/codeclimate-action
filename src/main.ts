@@ -13,10 +13,11 @@ import {
 } from './utils';
 import type { ExecOptions } from '@actions/exec/lib/interfaces';
 
+const PLATFORM = platform();
 // REFER: https://docs.codeclimate.com/docs/configuring-test-coverage#locations-of-pre-built-binaries
 /** Canonical download URL for the official CodeClimate reporter. */
 export const DOWNLOAD_URL = `https://codeclimate.com/downloads/test-reporter/test-reporter-latest-${
-  platform() === 'win32' ? 'windows' : platform()
+  PLATFORM === 'win32' ? 'windows' : PLATFORM
 }-${arch() === 'arm64' ? 'arm64' : 'amd64'}`;
 /** Local file name of the CodeClimate reporter. */
 export const EXECUTABLE = './cc-reporter';
@@ -144,7 +145,13 @@ async function getLocationLines(
     .map((pat) => pat.trim());
 
   const patternsAndFormats = coverageLocationPatternsLines.map((line) => {
-    const lineParts = line.split(':');
+    let lineParts = line.split(':');
+    // On Windows, if the glob received an absolute path, the path will
+    // include the Drive letter and the path – for example, `C:\Users\gp\projects\cc\*.lcov:lcov`
+    // which leads to 2 colons. So we handle this special case.
+    if (PLATFORM === 'win32' && (line.match(/:/g) || []).length > 1) {
+      lineParts = [lineParts.slice(0, -1).join(':'), lineParts.slice(-1)[0]];
+    }
     const format = lineParts.slice(-1)[0];
     const pattern = lineParts.slice(0, -1)[0];
     return { format, pattern };
