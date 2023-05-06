@@ -763,7 +763,9 @@ test('🧪 run() should throw an error if the before-build step throws an error.
       PLATFORM === 'win32'
         ? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} before-build"`
         : `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} before-build`,
-      PLATFORM === 'win32' ? `::error::The process '${DEFAULT_WORKDIR}\\test.${EXE_EXT}' failed with exit code 69` : `::error::The process '${DEFAULT_WORKDIR}/test.${EXE_EXT}' failed with exit code 69`,
+      PLATFORM === 'win32'
+        ? `::error::The process '${DEFAULT_WORKDIR}\\test.${EXE_EXT}' failed with exit code 69`
+        : `::error::The process '${DEFAULT_WORKDIR}/test.${EXE_EXT}' failed with exit code 69`,
       `::error::🚨 CC Reporter before-build checkin failed!`,
       ``,
     ].join(EOL),
