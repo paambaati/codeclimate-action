@@ -21,3 +21,6 @@ updates:
   - dependency-name: '@semantic-release/release-notes-generator'
     versions:
     - '11.x'
+  - dependency-name: '@types/node'
+    versions:
+    - '20.x'
