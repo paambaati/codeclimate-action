@@ -123,32 +123,31 @@ test('🧪 run() should run the CC reporter (happy path).', async (t) => {
     nock.cleanAll();
   }
 
-  t.equal(
-    capturedOutput,
-    [
-      `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...`,
-      `::debug::✅ CC Reporter downloaded...`,
-      `::debug::ℹ️ Verifying CC Reporter checksum...`,
-      `::debug::✅ CC Reported checksum verification completed...`,
-      `::debug::ℹ️ Verifying CC Reporter GPG signature...`,
-      `::debug::✅ CC Reported GPG signature verification completed...`,
-      PLATFORM === 'win32'
-        ? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} before-build"`
-        : `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} before-build`,
-      `before-build`,
-      `::debug::✅ CC Reporter before-build checkin completed...`,
-      `[command]${ECHO_CMD} 'coverage ok'`,
-      `'coverage ok'`,
-      `::debug::✅ Coverage run completed...`,
-      PLATFORM === 'win32'
-        ? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} after-build --exit-code 0"`
-        : `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} after-build --exit-code 0`,
-      `after-build --exit-code 0`,
-      `::debug::✅ CC Reporter after-build checkin completed!`,
-      ``,
-    ].join(EOL),
-    'should execute all steps in happy path.'
-  );
+  const expected = [
+    `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...`,
+    `::debug::✅ CC Reporter downloaded...`,
+    `::debug::ℹ️ Verifying CC Reporter checksum...`,
+    `::debug::✅ CC Reported checksum verification completed...`,
+    `::debug::ℹ️ Verifying CC Reporter GPG signature...`,
+    `::debug::✅ CC Reported GPG signature verification completed...`,
+    PLATFORM === 'win32'
+      ? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} before-build"`
+      : `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} before-build`,
+    `before-build`,
+    `::debug::✅ CC Reporter before-build checkin completed...`,
+    `[command]${ECHO_CMD} 'coverage ok'`,
+    `'coverage ok'`,
+    `::debug::✅ Coverage run completed...`,
+    PLATFORM === 'win32'
+      ? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} after-build --exit-code 0"`
+      : `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} after-build --exit-code 0`,
+    `after-build --exit-code 0`,
+    `::debug::✅ CC Reporter after-build checkin completed!`,
+    ``,
+  ].join(EOL);
+  console.debug('->> capturedOutput length = ', capturedOutput.length);
+  console.debug('->> expected length = ', expected.length);
+  t.equal(capturedOutput, expected, 'should execute all steps in happy path.');
   unlinkSync(filePath);
   unlinkSync(`${filePath}.sha256`);
   unlinkSync(`${filePath}.sha256.sig`);
