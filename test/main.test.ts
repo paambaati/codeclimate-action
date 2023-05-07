@@ -147,6 +147,8 @@ test('🧪 run() should run the CC reporter (happy path).', async (t) => {
   ].join(EOL);
   console.debug('->> capturedOutput length = ', capturedOutput.length);
   console.debug('->> expected length = ', expected.length);
+  console.debug('->>>> capturedOutput = ', JSON.stringify(capturedOutput));
+  console.debug('->>>> expected = ', JSON.stringify(expected));
   t.equal(capturedOutput, expected, 'should execute all steps in happy path.');
   unlinkSync(filePath);
   unlinkSync(`${filePath}.sha256`);
