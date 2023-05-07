@@ -6,10 +6,6 @@
 
 A GitHub action that publishes your code coverage to [Code Climate](http://codeclimate.com/).
 
-> **Note**
->
-> Please use a _specific_ version of this action – for example, `v4.0.0`, instead of using only major versions like `v4` or `v4.0` – these will **not** work!
-
 > **Warning**
 >
 > Please upgrade to v3.1.1 (or higher) immediately. v3.1.0 was recently broken inadverdently, and the only fix is to upgrade your action to v3.1.1 or higher. Please see [#626](https://github.com/paambaati/codeclimate-action/issues/626) for more details.
@@ -129,6 +125,6 @@ steps:
 
 Example projects
 
-1. [paambaati/websight](https://github.com/paambaati/websight/blob/89f03007680531587dd5ff5c673e6d813a298d8c/.github/workflows/ci.yml#L33-L50)
+1. [paambaati/websight](https://github.com/paambaati/websight/blob/5ab56bcc365ee73dd7937e87267db30f6357c4cd/.github/workflows/ci.yml#L33-L50)
 
 2. [MartinNuc/coverage-ga-test](https://github.com/MartinNuc/coverage-ga-test/blob/master/.github/workflows/ci.yaml)

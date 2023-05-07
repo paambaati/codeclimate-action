@@ -1,5 +1,9 @@
 name: "PR checks"
-on: [pull_request, push]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
 
 jobs:
   check_pr:
@@ -46,10 +50,10 @@ jobs:
         os:
           - { index: 1, os-name: 'ubuntu-latest', os-label: 'Linux' }
           - { index: 2, os-name: 'macos-latest', os-label: 'macOS' }
-          # NOTE: Windows is not supported because CodeClimate does not publish a Windows build of the reporter (yet).
+          - { index: 3, os-name: 'windows-latest', os-label: 'Windows' }
     runs-on: ${{ matrix.os.os-name }}
     concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}
+      group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.os.os-name }}
       cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
     steps:
     - name: checkout code

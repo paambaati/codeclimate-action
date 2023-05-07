@@ -8,16 +8,18 @@ import * as glob from '@actions/glob';
 import {
   downloadToFile,
   getOptionalString,
+  parsePathAndFormat,
   verifyChecksum,
   verifySignature,
 } from './utils';
 import type { ExecOptions } from '@actions/exec/lib/interfaces';
 
+const PLATFORM = platform();
 // REFER: https://docs.codeclimate.com/docs/configuring-test-coverage#locations-of-pre-built-binaries
 /** Canonical download URL for the official CodeClimate reporter. */
-export const DOWNLOAD_URL = `https://codeclimate.com/downloads/test-reporter/test-reporter-latest-${platform()}-${
-  arch() === 'arm64' ? 'arm64' : 'amd64'
-}`;
+export const DOWNLOAD_URL = `https://codeclimate.com/downloads/test-reporter/test-reporter-latest-${
+  PLATFORM === 'win32' ? 'windows' : PLATFORM
+}-${arch() === 'arm64' ? 'arm64' : 'amd64'}`;
 /** Local file name of the CodeClimate reporter. */
 export const EXECUTABLE = './cc-reporter';
 export const CODECLIMATE_GPG_PUBLIC_KEY_ID =
@@ -143,12 +145,8 @@ async function getLocationLines(
     .filter((pat) => pat)
     .map((pat) => pat.trim());
 
-  const patternsAndFormats = coverageLocationPatternsLines.map((line) => {
-    const lineParts = line.split(':');
-    const format = lineParts.slice(-1)[0];
-    const pattern = lineParts.slice(0, -1)[0];
-    return { format, pattern };
-  });
+  const patternsAndFormats =
+    coverageLocationPatternsLines.map(parsePathAndFormat);
 
   const pathsWithFormat = await Promise.all(
     patternsAndFormats.map(async ({ format, pattern }) => {
@@ -179,13 +177,6 @@ export function run(
   verifyDownload: string = DEFAULT_VERIFY_DOWNLOAD
 ): Promise<void> {
   return new Promise(async (resolve, reject) => {
-    if (platform() === 'win32') {
-      const err = new Error('CC Reporter is not supported on Windows!');
-      error(err.message);
-      setFailed('🚨 CodeClimate Reporter will not run on Windows!');
-      return reject(err);
-    }
-
     let lastExitCode = 1;
     if (workingDirectory) {
       debug(`Changing working directory to ${workingDirectory}`);
@@ -267,7 +258,9 @@ export function run(
       // Run format-coverage on each location.
       const parts: Array<string> = [];
       for (const i in coverageLocations) {
-        const [location, type] = coverageLocations[i].split(':');
+        const { format: type, pattern: location } = parsePathAndFormat(
+          coverageLocations[i]
+        );
         if (!type) {
           const err = new Error(`Invalid formatter type ${type}`);
           debug(

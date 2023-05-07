@@ -1,5 +1,6 @@
 import { createHash, timingSafeEqual } from 'crypto';
 import { readFile, createWriteStream } from 'fs';
+import { platform } from 'os';
 import { promisify } from 'util';
 import { getInput } from '@actions/core';
 import fetch from 'node-fetch';
@@ -44,7 +45,16 @@ export function downloadToFile(
 ): Promise<void> {
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await fetch(url, { timeout: 2 * 60 * 1000 }); // Timeout in 2 minutes.
+      const response = await fetch(url, {
+        redirect: 'follow',
+        follow: 5,
+        timeout: 2 * 60 * 1000, // Timeout in 2 minutes.
+      });
+      if (response.status < 200 || response.status > 299) {
+        throw new Error(
+          `Download of '${url}' failed with response status code ${response.status}`
+        );
+      }
       const writer = createWriteStream(file, { mode });
       response.body.pipe(writer);
       writer.on('close', () => {
@@ -106,7 +116,7 @@ export async function getFileChecksum(
  * Note that the checksum file is of the format `<checksum> <filename>`.
  *
  * @param originalFile Original file for which the checksum was generated.
- * @param checksumFile Checksum file.
+ * @param checksumFile Checksum file. Note that the checksum file has to be of the format <filename> <checksum>
  * @param algorithm (Optional) Hashing algorithm. @default `sha256`
  * @returns Returns `true` if checksums match, `false` if they don't.
  */
@@ -120,7 +130,7 @@ export async function verifyChecksum(
   const declaredChecksum = declaredChecksumFileContents
     .toString()
     .trim()
-    .split(' ')[0];
+    .split(/\s+/)[0];
   try {
     return timingSafeEqual(
       Buffer.from(binaryChecksum),
@@ -170,4 +180,50 @@ export async function verifySignature(
   } catch {
     return false;
   }
+}
+
+/**
+ * Parses a given coverage config line that looks like this –
+ *
+ * ```
+ * /Users/gp/projects/cc/*.lcov:lcov
+ * ```
+ *
+ * or –
+ *
+ * ```
+ * D:\Users\gp\projects\cc\*.lcov:lcov
+ * ```
+ *
+ * into –
+ *
+ * ```json
+ * { "format": "lcov", "pattern": "/Users/gp/projects/cc/*.lcov" }
+ * ```
+ *
+ * or –
+ *
+ * ```json
+ * { "format": "lcov", "pattern": "D:\Users\gp\projects\cc\*.lcov" }
+ * ```
+ * @param coverageConfigLine
+ * @returns
+ */
+export function parsePathAndFormat(coverageConfigLine: string): {
+  format: string;
+  pattern: string;
+} {
+  let lineParts = coverageConfigLine.split(':');
+  // On Windows, if the glob received an absolute path, the path will
+  // include the Drive letter and the path – for example, `C:\Users\gp\projects\cc\*.lcov:lcov`
+  // which leads to 2 colons. So we handle this special case.
+  if (
+    platform() === 'win32' &&
+    (coverageConfigLine.match(/:/g) || []).length > 1
+  ) {
+    lineParts = [lineParts.slice(0, -1).join(':'), lineParts.slice(-1)[0]];
+  }
+  const format = lineParts.slice(-1)[0];
+  const pattern = lineParts.slice(0, -1)[0];
+  return { format, pattern };
 }
