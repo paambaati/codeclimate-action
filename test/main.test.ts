@@ -36,7 +36,7 @@ const EXE_EXT = PLATFORM === 'win32' ? 'bat' : ('sh' as const);
 const DEFAULT_WORKDIR = process.cwd();
 const EXE_PATH_PREFIX =
   PLATFORM === 'win32'
-    ? 'C:\\WINDOWS\\system32\\cmd.exe /D /S /C'
+    ? 'C:\\Windows\\system32\\cmd.exe /D /S /C'
     : ('' as const);
 let ECHO_CMD = PLATFORM === 'win32' ? `${EXE_PATH_PREFIX} echo` : '/bin/echo';
 
@@ -145,10 +145,6 @@ test('🧪 run() should run the CC reporter (happy path).', async (t) => {
     `::debug::✅ CC Reporter after-build checkin completed!`,
     ``,
   ].join(EOL);
-  console.debug('->> capturedOutput length = ', capturedOutput.length);
-  console.debug('->> expected length = ', expected.length);
-  console.debug('->>>> capturedOutput = ', JSON.stringify(capturedOutput));
-  console.debug('->>>> expected = ', JSON.stringify(expected));
   t.equal(
     JSON.stringify(capturedOutput),
     JSON.stringify(expected),
