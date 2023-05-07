@@ -11,8 +11,7 @@ jobs:
     name: Get next release version
     runs-on: ubuntu-latest
     outputs:
-      last-release-version: ${{ steps.last-release.outputs.release }}
-      new-release-version: ${{ format('v{0}', steps.next-release.outputs.new-release-version) }}
+      need-release: ${{ steps.need-release.outputs.result }}
     steps:
       - name: checkout code
         uses: actions/checkout@v3
@@ -39,16 +38,35 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.CUSTOM_GITHUB_PERSONAL_TOKEN }}
 
-      - name: print outputs
+      - name: print discovered versions
         run: |
           echo "Last release version = ${{ steps.last-release.outputs.release }}"
           echo "Next release version = ${{ steps.next-release.outputs.new-release-version }}"
+      
+      - name: check if we need a new release
+        uses: actions/github-script@v6
+        id: need-release
+        env:
+          LAST_RELEASE: ${{ steps.last-release.outputs.release }}
+          NEW_RELEASE: ${{ steps.next-release.outputs.new-release-version }}
+        with:
+          script: |
+            const semver = require('semver');
+
+            const lastRelease = process.env.LAST_RELEASE.replace(/^,/, '');
+            const newRelease = process.env.NEW_RELEASE.replace(/^,/, '');
+            return semver.gt(newRelease, lastRelease);
+          result-encoding: string
+
+      - name: print if we need a new release
+        run: |
+          echo "Need a new release = ${{ steps.need-release.outputs.result }}"
 
   release:
     name: Cut a release on GitHub
     runs-on: ubuntu-latest
     needs: next-version
-    if: needs.next-version.outputs.new-release-version != '' && needs.next-version.outputs.new-release-version != needs.next-version.outputs.last-release-version
+    if: needs.next-version.outputs.need-release == 'true'
     steps:
       - name: checkout code
         uses: actions/checkout@v3
