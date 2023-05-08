@@ -55,8 +55,8 @@ jobs:
           script: |
             const semver = require('semver');
 
-            const lastRelease = process.env.LAST_RELEASE.replace(/^,/, '');
-            const newRelease = process.env.NEW_RELEASE.replace(/^,/, '');
+            const lastRelease = process.env.LAST_RELEASE.replace(/^v/, '');
+            const newRelease = process.env.NEW_RELEASE.replace(/^v/, '');
             return semver.gt(newRelease, lastRelease);
           result-encoding: string
 
