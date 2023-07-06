@@ -1,3 +1,66 @@
+# [5.0.0](https://github.com/paambaati/codeclimate-action/compare/v4.0.0...v5.0.0) (2023-07-06)
+
+
+### Bug Fixes
+
+* **ci:** checkout EVERYTHING so semantic-release has all the data it could need ([a16dca5](https://github.com/paambaati/codeclimate-action/commit/a16dca5bb60d6d1ceec305e554d1d07b2e6f9f2f))
+* **ci:** do not cancel all matrix builds for one ([1471593](https://github.com/paambaati/codeclimate-action/commit/1471593d867e0a8171a8bbd830bc6d14647c0c73))
+* **ci:** set up correct regex that replaces the 'v' prefixes for tags ([b3bcc0e](https://github.com/paambaati/codeclimate-action/commit/b3bcc0e23b5ab151ae0a3a2aa8dce8c6bb3bb3d7))
+* **core:** handle globs correctly in windows ([54ac87c](https://github.com/paambaati/codeclimate-action/commit/54ac87c16480738f78a87f5e33a4a417111a550b))
+* **core:** parse coverage path correctly on all platforms ([923001d](https://github.com/paambaati/codeclimate-action/commit/923001d88c62217179c085d441a5a3d54b8399e5))
+* create hash from windows ([077e614](https://github.com/paambaati/codeclimate-action/commit/077e614c8e5c583d418676d578d063d75c198405))
+* keep windows-style line endings for .bat files ([67549ff](https://github.com/paambaati/codeclimate-action/commit/67549ffc57b34e099f5bb2388d86c3cc7c347ec2))
+* set up gitattributes to stop the line ending fuckery ([4246a36](https://github.com/paambaati/codeclimate-action/commit/4246a36c822e053c11577e679d16bf16827d6842))
+* set up gitattributes to stop the line ending fuckery ([9181fd8](https://github.com/paambaati/codeclimate-action/commit/9181fd8af8132edee25fcc8df8a751d814e394c8))
+* **tests:** additional windows-style test fixes ([def6f6d](https://github.com/paambaati/codeclimate-action/commit/def6f6d4afae91513acccff73c32708488c56b75))
+* **tests:** fix tests for Windows ([18e310b](https://github.com/paambaati/codeclimate-action/commit/18e310ba76d6e1fe841d54e79d9de422dc9370d3))
+* **tests:** fix the Windows path ([6e02942](https://github.com/paambaati/codeclimate-action/commit/6e029425c431d797aa38acc4943036320fe4788e)), closes [/github.com/ljharb/tape/issues/593#issuecomment-1537292595](https://github.com//github.com/ljharb/tape/issues/593/issues/issuecomment-1537292595)
+* **tests:** make sure the special variable in script are quoted to make string comparison work ([c796f65](https://github.com/paambaati/codeclimate-action/commit/c796f651db785c619396cdbb8e09fe0c23f5dc46))
+* **tests:** mock checksum verification too ([2befa84](https://github.com/paambaati/codeclimate-action/commit/2befa84d394ee779f30efbf507b9aceabfdc18ca))
+* **tests:** more windows-specific test fixes ([de37362](https://github.com/paambaati/codeclimate-action/commit/de37362050b6d7216a5422f7a391e1d6380eec23))
+* **tests:** more windows-specific test fixes ([e44e0a3](https://github.com/paambaati/codeclimate-action/commit/e44e0a3f3b39f96c83d6e361469ae7fec20a5521))
+* **tests:** more windows-specific test fixes ([0b2f6f8](https://github.com/paambaati/codeclimate-action/commit/0b2f6f823e9a7761ee96aa4e10ea9855e814a789))
+* **tests:** more windows-specific test fixes ([9a9184a](https://github.com/paambaati/codeclimate-action/commit/9a9184a38ee7d74840d8db188c814b80ff42a045))
+* **tests:** more windows-specific test fixes ([1c1a7eb](https://github.com/paambaati/codeclimate-action/commit/1c1a7eb012ea910fd8c81de6dedfdaff7ce7374e))
+* **tests:** more windows-specific test fixes ([8d2edab](https://github.com/paambaati/codeclimate-action/commit/8d2edab83e08094146fcf395ff2f93f803ed50e5))
+* **tests:** more windows-specific test fixes ([e05d58f](https://github.com/paambaati/codeclimate-action/commit/e05d58f36f359fd2e40e1378c64a6d5c5aa83e19))
+* **tests:** more windows-specific tests ([e9e87cc](https://github.com/paambaati/codeclimate-action/commit/e9e87cc514c01b5a63d3f02552e7d1a137c803fc))
+* **tests:** more windows-specific tests ([13ff2e3](https://github.com/paambaati/codeclimate-action/commit/13ff2e357d666a066f84e76369c20bb78b8f669b))
+* **tests:** more windows-specific tests ([80aa61e](https://github.com/paambaati/codeclimate-action/commit/80aa61ef4dffb2558582006ee27683cf5d1d304e))
+* **tests:** more windows-specific tests ([498dee1](https://github.com/paambaati/codeclimate-action/commit/498dee151bf552b61d78f1cf1b5345169cff761f))
+* **tests:** more windows-specific tests ([f4dff2a](https://github.com/paambaati/codeclimate-action/commit/f4dff2a761bc3d7d08071c94d452704b5b07ff2d))
+* **tests:** more windows-specific tests ([4b48851](https://github.com/paambaati/codeclimate-action/commit/4b488512dd11c86232802e7bfb81c02b9b89c6e3))
+* **tests:** OS-agnostic line separators for all strings ([2fc4cc3](https://github.com/paambaati/codeclimate-action/commit/2fc4cc3403ce99cfe7000fe58b8d0acb89549fb7))
+* **tests:** remove windows-only test and start writing os-independent logic ([29cbd91](https://github.com/paambaati/codeclimate-action/commit/29cbd9169661bae87eccb3ae15101e9d9fa58f1b))
+* **tests:** run checksum verification pre-checks only for fixtures on their own target platforms ([4dc408b](https://github.com/paambaati/codeclimate-action/commit/4dc408bc02b974db9dc9e4129c7d797e7b0a3ee1))
+* **tests:** set up correct file mode on Windows ([4edff7e](https://github.com/paambaati/codeclimate-action/commit/4edff7ebe0387ebfb113739a5ab3c9101994820e))
+* **tests:** set up Windows fixtures ([c29289f](https://github.com/paambaati/codeclimate-action/commit/c29289fe7fac8870265111efaaeef59bb5b6a834))
+* **tests:** skip integration tests on unsupported platforms ([00e5b40](https://github.com/paambaati/codeclimate-action/commit/00e5b40552ecfd62683dfc2202ed236538468d25))
+* **tests:** try correcting extra spaces in checksum files generated on Windows ([edc5e97](https://github.com/paambaati/codeclimate-action/commit/edc5e97e04929ec51a7d6b02563e518d39aff823))
+* try LF-only line endings for all files ([e2c94ee](https://github.com/paambaati/codeclimate-action/commit/e2c94ee03d92b6c92abd36933bea05650aac91c7))
+* **util:** follow redirects in fetch ([a258bd9](https://github.com/paambaati/codeclimate-action/commit/a258bd9f1e258160b5309cfdfd7348aeb6edc640))
+
+
+### core
+
+* Support Windows ([9af890c](https://github.com/paambaati/codeclimate-action/commit/9af890ca201808293494389e160c2247062e61ab))
+* Support Windows ([3434c61](https://github.com/paambaati/codeclimate-action/commit/3434c618e21bb9a4ea49f8f85e10839bef1addcd))
+
+
+### Features
+
+* **core:** Support Windows ([f0efca8](https://github.com/paambaati/codeclimate-action/commit/f0efca8d8bb2d28d2e31f5b09b3a12db580b74ed)), closes [#665](https://github.com/paambaati/codeclimate-action/issues/665)
+* **core:** Support Windows ([9787ba6](https://github.com/paambaati/codeclimate-action/commit/9787ba65355cc7e2454726ff732df574e1a6b370))
+* **utils:** refactor coverage config line parser into own util ([e03d453](https://github.com/paambaati/codeclimate-action/commit/e03d4534fcf95c549b4b083f76870551d74140c1))
+
+
+### BREAKING CHANGES
+
+* this should ideally get published as v5
+* this should ideally get published as v5
+* **core:** Support Windows, now that CodeClimate has released a Windows binary of the reporter – see codeclimate.com/changelog/7dd79ee1cf1af7141b2bd18b
+* **core:** Support Windows, now that CodeClimate has released a Windows binary of the reporter
+
 # [4.0.0](https://github.com/paambaati/codeclimate-action/compare/v3.1.0...v4.0.0) (2023-04-23)
 
 
