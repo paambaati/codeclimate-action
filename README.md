@@ -6,11 +6,6 @@
 
 A GitHub action that publishes your code coverage to [Code Climate](http://codeclimate.com/).
 
-> **Warning**
->
-> Please upgrade to v3.1.1 (or higher) immediately. v3.1.0 was recently broken inadverdently, and the only fix is to upgrade your action to v3.1.1 or higher. Please see [#626](https://github.com/paambaati/codeclimate-action/issues/626) for more details.
-
-
 ## Usage
 
 This action requires that you set the [`CC_TEST_REPORTER_ID`](https://docs.codeclimate.com/docs/configuring-test-coverage) environment variable. You can find it under Repo Settings in your Code Climate project.
