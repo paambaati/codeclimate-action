@@ -35,7 +35,7 @@
         "openpgp": "5.9.0"
     },
     "devDependencies": {
-        "@google/semantic-release-replace-plugin": "1.2.0",
+        "@google/semantic-release-replace-plugin": "1.2.7",
         "@openpgp/web-stream-tools": "0.0.14",
         "@semantic-release/changelog": "6.0.3",
         "@semantic-release/commit-analyzer": "10.0.1",
