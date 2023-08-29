@@ -32,7 +32,7 @@
         "hook-std": "2.0.0",
         "node-fetch": "2.6.12",
         "nyc": "15.1.0",
-        "openpgp": "5.9.0"
+        "openpgp": "5.10.1"
     },
     "devDependencies": {
         "@google/semantic-release-replace-plugin": "1.2.7",
