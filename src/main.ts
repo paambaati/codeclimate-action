@@ -52,7 +52,7 @@ export const FILE_ARTIFACTS = new Set<string>();
 export async function downloadAndRecord(
   url: string,
   file: string,
-  mode?: number
+  mode?: number,
 ): Promise<void> {
   await downloadToFile(url, file, mode);
   FILE_ARTIFACTS.add(file);
@@ -90,7 +90,7 @@ function prepareEnv() {
 export async function verifyChecksumAndSignature(
   downloadUrl: string = DOWNLOAD_URL,
   executablePath: string = EXECUTABLE,
-  algorithm: string = 'sha256'
+  algorithm: string = 'sha256',
 ): Promise<void> {
   const checksumUrl = `${downloadUrl}.${algorithm}`;
   const checksumFilePath = `${executablePath}.${algorithm}`;
@@ -104,7 +104,7 @@ export async function verifyChecksumAndSignature(
     const checksumVerified = await verifyChecksum(
       executablePath,
       checksumFilePath,
-      algorithm
+      algorithm,
     );
     if (!checksumVerified)
       throw new Error('CC Reporter checksum does not match!');
@@ -120,12 +120,12 @@ export async function verifyChecksumAndSignature(
     await downloadAndRecord(signatureUrl, signatureFilePath);
     await downloadAndRecord(
       CODECLIMATE_GPG_PUBLIC_KEY_URL,
-      ccPublicKeyFilePath
+      ccPublicKeyFilePath,
     );
     const signatureVerified = await verifySignature(
       checksumFilePath,
       signatureFilePath,
-      ccPublicKeyFilePath
+      ccPublicKeyFilePath,
     );
     if (!signatureVerified)
       throw new Error('CC Reporter GPG signature is invalid!');
@@ -138,7 +138,7 @@ export async function verifyChecksumAndSignature(
 }
 
 async function getLocationLines(
-  coverageLocationPatternsParam: string
+  coverageLocationPatternsParam: string,
 ): Promise<Array<string>> {
   const coverageLocationPatternsLines = coverageLocationPatternsParam
     .split(/\r?\n/)
@@ -153,14 +153,14 @@ async function getLocationLines(
       const globber = await glob.create(pattern);
       const paths = await globber.glob();
       const pathsWithFormat = paths.map(
-        (singlePath) => `${singlePath}:${format}`
+        (singlePath) => `${singlePath}:${format}`,
       );
       return pathsWithFormat;
-    })
+    }),
   );
 
   const coverageLocationLines = ([] as Array<string>).concat(
-    ...pathsWithFormat
+    ...pathsWithFormat,
   );
 
   return coverageLocationLines;
@@ -174,7 +174,7 @@ export function run(
   codeClimateDebug: string = DEFAULT_CODECLIMATE_DEBUG,
   coverageLocationsParam: string = DEFAULT_COVERAGE_LOCATIONS,
   coveragePrefix?: string,
-  verifyDownload: string = DEFAULT_VERIFY_DOWNLOAD
+  verifyDownload: string = DEFAULT_VERIFY_DOWNLOAD,
 ): Promise<void> {
   return new Promise(async (resolve, reject) => {
     let lastExitCode = 1;
@@ -200,7 +200,7 @@ export function run(
       setFailed('🚨 CC Reporter download failed!');
       warning(`Could not download ${downloadUrl}`);
       warning(
-        `Please check if your platform is supported — see https://docs.codeclimate.com/docs/configuring-test-coverage#section-locations-of-pre-built-binaries`
+        `Please check if your platform is supported — see https://docs.codeclimate.com/docs/configuring-test-coverage#section-locations-of-pre-built-binaries`,
       );
       return reject(err);
     }
@@ -220,7 +220,7 @@ export function run(
       lastExitCode = await exec(executable, ['before-build'], execOpts);
       if (lastExitCode !== 0) {
         throw new Error(
-          `Coverage after-build exited with code ${lastExitCode}`
+          `Coverage after-build exited with code ${lastExitCode}`,
         );
       }
       debug('✅ CC Reporter before-build checkin completed...');
@@ -244,7 +244,7 @@ export function run(
       }
     } else {
       info(
-        `ℹ️ 'coverageCommand' not set, so skipping building coverage report!`
+        `ℹ️ 'coverageCommand' not set, so skipping building coverage report!`,
       );
     }
 
@@ -253,24 +253,24 @@ export function run(
       debug(
         `Parsing ${
           coverageLocations.length
-        } coverage location(s) — ${coverageLocations} (${typeof coverageLocations})`
+        } coverage location(s) — ${coverageLocations} (${typeof coverageLocations})`,
       );
       // Run format-coverage on each location.
       const parts: Array<string> = [];
       for (const i in coverageLocations) {
         const { format: type, pattern: location } = parsePathAndFormat(
-          coverageLocations[i]
+          coverageLocations[i],
         );
         if (!type) {
           const err = new Error(`Invalid formatter type ${type}`);
           debug(
             `⚠️ Could not find coverage formatter type! Found ${
               coverageLocations[i]
-            } (${typeof coverageLocations[i]})`
+            } (${typeof coverageLocations[i]})`,
           );
           error(err.message);
           setFailed(
-            '🚨 Coverage formatter type not set! Each coverage location should be of the format <file_path>:<coverage_format>'
+            '🚨 Coverage formatter type not set! Each coverage location should be of the format <file_path>:<coverage_format>',
           );
           return reject(err);
         }
@@ -293,7 +293,7 @@ export function run(
           lastExitCode = await exec(executable, commands, execOpts);
           if (lastExitCode !== 0) {
             throw new Error(
-              `Coverage formatter exited with code ${lastExitCode}`
+              `Coverage formatter exited with code ${lastExitCode}`,
             );
           }
         } catch (err) {
@@ -318,7 +318,7 @@ export function run(
         lastExitCode = await exec(executable, sumCommands, execOpts);
         if (lastExitCode !== 0) {
           throw new Error(
-            `Coverage sum process exited with code ${lastExitCode}`
+            `Coverage sum process exited with code ${lastExitCode}`,
           );
         }
       } catch (err) {
@@ -354,7 +354,7 @@ export function run(
       lastExitCode = await exec(executable, commands, execOpts);
       if (lastExitCode !== 0) {
         throw new Error(
-          `Coverage after-build exited with code ${lastExitCode}`
+          `Coverage after-build exited with code ${lastExitCode}`,
         );
       }
       debug('✅ CC Reporter after-build checkin completed!');
@@ -371,24 +371,24 @@ export function run(
 if (require.main === module) {
   const coverageCommand = getOptionalString(
     'coverageCommand',
-    DEFAULT_COVERAGE_COMMAND
+    DEFAULT_COVERAGE_COMMAND,
   );
   const workingDirectory = getOptionalString(
     'workingDirectory',
-    DEFAULT_WORKING_DIRECTORY
+    DEFAULT_WORKING_DIRECTORY,
   );
   const codeClimateDebug = getOptionalString(
     'debug',
-    DEFAULT_CODECLIMATE_DEBUG
+    DEFAULT_CODECLIMATE_DEBUG,
   );
   const coverageLocations = getOptionalString(
     'coverageLocations',
-    DEFAULT_COVERAGE_LOCATIONS
+    DEFAULT_COVERAGE_LOCATIONS,
   );
   const coveragePrefix = getOptionalString('prefix');
   const verifyDownload = getOptionalString(
     'verifyDownload',
-    DEFAULT_VERIFY_DOWNLOAD
+    DEFAULT_VERIFY_DOWNLOAD,
   );
   try {
     run(
@@ -399,7 +399,7 @@ if (require.main === module) {
       codeClimateDebug,
       coverageLocations,
       coveragePrefix,
-      verifyDownload
+      verifyDownload,
     );
   } catch (err) {
     throw err;

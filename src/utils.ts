@@ -28,7 +28,7 @@ export const getOptionalString = (name: string, defaultValue = '') =>
  */
 export const areObjectsEqual = (
   obj1: object | [],
-  obj2: object | []
+  obj2: object | [],
 ): boolean => JSON.stringify(obj1) === JSON.stringify(obj2);
 
 /**
@@ -41,7 +41,7 @@ export const areObjectsEqual = (
 export function downloadToFile(
   url: string,
   file: string,
-  mode: number = 0o755
+  mode: number = 0o755,
 ): Promise<void> {
   return new Promise(async (resolve, reject) => {
     try {
@@ -52,7 +52,7 @@ export function downloadToFile(
       });
       if (response.status < 200 || response.status > 299) {
         throw new Error(
-          `Download of '${url}' failed with response status code ${response.status}`
+          `Download of '${url}' failed with response status code ${response.status}`,
         );
       }
       const writer = createWriteStream(file, { mode });
@@ -75,7 +75,7 @@ export function downloadToFile(
  */
 export async function getFileContents(
   filePath: string,
-  options?: ReadFileAsyncOptions
+  options?: ReadFileAsyncOptions,
 ): Promise<Buffer> {
   return await readFileAsync(filePath, options);
 }
@@ -89,7 +89,7 @@ export async function getFileContents(
  */
 export async function getFileContentsAsString(
   filePath: string,
-  options?: ReadFileAsyncOptions
+  options?: ReadFileAsyncOptions,
 ): Promise<string> {
   return (await getFileContents(filePath, options)).toString('utf8');
 }
@@ -103,7 +103,7 @@ export async function getFileContentsAsString(
  */
 export async function getFileChecksum(
   filePath: string,
-  algorithm: string = 'sha256'
+  algorithm: string = 'sha256',
 ): Promise<string> {
   const fileContents = await getFileContents(filePath);
   return createHash(algorithm).update(fileContents).digest('hex');
@@ -123,7 +123,7 @@ export async function getFileChecksum(
 export async function verifyChecksum(
   originalFile: string,
   checksumFile: string,
-  algorithm: string = 'sha256'
+  algorithm: string = 'sha256',
 ): Promise<boolean> {
   const binaryChecksum = await getFileChecksum(originalFile, algorithm);
   const declaredChecksumFileContents = await getFileContents(checksumFile);
@@ -134,7 +134,7 @@ export async function verifyChecksum(
   try {
     return timingSafeEqual(
       Buffer.from(binaryChecksum),
-      Buffer.from(declaredChecksum)
+      Buffer.from(declaredChecksum),
     );
   } catch {
     // Fail on other errors that can definitely cause the comparison to fail, including
@@ -154,7 +154,7 @@ export async function verifyChecksum(
 export async function verifySignature(
   messageFilePath: string,
   signatureFilePath: string,
-  publicKeyFilePath: string
+  publicKeyFilePath: string,
 ): Promise<boolean> {
   const messageText = await getFileContentsAsString(messageFilePath);
   const signatureBuffer = await getFileContents(signatureFilePath);

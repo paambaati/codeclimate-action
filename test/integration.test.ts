@@ -47,8 +47,8 @@ test.skip(
         `::debug::✅ CC Reported GPG signature verification completed...`,
         ``,
       ].join(EOL),
-      'should download the reporter and correctly pass checksum and signature verification steps.'
+      'should download the reporter and correctly pass checksum and signature verification steps.',
     );
     t.end();
-  }
+  },
 );

@@ -113,7 +113,7 @@ test('🧪 run() should run the CC reporter (happy path).', async (t) => {
     await run(
       'http://localhost.test/dummy-cc-reporter',
       filePath,
-      `${ECHO_CMD} 'coverage ok'`
+      `${ECHO_CMD} 'coverage ok'`,
     );
     stdHook.unhook();
   } catch (err) {
@@ -148,7 +148,7 @@ test('🧪 run() should run the CC reporter (happy path).', async (t) => {
   t.equal(
     JSON.stringify(capturedOutput),
     JSON.stringify(expected),
-    'should execute all steps in happy path.'
+    'should execute all steps in happy path.',
   );
   unlinkSync(filePath);
   unlinkSync(`${filePath}.sha256`);
@@ -184,7 +184,7 @@ test('🧪 run() should run the CC reporter without verification if configured.'
       undefined,
       undefined,
       undefined,
-      'false'
+      'false',
     );
     stdHook.unhook();
   } catch (err) {
@@ -214,7 +214,7 @@ test('🧪 run() should run the CC reporter without verification if configured.'
       `::debug::✅ CC Reporter after-build checkin completed!`,
       ``,
     ].join(EOL),
-    'should execute all steps (except verification).'
+    'should execute all steps (except verification).',
   );
   unlinkSync(filePath);
   nock.cleanAll();
@@ -297,7 +297,7 @@ test('🧪 run() should run the CC reporter without a coverage command.', async 
       `::debug::✅ CC Reporter after-build checkin completed!`,
       ``,
     ].join(EOL),
-    'should execute all steps (except running the coverage command).'
+    'should execute all steps (except running the coverage command).',
   );
   unlinkSync(filePath);
   unlinkSync(`${filePath}.sha256`);
@@ -379,7 +379,7 @@ test('🧪 run() should convert patterns to locations.', async (t) => {
       '',
       '',
       'false',
-      filePattern
+      filePattern,
     );
     stdHook.unhook();
   } catch (err) {
@@ -394,11 +394,11 @@ test('🧪 run() should convert patterns to locations.', async (t) => {
     PLATFORM === 'win32'
       ? `${DEFAULT_WORKDIR}\\*.lcov`
       : `${DEFAULT_WORKDIR}/*.lcov`,
-    'should create a globber with given pattern.'
+    'should create a globber with given pattern.',
   );
   t.true(
     globSpy.calledOnceWithExactly(),
-    'should get the paths of the files from the newly created globber instance.'
+    'should get the paths of the files from the newly created globber instance.',
   );
   t.equal(
     capturedOutput,
@@ -441,7 +441,7 @@ test('🧪 run() should convert patterns to locations.', async (t) => {
       `::debug::✅ CC Reporter upload coverage completed!`,
       ``,
     ].join(EOL),
-    'should execute all steps (including uploading globbed coverage files).'
+    'should execute all steps (including uploading globbed coverage files).',
   );
   unlinkSync(filePath);
   unlinkSync(`${filePath}.sha256`);
@@ -462,7 +462,7 @@ test('🧪 run() should correctly switch the working directory if given.', async
     .reply(200, async () => {
       const dummyReporterFile = joinPath(
         __dirname,
-        `./fixtures/dummy-cc-reporter.${EXE_EXT}`
+        `./fixtures/dummy-cc-reporter.${EXE_EXT}`,
       );
       const dummyReporter = await readFileAsync(dummyReporterFile);
       return toReadableStream(dummyReporter);
@@ -473,7 +473,7 @@ test('🧪 run() should correctly switch the working directory if given.', async
     .reply(200, async () => {
       const checksumFile = joinPath(
         __dirname,
-        `./fixtures/dummy-cc-reporter.${EXE_EXT}.sha256`
+        `./fixtures/dummy-cc-reporter.${EXE_EXT}.sha256`,
       );
       const checksum = await readFileAsync(checksumFile);
       return toReadableStream(checksum);
@@ -484,7 +484,7 @@ test('🧪 run() should correctly switch the working directory if given.', async
     .reply(200, async () => {
       const signatureFile = joinPath(
         __dirname,
-        `./fixtures/dummy-cc-reporter.${EXE_EXT}.sha256.sig`
+        `./fixtures/dummy-cc-reporter.${EXE_EXT}.sha256.sig`,
       );
       const signature = await readFileAsync(signatureFile);
       return toReadableStream(signature);
@@ -495,7 +495,7 @@ test('🧪 run() should correctly switch the working directory if given.', async
     .reply(200, async () => {
       const publicKeyFile = joinPath(
         __dirname,
-        `./fixtures/9BD9E2DD46DA965A537E5B0A5CBF320243B6FD85.asc`
+        `./fixtures/9BD9E2DD46DA965A537E5B0A5CBF320243B6FD85.asc`,
       );
       const publicKey = await readFileAsync(publicKeyFile);
       return toReadableStream(publicKey);
@@ -515,7 +515,7 @@ test('🧪 run() should correctly switch the working directory if given.', async
       'http://localhost.test/dummy-cc-reporter',
       filePath,
       `${ECHO_CMD} 'coverage ok'`,
-      CUSTOM_WORKDIR
+      CUSTOM_WORKDIR,
     );
     stdHook.unhook();
   } catch (err) {
@@ -551,7 +551,7 @@ test('🧪 run() should correctly switch the working directory if given.', async
       `::debug::✅ CC Reporter after-build checkin completed!`,
       ``,
     ].join(EOL),
-    'should execute all steps when custom working directory is given.'
+    'should execute all steps when custom working directory is given.',
   );
   unlinkSync(filePath);
   nock.cleanAll();
@@ -587,7 +587,7 @@ test('🧪 run() should throw an error if the checksum verification fails.', asy
     await run(
       'http://localhost.test/dummy-cc-reporter',
       filePath,
-      `${ECHO_CMD} 'coverage ok'`
+      `${ECHO_CMD} 'coverage ok'`,
     );
     t.fail('should have thrown an error');
     stdHook.unhook();
@@ -608,7 +608,7 @@ test('🧪 run() should throw an error if the checksum verification fails.', asy
       `::error::🚨 CC Reporter checksum verfication failed!`,
       ``,
     ].join(EOL),
-    'should correctly throw the error if the checksum verification fails.'
+    'should correctly throw the error if the checksum verification fails.',
   );
   unlinkSync(filePath);
   unlinkSync(`${filePath}.sha256`);
@@ -664,7 +664,7 @@ test('🧪 run() should throw an error if the GPG signature verification fails.'
     await run(
       'http://localhost.test/dummy-cc-reporter',
       filePath,
-      `echo 'coverage ok'`
+      `echo 'coverage ok'`,
     );
     stdHook.unhook();
   } catch (err) {
@@ -686,7 +686,7 @@ test('🧪 run() should throw an error if the GPG signature verification fails.'
       `::error::🚨 CC Reporter GPG signature verfication failed!`,
       ``,
     ].join(EOL),
-    'should correctly throw the error if the GPG signature verification fails.'
+    'should correctly throw the error if the GPG signature verification fails.',
   );
   unlinkSync(filePath);
   unlinkSync(`${filePath}.sha256`);
@@ -744,7 +744,7 @@ test('🧪 run() should throw an error if the before-build step throws an error.
     await run(
       'http://localhost.test/dummy-cc-reporter',
       filePath,
-      `${ECHO_CMD} 'coverage ok'`
+      `${ECHO_CMD} 'coverage ok'`,
     );
     stdHook.unhook();
   } catch (err) {
@@ -772,7 +772,7 @@ test('🧪 run() should throw an error if the before-build step throws an error.
       `::error::🚨 CC Reporter before-build checkin failed!`,
       ``,
     ].join(EOL),
-    'should correctly throw the error if the before-build step throws an error.'
+    'should correctly throw the error if the before-build step throws an error.',
   );
   unlinkSync(filePath);
   unlinkSync(`${filePath}.sha256`);
@@ -830,7 +830,7 @@ test('🧪 run() should throw an error if the after-build step throws an error.'
     await run(
       'http://localhost.test/dummy-cc-reporter',
       filePath,
-      `${ECHO_CMD} 'coverage ok'`
+      `${ECHO_CMD} 'coverage ok'`,
     );
     stdHook.unhook();
   } catch (err) {
@@ -865,7 +865,7 @@ test('🧪 run() should throw an error if the after-build step throws an error.'
       `::error::🚨 CC Reporter after-build checkin failed!`,
       ``,
     ].join(EOL),
-    'should correctly throw the error if the after-build step throws an error.'
+    'should correctly throw the error if the after-build step throws an error.',
   );
   unlinkSync(filePath);
   unlinkSync(`${filePath}.sha256`);
@@ -924,7 +924,7 @@ test('🧪 run() should exit cleanly when the coverage command fails.', async (t
     await run(
       'http://localhost.test/dummy-cc-reporter',
       filePath,
-      COVERAGE_COMMAND
+      COVERAGE_COMMAND,
     );
     stdHook.unhook();
     t.fail('Should throw an error.');
@@ -950,7 +950,7 @@ test('🧪 run() should exit cleanly when the coverage command fails.', async (t
         `::error::🚨 Coverage run failed!`,
         ``,
       ].join(EOL),
-      'should fail correctly on wrong/invalid coverage command.'
+      'should fail correctly on wrong/invalid coverage command.',
     );
   } finally {
     unlinkSync(filePath);
