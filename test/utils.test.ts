@@ -29,7 +29,7 @@ test('🧪 areObjectsEqual() should correctly check object equality', (t) => {
   };
   t.true(
     areObjectsEqual(obj1, { ...obj1 }),
-    'objects should be compared correctly.'
+    'objects should be compared correctly.',
   );
   t.end();
 });
@@ -47,13 +47,13 @@ echo "hello"
   await downloadToFile(
     'http://localhost.test/dummy-cc-reporter',
     filePath,
-    0o777
+    0o777,
   );
   const stats = await stat(filePath);
   t.equal(
     stats.mode,
     platform() === 'win32' ? 33206 : 33261,
-    'downloaded file should exist and have executable permissions on valid platforms.'
+    'downloaded file should exist and have executable permissions on valid platforms.',
   );
   unlinkSync(filePath);
   nock.cleanAll();
@@ -77,10 +77,10 @@ test(
     t.deepEqual(
       result,
       expected,
-      'path patterns and formats should be correctly parsed on Windows'
+      'path patterns and formats should be correctly parsed on Windows',
     );
     t.end();
-  }
+  },
 );
 
 test(
@@ -100,10 +100,10 @@ test(
     t.deepEqual(
       result,
       expected,
-      'path patterns and formats should be correctly parsed on macOS'
+      'path patterns and formats should be correctly parsed on macOS',
     );
     t.end();
-  }
+  },
 );
 
 test(
@@ -123,10 +123,10 @@ test(
     t.deepEqual(
       result,
       expected,
-      'path patterns and formats should be correctly parsed on Linux'
+      'path patterns and formats should be correctly parsed on Linux',
     );
     t.end();
-  }
+  },
 );
 
 test('💣 teardown', (t) => {
