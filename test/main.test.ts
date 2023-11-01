@@ -1,4 +1,4 @@
-import test from 'tape';
+import t from 'tap';
 import nock from 'nock';
 import toReadableStream from 'to-readable-stream';
 import { default as hookStd } from 'hook-std';
@@ -42,7 +42,7 @@ let ECHO_CMD = PLATFORM === 'win32' ? `${EXE_PATH_PREFIX} echo` : '/bin/echo';
 
 const sandbox = sinon.createSandbox();
 
-test('🛠 setup', (t) => {
+t.test('🛠 setup', (t) => {
   t.plan(0);
   nock.disableNetConnect();
   if (!nock.isActive()) nock.activate();
@@ -58,7 +58,7 @@ test('🛠 setup', (t) => {
   }
 });
 
-test('🧪 run() should run the CC reporter (happy path).', async (t) => {
+t.test('🧪 run() should run the CC reporter (happy path).', async (t) => {
   t.plan(1);
   t.teardown(() => sandbox.restore());
   const filePath = `./test.${EXE_EXT}`;
@@ -158,7 +158,7 @@ test('🧪 run() should run the CC reporter (happy path).', async (t) => {
   t.end();
 });
 
-test('🧪 run() should run the CC reporter without verification if configured.', async (t) => {
+t.test('🧪 run() should run the CC reporter without verification if configured.', async (t) => {
   t.plan(1);
   t.teardown(() => sandbox.restore());
   const filePath = `./test.${EXE_EXT}`;
@@ -221,7 +221,7 @@ test('🧪 run() should run the CC reporter without verification if configured.'
   t.end();
 });
 
-test('🧪 run() should run the CC reporter without a coverage command.', async (t) => {
+t.test('🧪 run() should run the CC reporter without a coverage command.', async (t) => {
   t.plan(1);
   t.teardown(() => sandbox.restore());
   const filePath = `./test.${EXE_EXT}`;
@@ -307,7 +307,7 @@ test('🧪 run() should run the CC reporter without a coverage command.', async 
   t.end();
 });
 
-test('🧪 run() should convert patterns to locations.', async (t) => {
+t.test('🧪 run() should convert patterns to locations.', async (t) => {
   t.plan(3);
   t.teardown(() => sandbox.restore());
   const globSpy = sandbox
@@ -396,7 +396,7 @@ test('🧪 run() should convert patterns to locations.', async (t) => {
       : `${DEFAULT_WORKDIR}/*.lcov`,
     'should create a globber with given pattern.',
   );
-  t.true(
+  t.ok(
     globSpy.calledOnceWithExactly(),
     'should get the paths of the files from the newly created globber instance.',
   );
@@ -453,7 +453,7 @@ test('🧪 run() should convert patterns to locations.', async (t) => {
   t.end();
 });
 
-test('🧪 run() should correctly switch the working directory if given.', async (t) => {
+t.test('🧪 run() should correctly switch the working directory if given.', async (t) => {
   t.plan(1);
   t.teardown(() => sandbox.restore());
   const filePath = `./test.${EXE_EXT}`;
@@ -559,7 +559,7 @@ test('🧪 run() should correctly switch the working directory if given.', async
   t.end();
 });
 
-test('🧪 run() should throw an error if the checksum verification fails.', async (t) => {
+t.test('🧪 run() should throw an error if the checksum verification fails.', async (t) => {
   t.plan(1);
   t.teardown(() => sandbox.restore());
   const filePath = `./test.${EXE_EXT}`;
@@ -616,7 +616,7 @@ test('🧪 run() should throw an error if the checksum verification fails.', asy
   t.end();
 });
 
-test('🧪 run() should throw an error if the GPG signature verification fails.', async (t) => {
+t.test('🧪 run() should throw an error if the GPG signature verification fails.', async (t) => {
   t.plan(1);
   t.teardown(() => sandbox.restore());
   const filePath = `./test.${EXE_EXT}`;
@@ -696,7 +696,7 @@ test('🧪 run() should throw an error if the GPG signature verification fails.'
   t.end();
 });
 
-test('🧪 run() should throw an error if the before-build step throws an error.', async (t) => {
+t.test('🧪 run() should throw an error if the before-build step throws an error.', async (t) => {
   t.plan(1);
   t.teardown(() => sandbox.restore());
   const filePath = `./test.${EXE_EXT}`;
@@ -782,7 +782,7 @@ test('🧪 run() should throw an error if the before-build step throws an error.
   t.end();
 });
 
-test('🧪 run() should throw an error if the after-build step throws an error.', async (t) => {
+t.test('🧪 run() should throw an error if the after-build step throws an error.', async (t) => {
   t.plan(1);
   t.teardown(() => sandbox.restore());
   const filePath = `./test.${EXE_EXT}`;
@@ -875,7 +875,7 @@ test('🧪 run() should throw an error if the after-build step throws an error.'
   t.end();
 });
 
-test('🧪 run() should exit cleanly when the coverage command fails.', async (t) => {
+t.test('🧪 run() should exit cleanly when the coverage command fails.', async (t) => {
   t.plan(1);
   t.teardown(() => sandbox.restore());
   const COVERAGE_COMMAND = 'wololololo'; // Random command that doesn't exist (and so should fail).
@@ -962,7 +962,7 @@ test('🧪 run() should exit cleanly when the coverage command fails.', async (t
   }
 });
 
-test('💣 teardown', (t) => {
+t.test('💣 teardown', (t) => {
   nock.restore();
   nock.cleanAll();
   nock.enableNetConnect();

@@ -1,0 +1,7 @@
+{
+    "extends": "./tsconfig.json",
+    "target": "ESNEXT",
+    "include": [
+        "./test/*.test.ts"
+    ]
+}
