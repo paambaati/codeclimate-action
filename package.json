@@ -6,9 +6,9 @@
     "main": "lib/main.js",
     "scripts": {
         "build": "tsc",
-        "test": "tap run",
-        "test:only": "npm run test -- --disable-coverage --only",
-        "coverage": "npm run test -- --coverage-report=lcovonly",
+        "test": "tap run --disable-coverage",
+        "test:only": "npm run test -- --only",
+        "coverage": "npm run test -- --no-disable-coverage --coverage-report=lcovonly",
         "format": "prettier --write src/*.ts test/*.ts",
         "format:check": "prettier --check src/*.ts test/*.ts"
     },
