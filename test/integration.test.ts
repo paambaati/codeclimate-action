@@ -13,7 +13,10 @@ import {
 t.test(
   '🧪 verifyChecksumAndSignature() should download the CC reporter and pass all validations (happy path).',
   {
-    skip: platform() === 'darwin' && arch() === 'arm64' ? 'Skipping because CC reporter not available on macOS Apple Silicon!' : undefined,
+    skip:
+      platform() === 'darwin' && arch() === 'arm64'
+        ? 'Skipping because CC reporter not available on macOS Apple Silicon!'
+        : undefined,
   },
   async (t) => {
     t.plan(1);

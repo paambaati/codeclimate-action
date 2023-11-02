@@ -34,31 +34,34 @@ t.test('🧪 areObjectsEqual() should correctly check object equality', (t) => {
   t.end();
 });
 
-t.test('🧪 downloadToFile() should download the give URL and write to given file location with given mode.', async (t) => {
-  t.plan(1);
-  const filePath = './test.sh';
-  nock('http://localhost.test')
-    .get('/dummy-cc-reporter')
-    .reply(200, () => {
-      return toReadableStream(`#!/bin/bash
+t.test(
+  '🧪 downloadToFile() should download the give URL and write to given file location with given mode.',
+  async (t) => {
+    t.plan(1);
+    const filePath = './test.sh';
+    nock('http://localhost.test')
+      .get('/dummy-cc-reporter')
+      .reply(200, () => {
+        return toReadableStream(`#!/bin/bash
 echo "hello"
 `);
-    });
-  await downloadToFile(
-    'http://localhost.test/dummy-cc-reporter',
-    filePath,
-    0o777,
-  );
-  const stats = await stat(filePath);
-  t.equal(
-    stats.mode,
-    platform() === 'win32' ? 33206 : 33261,
-    'downloaded file should exist and have executable permissions on valid platforms.',
-  );
-  unlinkSync(filePath);
-  nock.cleanAll();
-  t.end();
-});
+      });
+    await downloadToFile(
+      'http://localhost.test/dummy-cc-reporter',
+      filePath,
+      0o777,
+    );
+    const stats = await stat(filePath);
+    t.equal(
+      stats.mode,
+      platform() === 'win32' ? 33206 : 33261,
+      'downloaded file should exist and have executable permissions on valid platforms.',
+    );
+    unlinkSync(filePath);
+    nock.cleanAll();
+    t.end();
+  },
+);
 
 t.test(
   '🧪 parsePathAndFormat() should correctly parse path patterns and formats correctly on Windows.',

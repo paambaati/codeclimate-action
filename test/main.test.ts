@@ -157,154 +157,160 @@ t.test('🧪 run() should run the CC reporter (happy path).', async (t) => {
   t.end();
 });
 
-t.test('🧪 run() should run the CC reporter without verification if configured.', async (t) => {
-  t.plan(1);
-  t.teardown(() => sandbox.restore());
-  const filePath = `./test.${EXE_EXT}`;
-  nock('http://localhost.test')
-    .get('/dummy-cc-reporter')
-    .reply(200, async () => {
-      const dummyReporterFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}`;
-      const dummyReporter = await readFileAsync(dummyReporterFile);
-      return toReadableStream(dummyReporter);
+t.test(
+  '🧪 run() should run the CC reporter without verification if configured.',
+  async (t) => {
+    t.plan(1);
+    t.teardown(() => sandbox.restore());
+    const filePath = `./test.${EXE_EXT}`;
+    nock('http://localhost.test')
+      .get('/dummy-cc-reporter')
+      .reply(200, async () => {
+        const dummyReporterFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}`;
+        const dummyReporter = await readFileAsync(dummyReporterFile);
+        return toReadableStream(dummyReporter);
+      });
+
+    let capturedOutput = '';
+    const stdHook = hookStd((text: string) => {
+      capturedOutput += text;
     });
 
-  let capturedOutput = '';
-  const stdHook = hookStd((text: string) => {
-    capturedOutput += text;
-  });
+    try {
+      await run(
+        'http://localhost.test/dummy-cc-reporter',
+        filePath,
+        `${ECHO_CMD} 'coverage ok'`,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        'false',
+      );
+      stdHook.unhook();
+    } catch (err) {
+      stdHook.unhook();
+      t.fail(err);
+    } finally {
+      nock.cleanAll();
+    }
 
-  try {
-    await run(
-      'http://localhost.test/dummy-cc-reporter',
-      filePath,
-      `${ECHO_CMD} 'coverage ok'`,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      'false',
+    t.equal(
+      capturedOutput,
+      [
+        `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...`,
+        `::debug::✅ CC Reporter downloaded...`,
+        PLATFORM === 'win32'
+          ? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} before-build"`
+          : `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} before-build`,
+        `before-build`,
+        `::debug::✅ CC Reporter before-build checkin completed...`,
+        `[command]${ECHO_CMD} 'coverage ok'`,
+        `'coverage ok'`,
+        `::debug::✅ Coverage run completed...`,
+        PLATFORM === 'win32'
+          ? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} after-build --exit-code 0"`
+          : `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} after-build --exit-code 0`,
+        `after-build --exit-code 0`,
+        `::debug::✅ CC Reporter after-build checkin completed!`,
+        ``,
+      ].join(EOL),
+      'should execute all steps (except verification).',
     );
-    stdHook.unhook();
-  } catch (err) {
-    stdHook.unhook();
-    t.fail(err);
-  } finally {
+    unlinkSync(filePath);
     nock.cleanAll();
-  }
+    t.end();
+  },
+);
 
-  t.equal(
-    capturedOutput,
-    [
-      `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...`,
-      `::debug::✅ CC Reporter downloaded...`,
-      PLATFORM === 'win32'
-        ? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} before-build"`
-        : `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} before-build`,
-      `before-build`,
-      `::debug::✅ CC Reporter before-build checkin completed...`,
-      `[command]${ECHO_CMD} 'coverage ok'`,
-      `'coverage ok'`,
-      `::debug::✅ Coverage run completed...`,
-      PLATFORM === 'win32'
-        ? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} after-build --exit-code 0"`
-        : `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} after-build --exit-code 0`,
-      `after-build --exit-code 0`,
-      `::debug::✅ CC Reporter after-build checkin completed!`,
-      ``,
-    ].join(EOL),
-    'should execute all steps (except verification).',
-  );
-  unlinkSync(filePath);
-  nock.cleanAll();
-  t.end();
-});
+t.test(
+  '🧪 run() should run the CC reporter without a coverage command.',
+  async (t) => {
+    t.plan(1);
+    t.teardown(() => sandbox.restore());
+    const filePath = `./test.${EXE_EXT}`;
+    nock('http://localhost.test')
+      .get('/dummy-cc-reporter')
+      .reply(200, async () => {
+        const dummyReporterFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}`;
+        const dummyReporter = await readFileAsync(dummyReporterFile);
+        return toReadableStream(dummyReporter);
+      });
 
-t.test('🧪 run() should run the CC reporter without a coverage command.', async (t) => {
-  t.plan(1);
-  t.teardown(() => sandbox.restore());
-  const filePath = `./test.${EXE_EXT}`;
-  nock('http://localhost.test')
-    .get('/dummy-cc-reporter')
-    .reply(200, async () => {
-      const dummyReporterFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}`;
-      const dummyReporter = await readFileAsync(dummyReporterFile);
-      return toReadableStream(dummyReporter);
+    nock('http://localhost.test')
+      .get('/dummy-cc-reporter.sha256')
+      .reply(200, async () => {
+        const checksumFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}.sha256`;
+        const checksum = await readFileAsync(checksumFile);
+        return toReadableStream(checksum);
+      });
+
+    nock('http://localhost.test')
+      .get('/dummy-cc-reporter.sha256.sig')
+      .reply(200, async () => {
+        const signatureFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}.sha256.sig`;
+        const signature = await readFileAsync(signatureFile);
+        return toReadableStream(signature);
+      });
+
+    nock('https://keys.openpgp.org')
+      .get(`/vks/v1/by-fingerprint/${CODECLIMATE_GPG_PUBLIC_KEY_ID}`)
+      .reply(200, async () => {
+        const publicKeyFile = `./test/fixtures/9BD9E2DD46DA965A537E5B0A5CBF320243B6FD85.asc`;
+        const publicKey = await readFileAsync(publicKeyFile);
+        return toReadableStream(publicKey);
+      });
+
+    sandbox.stub(utils, 'verifyChecksum').resolves(true);
+    sandbox.stub(utils, 'verifySignature').resolves(true);
+
+    let capturedOutput = '';
+    const stdHook = hookStd((text: string) => {
+      capturedOutput += text;
     });
 
-  nock('http://localhost.test')
-    .get('/dummy-cc-reporter.sha256')
-    .reply(200, async () => {
-      const checksumFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}.sha256`;
-      const checksum = await readFileAsync(checksumFile);
-      return toReadableStream(checksum);
-    });
+    try {
+      await run('http://localhost.test/dummy-cc-reporter', filePath, '');
+      stdHook.unhook();
+    } catch (err) {
+      stdHook.unhook();
+      t.fail(err);
+    } finally {
+      nock.cleanAll();
+    }
 
-  nock('http://localhost.test')
-    .get('/dummy-cc-reporter.sha256.sig')
-    .reply(200, async () => {
-      const signatureFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}.sha256.sig`;
-      const signature = await readFileAsync(signatureFile);
-      return toReadableStream(signature);
-    });
-
-  nock('https://keys.openpgp.org')
-    .get(`/vks/v1/by-fingerprint/${CODECLIMATE_GPG_PUBLIC_KEY_ID}`)
-    .reply(200, async () => {
-      const publicKeyFile = `./test/fixtures/9BD9E2DD46DA965A537E5B0A5CBF320243B6FD85.asc`;
-      const publicKey = await readFileAsync(publicKeyFile);
-      return toReadableStream(publicKey);
-    });
-
-  sandbox.stub(utils, 'verifyChecksum').resolves(true);
-  sandbox.stub(utils, 'verifySignature').resolves(true);
-
-  let capturedOutput = '';
-  const stdHook = hookStd((text: string) => {
-    capturedOutput += text;
-  });
-
-  try {
-    await run('http://localhost.test/dummy-cc-reporter', filePath, '');
-    stdHook.unhook();
-  } catch (err) {
-    stdHook.unhook();
-    t.fail(err);
-  } finally {
+    t.equal(
+      capturedOutput,
+      [
+        `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...`,
+        `::debug::✅ CC Reporter downloaded...`,
+        `::debug::ℹ️ Verifying CC Reporter checksum...`,
+        `::debug::✅ CC Reported checksum verification completed...`,
+        `::debug::ℹ️ Verifying CC Reporter GPG signature...`,
+        `::debug::✅ CC Reported GPG signature verification completed...`,
+        PLATFORM === 'win32'
+          ? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} before-build"`
+          : `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} before-build`,
+        `before-build`,
+        `::debug::✅ CC Reporter before-build checkin completed...`,
+        `ℹ️ 'coverageCommand' not set, so skipping building coverage report!`,
+        PLATFORM === 'win32'
+          ? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} after-build --exit-code 0"`
+          : `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} after-build --exit-code 0`,
+        `after-build --exit-code 0`,
+        `::debug::✅ CC Reporter after-build checkin completed!`,
+        ``,
+      ].join(EOL),
+      'should execute all steps (except running the coverage command).',
+    );
+    unlinkSync(filePath);
+    unlinkSync(`${filePath}.sha256`);
+    unlinkSync(`${filePath}.sha256.sig`);
+    unlinkSync('public-key.asc');
     nock.cleanAll();
-  }
-
-  t.equal(
-    capturedOutput,
-    [
-      `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...`,
-      `::debug::✅ CC Reporter downloaded...`,
-      `::debug::ℹ️ Verifying CC Reporter checksum...`,
-      `::debug::✅ CC Reported checksum verification completed...`,
-      `::debug::ℹ️ Verifying CC Reporter GPG signature...`,
-      `::debug::✅ CC Reported GPG signature verification completed...`,
-      PLATFORM === 'win32'
-        ? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} before-build"`
-        : `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} before-build`,
-      `before-build`,
-      `::debug::✅ CC Reporter before-build checkin completed...`,
-      `ℹ️ 'coverageCommand' not set, so skipping building coverage report!`,
-      PLATFORM === 'win32'
-        ? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} after-build --exit-code 0"`
-        : `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} after-build --exit-code 0`,
-      `after-build --exit-code 0`,
-      `::debug::✅ CC Reporter after-build checkin completed!`,
-      ``,
-    ].join(EOL),
-    'should execute all steps (except running the coverage command).',
-  );
-  unlinkSync(filePath);
-  unlinkSync(`${filePath}.sha256`);
-  unlinkSync(`${filePath}.sha256.sig`);
-  unlinkSync('public-key.asc');
-  nock.cleanAll();
-  t.end();
-});
+    t.end();
+  },
+);
 
 t.test('🧪 run() should convert patterns to locations.', async (t) => {
   t.plan(3);
@@ -452,483 +458,318 @@ t.test('🧪 run() should convert patterns to locations.', async (t) => {
   t.end();
 });
 
-t.test('🧪 run() should correctly switch the working directory if given.', async (t) => {
-  t.plan(1);
-  t.teardown(() => sandbox.restore());
-  const filePath = `./test.${EXE_EXT}`;
-  nock('http://localhost.test')
-    .get('/dummy-cc-reporter')
-    .reply(200, async () => {
-      const dummyReporterFile = joinPath(
-        __dirname,
-        `./fixtures/dummy-cc-reporter.${EXE_EXT}`,
+t.test(
+  '🧪 run() should correctly switch the working directory if given.',
+  async (t) => {
+    t.plan(1);
+    t.teardown(() => sandbox.restore());
+    const filePath = `./test.${EXE_EXT}`;
+    nock('http://localhost.test')
+      .get('/dummy-cc-reporter')
+      .reply(200, async () => {
+        const dummyReporterFile = joinPath(
+          __dirname,
+          `./fixtures/dummy-cc-reporter.${EXE_EXT}`,
+        );
+        const dummyReporter = await readFileAsync(dummyReporterFile);
+        return toReadableStream(dummyReporter);
+      });
+
+    nock('http://localhost.test')
+      .get('/dummy-cc-reporter.sha256')
+      .reply(200, async () => {
+        const checksumFile = joinPath(
+          __dirname,
+          `./fixtures/dummy-cc-reporter.${EXE_EXT}.sha256`,
+        );
+        const checksum = await readFileAsync(checksumFile);
+        return toReadableStream(checksum);
+      });
+
+    nock('http://localhost.test')
+      .get('/dummy-cc-reporter.sha256.sig')
+      .reply(200, async () => {
+        const signatureFile = joinPath(
+          __dirname,
+          `./fixtures/dummy-cc-reporter.${EXE_EXT}.sha256.sig`,
+        );
+        const signature = await readFileAsync(signatureFile);
+        return toReadableStream(signature);
+      });
+
+    nock('https://keys.openpgp.org')
+      .get(`/vks/v1/by-fingerprint/${CODECLIMATE_GPG_PUBLIC_KEY_ID}`)
+      .reply(200, async () => {
+        const publicKeyFile = joinPath(
+          __dirname,
+          `./fixtures/9BD9E2DD46DA965A537E5B0A5CBF320243B6FD85.asc`,
+        );
+        const publicKey = await readFileAsync(publicKeyFile);
+        return toReadableStream(publicKey);
+      });
+
+    sandbox.stub(utils, 'verifyChecksum').resolves(true);
+    sandbox.stub(utils, 'verifySignature').resolves(true);
+
+    let capturedOutput = '';
+    const stdHook = hookStd((text: string) => {
+      capturedOutput += text;
+    });
+
+    const CUSTOM_WORKDIR = await realpath(tmpdir());
+    try {
+      await run(
+        'http://localhost.test/dummy-cc-reporter',
+        filePath,
+        `${ECHO_CMD} 'coverage ok'`,
+        CUSTOM_WORKDIR,
       );
-      const dummyReporter = await readFileAsync(dummyReporterFile);
-      return toReadableStream(dummyReporter);
+      stdHook.unhook();
+    } catch (err) {
+      stdHook.unhook();
+      t.fail(err);
+    } finally {
+      nock.cleanAll();
+    }
+
+    t.equal(
+      capturedOutput,
+      [
+        `::debug::Changing working directory to ${CUSTOM_WORKDIR}`,
+        `::debug::✅ Changing working directory completed...`,
+        `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...`,
+        `::debug::✅ CC Reporter downloaded...`,
+        `::debug::ℹ️ Verifying CC Reporter checksum...`,
+        `::debug::✅ CC Reported checksum verification completed...`,
+        `::debug::ℹ️ Verifying CC Reporter GPG signature...`,
+        `::debug::✅ CC Reported GPG signature verification completed...`,
+        PLATFORM === 'win32'
+          ? `[command]${EXE_PATH_PREFIX} ""${CUSTOM_WORKDIR}\\test.${EXE_EXT}" before-build"`
+          : `[command]${CUSTOM_WORKDIR}/test.${EXE_EXT} before-build`,
+        `before-build`,
+        `::debug::✅ CC Reporter before-build checkin completed...`,
+        `[command]${ECHO_CMD} 'coverage ok'`,
+        `'coverage ok'`,
+        `::debug::✅ Coverage run completed...`,
+        PLATFORM === 'win32'
+          ? `[command]${EXE_PATH_PREFIX} ""${CUSTOM_WORKDIR}\\test.${EXE_EXT}" after-build --exit-code 0"`
+          : `[command]${CUSTOM_WORKDIR}/test.${EXE_EXT} after-build --exit-code 0`,
+        `after-build --exit-code 0`,
+        `::debug::✅ CC Reporter after-build checkin completed!`,
+        ``,
+      ].join(EOL),
+      'should execute all steps when custom working directory is given.',
+    );
+    unlinkSync(filePath);
+    nock.cleanAll();
+    process.chdir(DEFAULT_WORKDIR);
+    t.end();
+  },
+);
+
+t.test(
+  '🧪 run() should throw an error if the checksum verification fails.',
+  async (t) => {
+    t.plan(1);
+    t.teardown(() => sandbox.restore());
+    const filePath = `./test.${EXE_EXT}`;
+    nock('http://localhost.test')
+      .get('/dummy-cc-reporter')
+      .reply(200, async () => {
+        const dummyReporterFile = `./test/fixtures/dummy-cc-reporter-before-build-error.${EXE_EXT}`;
+        const dummyReporter = await readFileAsync(dummyReporterFile);
+        return toReadableStream(dummyReporter);
+      });
+
+    nock('http://localhost.test')
+      .get(`/dummy-cc-reporter.sha256`)
+      .reply(200, () => {
+        const dummyChecksum = 'lolno';
+        return toReadableStream(dummyChecksum);
+      });
+
+    let capturedOutput = '';
+    const stdHook = hookStd((text: string) => {
+      capturedOutput += text;
     });
 
-  nock('http://localhost.test')
-    .get('/dummy-cc-reporter.sha256')
-    .reply(200, async () => {
-      const checksumFile = joinPath(
-        __dirname,
-        `./fixtures/dummy-cc-reporter.${EXE_EXT}.sha256`,
+    try {
+      await run(
+        'http://localhost.test/dummy-cc-reporter',
+        filePath,
+        `${ECHO_CMD} 'coverage ok'`,
       );
-      const checksum = await readFileAsync(checksumFile);
-      return toReadableStream(checksum);
+      t.fail('should have thrown an error');
+      stdHook.unhook();
+    } catch (err) {
+      stdHook.unhook();
+      // do nothing else, we expect this run command to fail.
+    } finally {
+      nock.cleanAll();
+    }
+
+    t.equal(
+      capturedOutput,
+      [
+        `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...`,
+        `::debug::✅ CC Reporter downloaded...`,
+        `::debug::ℹ️ Verifying CC Reporter checksum...`,
+        `::error::CC Reporter checksum does not match!`,
+        `::error::🚨 CC Reporter checksum verfication failed!`,
+        ``,
+      ].join(EOL),
+      'should correctly throw the error if the checksum verification fails.',
+    );
+    unlinkSync(filePath);
+    unlinkSync(`${filePath}.sha256`);
+    nock.cleanAll();
+    t.end();
+  },
+);
+
+t.test(
+  '🧪 run() should throw an error if the GPG signature verification fails.',
+  async (t) => {
+    t.plan(1);
+    t.teardown(() => sandbox.restore());
+    const filePath = `./test.${EXE_EXT}`;
+    nock('http://localhost.test')
+      .get('/dummy-cc-reporter')
+      .reply(200, async () => {
+        const dummyReporterFile = `./test/fixtures/dummy-cc-reporter-before-build-error.${EXE_EXT}`;
+        const dummyReporter = await readFileAsync(dummyReporterFile);
+        return toReadableStream(dummyReporter);
+      });
+
+    nock('http://localhost.test')
+      .get('/dummy-cc-reporter.sha256')
+      .reply(200, async () => {
+        const checksumFile = `./test/fixtures/dummy-cc-reporter-before-build-error.${EXE_EXT}.sha256`;
+        const checksum = await readFileAsync(checksumFile);
+        return toReadableStream(checksum);
+      });
+
+    nock('http://localhost.test')
+      .get('/dummy-cc-reporter.sha256.sig')
+      .reply(200, async () => {
+        const signatureFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}.sha256.sig`;
+        const signature = await readFileAsync(signatureFile);
+        return toReadableStream(signature);
+      });
+
+    nock('https://keys.openpgp.org')
+      .get(`/vks/v1/by-fingerprint/${CODECLIMATE_GPG_PUBLIC_KEY_ID}`)
+      .reply(200, async () => {
+        const publicKeyFile = `./test/fixtures/9BD9E2DD46DA965A537E5B0A5CBF320243B6FD85.asc`;
+        const publicKey = await readFileAsync(publicKeyFile);
+        return toReadableStream(publicKey);
+      });
+
+    sandbox.stub(utils, 'verifyChecksum').resolves(true);
+    sandbox.stub(utils, 'verifySignature').resolves(false);
+
+    let capturedOutput = '';
+    const stdHook = hookStd((text: string) => {
+      capturedOutput += text;
     });
 
-  nock('http://localhost.test')
-    .get('/dummy-cc-reporter.sha256.sig')
-    .reply(200, async () => {
-      const signatureFile = joinPath(
-        __dirname,
-        `./fixtures/dummy-cc-reporter.${EXE_EXT}.sha256.sig`,
+    try {
+      await run(
+        'http://localhost.test/dummy-cc-reporter',
+        filePath,
+        `echo 'coverage ok'`,
       );
-      const signature = await readFileAsync(signatureFile);
-      return toReadableStream(signature);
+      stdHook.unhook();
+    } catch (err) {
+      stdHook.unhook();
+      // do nothing else, we expect this run command to fail.
+    } finally {
+      nock.cleanAll();
+    }
+
+    t.equal(
+      capturedOutput,
+      [
+        `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...`,
+        `::debug::✅ CC Reporter downloaded...`,
+        `::debug::ℹ️ Verifying CC Reporter checksum...`,
+        `::debug::✅ CC Reported checksum verification completed...`,
+        `::debug::ℹ️ Verifying CC Reporter GPG signature...`,
+        `::error::CC Reporter GPG signature is invalid!`,
+        `::error::🚨 CC Reporter GPG signature verfication failed!`,
+        ``,
+      ].join(EOL),
+      'should correctly throw the error if the GPG signature verification fails.',
+    );
+    unlinkSync(filePath);
+    unlinkSync(`${filePath}.sha256`);
+    unlinkSync(`${filePath}.sha256.sig`);
+    unlinkSync('public-key.asc');
+    nock.cleanAll();
+    t.end();
+  },
+);
+
+t.test(
+  '🧪 run() should throw an error if the before-build step throws an error.',
+  async (t) => {
+    t.plan(1);
+    t.teardown(() => sandbox.restore());
+    const filePath = `./test.${EXE_EXT}`;
+    nock('http://localhost.test')
+      .get('/dummy-cc-reporter')
+      .reply(200, async () => {
+        const dummyReporterFile = `./test/fixtures/dummy-cc-reporter-before-build-error.${EXE_EXT}`;
+        const dummyReporter = await readFileAsync(dummyReporterFile);
+        return toReadableStream(dummyReporter);
+      });
+
+    nock('http://localhost.test')
+      .get('/dummy-cc-reporter.sha256')
+      .reply(200, async () => {
+        const checksumFile = `./test/fixtures/dummy-cc-reporter-before-build-error.${EXE_EXT}.sha256`;
+        const checksum = await readFileAsync(checksumFile);
+        return toReadableStream(checksum);
+      });
+
+    nock('http://localhost.test')
+      .get('/dummy-cc-reporter.sha256.sig')
+      .reply(200, async () => {
+        const signatureFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}.sha256.sig`;
+        const signature = await readFileAsync(signatureFile);
+        return toReadableStream(signature);
+      });
+
+    nock('https://keys.openpgp.org')
+      .get(`/vks/v1/by-fingerprint/${CODECLIMATE_GPG_PUBLIC_KEY_ID}`)
+      .reply(200, async () => {
+        const publicKeyFile = `./test/fixtures/9BD9E2DD46DA965A537E5B0A5CBF320243B6FD85.asc`;
+        const publicKey = await readFileAsync(publicKeyFile);
+        return toReadableStream(publicKey);
+      });
+
+    sandbox.stub(utils, 'verifyChecksum').resolves(true);
+    sandbox.stub(utils, 'verifySignature').resolves(true);
+
+    let capturedOutput = '';
+    const stdHook = hookStd((text: string) => {
+      capturedOutput += text;
     });
 
-  nock('https://keys.openpgp.org')
-    .get(`/vks/v1/by-fingerprint/${CODECLIMATE_GPG_PUBLIC_KEY_ID}`)
-    .reply(200, async () => {
-      const publicKeyFile = joinPath(
-        __dirname,
-        `./fixtures/9BD9E2DD46DA965A537E5B0A5CBF320243B6FD85.asc`,
+    try {
+      await run(
+        'http://localhost.test/dummy-cc-reporter',
+        filePath,
+        `${ECHO_CMD} 'coverage ok'`,
       );
-      const publicKey = await readFileAsync(publicKeyFile);
-      return toReadableStream(publicKey);
-    });
+      stdHook.unhook();
+    } catch (err) {
+      stdHook.unhook();
+      // do nothing else, we expect this run command to fail.
+    } finally {
+      nock.cleanAll();
+    }
 
-  sandbox.stub(utils, 'verifyChecksum').resolves(true);
-  sandbox.stub(utils, 'verifySignature').resolves(true);
-
-  let capturedOutput = '';
-  const stdHook = hookStd((text: string) => {
-    capturedOutput += text;
-  });
-
-  const CUSTOM_WORKDIR = await realpath(tmpdir());
-  try {
-    await run(
-      'http://localhost.test/dummy-cc-reporter',
-      filePath,
-      `${ECHO_CMD} 'coverage ok'`,
-      CUSTOM_WORKDIR,
-    );
-    stdHook.unhook();
-  } catch (err) {
-    stdHook.unhook();
-    t.fail(err);
-  } finally {
-    nock.cleanAll();
-  }
-
-  t.equal(
-    capturedOutput,
-    [
-      `::debug::Changing working directory to ${CUSTOM_WORKDIR}`,
-      `::debug::✅ Changing working directory completed...`,
-      `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...`,
-      `::debug::✅ CC Reporter downloaded...`,
-      `::debug::ℹ️ Verifying CC Reporter checksum...`,
-      `::debug::✅ CC Reported checksum verification completed...`,
-      `::debug::ℹ️ Verifying CC Reporter GPG signature...`,
-      `::debug::✅ CC Reported GPG signature verification completed...`,
-      PLATFORM === 'win32'
-        ? `[command]${EXE_PATH_PREFIX} ""${CUSTOM_WORKDIR}\\test.${EXE_EXT}" before-build"`
-        : `[command]${CUSTOM_WORKDIR}/test.${EXE_EXT} before-build`,
-      `before-build`,
-      `::debug::✅ CC Reporter before-build checkin completed...`,
-      `[command]${ECHO_CMD} 'coverage ok'`,
-      `'coverage ok'`,
-      `::debug::✅ Coverage run completed...`,
-      PLATFORM === 'win32'
-        ? `[command]${EXE_PATH_PREFIX} ""${CUSTOM_WORKDIR}\\test.${EXE_EXT}" after-build --exit-code 0"`
-        : `[command]${CUSTOM_WORKDIR}/test.${EXE_EXT} after-build --exit-code 0`,
-      `after-build --exit-code 0`,
-      `::debug::✅ CC Reporter after-build checkin completed!`,
-      ``,
-    ].join(EOL),
-    'should execute all steps when custom working directory is given.',
-  );
-  unlinkSync(filePath);
-  nock.cleanAll();
-  process.chdir(DEFAULT_WORKDIR);
-  t.end();
-});
-
-t.test('🧪 run() should throw an error if the checksum verification fails.', async (t) => {
-  t.plan(1);
-  t.teardown(() => sandbox.restore());
-  const filePath = `./test.${EXE_EXT}`;
-  nock('http://localhost.test')
-    .get('/dummy-cc-reporter')
-    .reply(200, async () => {
-      const dummyReporterFile = `./test/fixtures/dummy-cc-reporter-before-build-error.${EXE_EXT}`;
-      const dummyReporter = await readFileAsync(dummyReporterFile);
-      return toReadableStream(dummyReporter);
-    });
-
-  nock('http://localhost.test')
-    .get(`/dummy-cc-reporter.sha256`)
-    .reply(200, () => {
-      const dummyChecksum = 'lolno';
-      return toReadableStream(dummyChecksum);
-    });
-
-  let capturedOutput = '';
-  const stdHook = hookStd((text: string) => {
-    capturedOutput += text;
-  });
-
-  try {
-    await run(
-      'http://localhost.test/dummy-cc-reporter',
-      filePath,
-      `${ECHO_CMD} 'coverage ok'`,
-    );
-    t.fail('should have thrown an error');
-    stdHook.unhook();
-  } catch (err) {
-    stdHook.unhook();
-    // do nothing else, we expect this run command to fail.
-  } finally {
-    nock.cleanAll();
-  }
-
-  t.equal(
-    capturedOutput,
-    [
-      `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...`,
-      `::debug::✅ CC Reporter downloaded...`,
-      `::debug::ℹ️ Verifying CC Reporter checksum...`,
-      `::error::CC Reporter checksum does not match!`,
-      `::error::🚨 CC Reporter checksum verfication failed!`,
-      ``,
-    ].join(EOL),
-    'should correctly throw the error if the checksum verification fails.',
-  );
-  unlinkSync(filePath);
-  unlinkSync(`${filePath}.sha256`);
-  nock.cleanAll();
-  t.end();
-});
-
-t.test('🧪 run() should throw an error if the GPG signature verification fails.', async (t) => {
-  t.plan(1);
-  t.teardown(() => sandbox.restore());
-  const filePath = `./test.${EXE_EXT}`;
-  nock('http://localhost.test')
-    .get('/dummy-cc-reporter')
-    .reply(200, async () => {
-      const dummyReporterFile = `./test/fixtures/dummy-cc-reporter-before-build-error.${EXE_EXT}`;
-      const dummyReporter = await readFileAsync(dummyReporterFile);
-      return toReadableStream(dummyReporter);
-    });
-
-  nock('http://localhost.test')
-    .get('/dummy-cc-reporter.sha256')
-    .reply(200, async () => {
-      const checksumFile = `./test/fixtures/dummy-cc-reporter-before-build-error.${EXE_EXT}.sha256`;
-      const checksum = await readFileAsync(checksumFile);
-      return toReadableStream(checksum);
-    });
-
-  nock('http://localhost.test')
-    .get('/dummy-cc-reporter.sha256.sig')
-    .reply(200, async () => {
-      const signatureFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}.sha256.sig`;
-      const signature = await readFileAsync(signatureFile);
-      return toReadableStream(signature);
-    });
-
-  nock('https://keys.openpgp.org')
-    .get(`/vks/v1/by-fingerprint/${CODECLIMATE_GPG_PUBLIC_KEY_ID}`)
-    .reply(200, async () => {
-      const publicKeyFile = `./test/fixtures/9BD9E2DD46DA965A537E5B0A5CBF320243B6FD85.asc`;
-      const publicKey = await readFileAsync(publicKeyFile);
-      return toReadableStream(publicKey);
-    });
-
-  sandbox.stub(utils, 'verifyChecksum').resolves(true);
-  sandbox.stub(utils, 'verifySignature').resolves(false);
-
-  let capturedOutput = '';
-  const stdHook = hookStd((text: string) => {
-    capturedOutput += text;
-  });
-
-  try {
-    await run(
-      'http://localhost.test/dummy-cc-reporter',
-      filePath,
-      `echo 'coverage ok'`,
-    );
-    stdHook.unhook();
-  } catch (err) {
-    stdHook.unhook();
-    // do nothing else, we expect this run command to fail.
-  } finally {
-    nock.cleanAll();
-  }
-
-  t.equal(
-    capturedOutput,
-    [
-      `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...`,
-      `::debug::✅ CC Reporter downloaded...`,
-      `::debug::ℹ️ Verifying CC Reporter checksum...`,
-      `::debug::✅ CC Reported checksum verification completed...`,
-      `::debug::ℹ️ Verifying CC Reporter GPG signature...`,
-      `::error::CC Reporter GPG signature is invalid!`,
-      `::error::🚨 CC Reporter GPG signature verfication failed!`,
-      ``,
-    ].join(EOL),
-    'should correctly throw the error if the GPG signature verification fails.',
-  );
-  unlinkSync(filePath);
-  unlinkSync(`${filePath}.sha256`);
-  unlinkSync(`${filePath}.sha256.sig`);
-  unlinkSync('public-key.asc');
-  nock.cleanAll();
-  t.end();
-});
-
-t.test('🧪 run() should throw an error if the before-build step throws an error.', async (t) => {
-  t.plan(1);
-  t.teardown(() => sandbox.restore());
-  const filePath = `./test.${EXE_EXT}`;
-  nock('http://localhost.test')
-    .get('/dummy-cc-reporter')
-    .reply(200, async () => {
-      const dummyReporterFile = `./test/fixtures/dummy-cc-reporter-before-build-error.${EXE_EXT}`;
-      const dummyReporter = await readFileAsync(dummyReporterFile);
-      return toReadableStream(dummyReporter);
-    });
-
-  nock('http://localhost.test')
-    .get('/dummy-cc-reporter.sha256')
-    .reply(200, async () => {
-      const checksumFile = `./test/fixtures/dummy-cc-reporter-before-build-error.${EXE_EXT}.sha256`;
-      const checksum = await readFileAsync(checksumFile);
-      return toReadableStream(checksum);
-    });
-
-  nock('http://localhost.test')
-    .get('/dummy-cc-reporter.sha256.sig')
-    .reply(200, async () => {
-      const signatureFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}.sha256.sig`;
-      const signature = await readFileAsync(signatureFile);
-      return toReadableStream(signature);
-    });
-
-  nock('https://keys.openpgp.org')
-    .get(`/vks/v1/by-fingerprint/${CODECLIMATE_GPG_PUBLIC_KEY_ID}`)
-    .reply(200, async () => {
-      const publicKeyFile = `./test/fixtures/9BD9E2DD46DA965A537E5B0A5CBF320243B6FD85.asc`;
-      const publicKey = await readFileAsync(publicKeyFile);
-      return toReadableStream(publicKey);
-    });
-
-  sandbox.stub(utils, 'verifyChecksum').resolves(true);
-  sandbox.stub(utils, 'verifySignature').resolves(true);
-
-  let capturedOutput = '';
-  const stdHook = hookStd((text: string) => {
-    capturedOutput += text;
-  });
-
-  try {
-    await run(
-      'http://localhost.test/dummy-cc-reporter',
-      filePath,
-      `${ECHO_CMD} 'coverage ok'`,
-    );
-    stdHook.unhook();
-  } catch (err) {
-    stdHook.unhook();
-    // do nothing else, we expect this run command to fail.
-  } finally {
-    nock.cleanAll();
-  }
-
-  t.equal(
-    capturedOutput,
-    [
-      `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...`,
-      `::debug::✅ CC Reporter downloaded...`,
-      `::debug::ℹ️ Verifying CC Reporter checksum...`,
-      `::debug::✅ CC Reported checksum verification completed...`,
-      `::debug::ℹ️ Verifying CC Reporter GPG signature...`,
-      `::debug::✅ CC Reported GPG signature verification completed...`,
-      PLATFORM === 'win32'
-        ? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} before-build"`
-        : `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} before-build`,
-      PLATFORM === 'win32'
-        ? `::error::The process '${DEFAULT_WORKDIR}\\test.${EXE_EXT}' failed with exit code 69`
-        : `::error::The process '${DEFAULT_WORKDIR}/test.${EXE_EXT}' failed with exit code 69`,
-      `::error::🚨 CC Reporter before-build checkin failed!`,
-      ``,
-    ].join(EOL),
-    'should correctly throw the error if the before-build step throws an error.',
-  );
-  unlinkSync(filePath);
-  unlinkSync(`${filePath}.sha256`);
-  unlinkSync(`${filePath}.sha256.sig`);
-  unlinkSync('public-key.asc');
-  nock.cleanAll();
-  t.end();
-});
-
-t.test('🧪 run() should throw an error if the after-build step throws an error.', async (t) => {
-  t.plan(1);
-  t.teardown(() => sandbox.restore());
-  const filePath = `./test.${EXE_EXT}`;
-  nock('http://localhost.test')
-    .get('/dummy-cc-reporter')
-    .reply(200, async () => {
-      const dummyReporterFile = `./test/fixtures/dummy-cc-reporter-after-build-error.${EXE_EXT}`;
-      const dummyReporter = await readFileAsync(dummyReporterFile);
-      return toReadableStream(dummyReporter);
-    });
-
-  nock('http://localhost.test')
-    .get('/dummy-cc-reporter.sha256')
-    .reply(200, async () => {
-      const checksumFile = `./test/fixtures/dummy-cc-reporter-after-build-error.${EXE_EXT}.sha256`;
-      const checksum = await readFileAsync(checksumFile);
-      return toReadableStream(checksum);
-    });
-
-  nock('http://localhost.test')
-    .get('/dummy-cc-reporter.sha256.sig')
-    .reply(200, async () => {
-      const signatureFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}.sha256.sig`;
-      const signature = await readFileAsync(signatureFile);
-      return toReadableStream(signature);
-    });
-
-  nock('https://keys.openpgp.org')
-    .get(`/vks/v1/by-fingerprint/${CODECLIMATE_GPG_PUBLIC_KEY_ID}`)
-    .reply(200, async () => {
-      const publicKeyFile = `./test/fixtures/9BD9E2DD46DA965A537E5B0A5CBF320243B6FD85.asc`;
-      const publicKey = await readFileAsync(publicKeyFile);
-      return toReadableStream(publicKey);
-    });
-
-  sandbox.stub(utils, 'verifyChecksum').resolves(true);
-  sandbox.stub(utils, 'verifySignature').resolves(true);
-
-  let capturedOutput = '';
-  const stdHook = hookStd((text: string) => {
-    capturedOutput += text;
-  });
-
-  try {
-    await run(
-      'http://localhost.test/dummy-cc-reporter',
-      filePath,
-      `${ECHO_CMD} 'coverage ok'`,
-    );
-    stdHook.unhook();
-  } catch (err) {
-    stdHook.unhook();
-    // do nothing else, we expect this run command to fail.
-  } finally {
-    nock.cleanAll();
-  }
-
-  t.equal(
-    capturedOutput,
-    [
-      `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...`,
-      `::debug::✅ CC Reporter downloaded...`,
-      `::debug::ℹ️ Verifying CC Reporter checksum...`,
-      `::debug::✅ CC Reported checksum verification completed...`,
-      `::debug::ℹ️ Verifying CC Reporter GPG signature...`,
-      `::debug::✅ CC Reported GPG signature verification completed...`,
-      PLATFORM === 'win32'
-        ? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} before-build"`
-        : `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} before-build`,
-      `::debug::✅ CC Reporter before-build checkin completed...`,
-      `[command]${ECHO_CMD} 'coverage ok'`,
-      `'coverage ok'`,
-      `::debug::✅ Coverage run completed...`,
-      PLATFORM === 'win32'
-        ? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} after-build --exit-code 0"`
-        : `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} after-build --exit-code 0`,
-      PLATFORM === 'win32'
-        ? `::error::The process '${DEFAULT_WORKDIR}\\test.${EXE_EXT}' failed with exit code 69`
-        : `::error::The process '${DEFAULT_WORKDIR}/test.${EXE_EXT}' failed with exit code 69`,
-      `::error::🚨 CC Reporter after-build checkin failed!`,
-      ``,
-    ].join(EOL),
-    'should correctly throw the error if the after-build step throws an error.',
-  );
-  unlinkSync(filePath);
-  unlinkSync(`${filePath}.sha256`);
-  unlinkSync(`${filePath}.sha256.sig`);
-  unlinkSync('public-key.asc');
-  nock.cleanAll();
-  t.end();
-});
-
-t.test('🧪 run() should exit cleanly when the coverage command fails.', async (t) => {
-  t.plan(1);
-  t.teardown(() => sandbox.restore());
-  const COVERAGE_COMMAND = 'wololololo'; // Random command that doesn't exist (and so should fail).
-  const filePath = `./test.${EXE_EXT}`;
-  nock('http://localhost.test')
-    .get('/dummy-cc-reporter')
-    .reply(200, async () => {
-      const dummyReporterFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}`;
-      const dummyReporter = await readFileAsync(dummyReporterFile);
-      return toReadableStream(dummyReporter);
-    });
-
-  nock('http://localhost.test')
-    .get('/dummy-cc-reporter.sha256')
-    .reply(200, async () => {
-      const checksumFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}.sha256`;
-      const checksum = await readFileAsync(checksumFile);
-      return toReadableStream(checksum);
-    });
-
-  nock('http://localhost.test')
-    .get('/dummy-cc-reporter.sha256.sig')
-    .reply(200, async () => {
-      const signatureFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}.sha256.sig`;
-      const signature = await readFileAsync(signatureFile);
-      return toReadableStream(signature);
-    });
-
-  nock('https://keys.openpgp.org')
-    .get(`/vks/v1/by-fingerprint/${CODECLIMATE_GPG_PUBLIC_KEY_ID}`)
-    .reply(200, async () => {
-      const publicKeyFile = `./test/fixtures/9BD9E2DD46DA965A537E5B0A5CBF320243B6FD85.asc`;
-      const publicKey = await readFileAsync(publicKeyFile);
-      return toReadableStream(publicKey);
-    });
-
-  sandbox.stub(utils, 'verifyChecksum').resolves(true);
-  sandbox.stub(utils, 'verifySignature').resolves(true);
-
-  let capturedOutput = '';
-  const stdHook = hookStd((text: string) => {
-    capturedOutput += text;
-  });
-
-  try {
-    await run(
-      'http://localhost.test/dummy-cc-reporter',
-      filePath,
-      COVERAGE_COMMAND,
-    );
-    stdHook.unhook();
-    t.fail('Should throw an error.');
-  } catch (err) {
-    stdHook.unhook();
     t.equal(
       capturedOutput,
       [
@@ -941,25 +782,208 @@ t.test('🧪 run() should exit cleanly when the coverage command fails.', async 
         PLATFORM === 'win32'
           ? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} before-build"`
           : `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} before-build`,
-        `before-build`,
-        `::debug::✅ CC Reporter before-build checkin completed...`,
         PLATFORM === 'win32'
-          ? `::error::Unable to locate executable file: ${COVERAGE_COMMAND}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also verify the file has a valid extension for an executable file.`
-          : `::error::Unable to locate executable file: ${COVERAGE_COMMAND}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also check the file mode to verify the file is executable.`,
-        `::error::🚨 Coverage run failed!`,
+          ? `::error::The process '${DEFAULT_WORKDIR}\\test.${EXE_EXT}' failed with exit code 69`
+          : `::error::The process '${DEFAULT_WORKDIR}/test.${EXE_EXT}' failed with exit code 69`,
+        `::error::🚨 CC Reporter before-build checkin failed!`,
         ``,
       ].join(EOL),
-      'should fail correctly on wrong/invalid coverage command.',
+      'should correctly throw the error if the before-build step throws an error.',
     );
-  } finally {
     unlinkSync(filePath);
     unlinkSync(`${filePath}.sha256`);
     unlinkSync(`${filePath}.sha256.sig`);
     unlinkSync('public-key.asc');
     nock.cleanAll();
     t.end();
-  }
-});
+  },
+);
+
+t.test(
+  '🧪 run() should throw an error if the after-build step throws an error.',
+  async (t) => {
+    t.plan(1);
+    t.teardown(() => sandbox.restore());
+    const filePath = `./test.${EXE_EXT}`;
+    nock('http://localhost.test')
+      .get('/dummy-cc-reporter')
+      .reply(200, async () => {
+        const dummyReporterFile = `./test/fixtures/dummy-cc-reporter-after-build-error.${EXE_EXT}`;
+        const dummyReporter = await readFileAsync(dummyReporterFile);
+        return toReadableStream(dummyReporter);
+      });
+
+    nock('http://localhost.test')
+      .get('/dummy-cc-reporter.sha256')
+      .reply(200, async () => {
+        const checksumFile = `./test/fixtures/dummy-cc-reporter-after-build-error.${EXE_EXT}.sha256`;
+        const checksum = await readFileAsync(checksumFile);
+        return toReadableStream(checksum);
+      });
+
+    nock('http://localhost.test')
+      .get('/dummy-cc-reporter.sha256.sig')
+      .reply(200, async () => {
+        const signatureFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}.sha256.sig`;
+        const signature = await readFileAsync(signatureFile);
+        return toReadableStream(signature);
+      });
+
+    nock('https://keys.openpgp.org')
+      .get(`/vks/v1/by-fingerprint/${CODECLIMATE_GPG_PUBLIC_KEY_ID}`)
+      .reply(200, async () => {
+        const publicKeyFile = `./test/fixtures/9BD9E2DD46DA965A537E5B0A5CBF320243B6FD85.asc`;
+        const publicKey = await readFileAsync(publicKeyFile);
+        return toReadableStream(publicKey);
+      });
+
+    sandbox.stub(utils, 'verifyChecksum').resolves(true);
+    sandbox.stub(utils, 'verifySignature').resolves(true);
+
+    let capturedOutput = '';
+    const stdHook = hookStd((text: string) => {
+      capturedOutput += text;
+    });
+
+    try {
+      await run(
+        'http://localhost.test/dummy-cc-reporter',
+        filePath,
+        `${ECHO_CMD} 'coverage ok'`,
+      );
+      stdHook.unhook();
+    } catch (err) {
+      stdHook.unhook();
+      // do nothing else, we expect this run command to fail.
+    } finally {
+      nock.cleanAll();
+    }
+
+    t.equal(
+      capturedOutput,
+      [
+        `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...`,
+        `::debug::✅ CC Reporter downloaded...`,
+        `::debug::ℹ️ Verifying CC Reporter checksum...`,
+        `::debug::✅ CC Reported checksum verification completed...`,
+        `::debug::ℹ️ Verifying CC Reporter GPG signature...`,
+        `::debug::✅ CC Reported GPG signature verification completed...`,
+        PLATFORM === 'win32'
+          ? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} before-build"`
+          : `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} before-build`,
+        `::debug::✅ CC Reporter before-build checkin completed...`,
+        `[command]${ECHO_CMD} 'coverage ok'`,
+        `'coverage ok'`,
+        `::debug::✅ Coverage run completed...`,
+        PLATFORM === 'win32'
+          ? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} after-build --exit-code 0"`
+          : `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} after-build --exit-code 0`,
+        PLATFORM === 'win32'
+          ? `::error::The process '${DEFAULT_WORKDIR}\\test.${EXE_EXT}' failed with exit code 69`
+          : `::error::The process '${DEFAULT_WORKDIR}/test.${EXE_EXT}' failed with exit code 69`,
+        `::error::🚨 CC Reporter after-build checkin failed!`,
+        ``,
+      ].join(EOL),
+      'should correctly throw the error if the after-build step throws an error.',
+    );
+    unlinkSync(filePath);
+    unlinkSync(`${filePath}.sha256`);
+    unlinkSync(`${filePath}.sha256.sig`);
+    unlinkSync('public-key.asc');
+    nock.cleanAll();
+    t.end();
+  },
+);
+
+t.test(
+  '🧪 run() should exit cleanly when the coverage command fails.',
+  async (t) => {
+    t.plan(1);
+    t.teardown(() => sandbox.restore());
+    const COVERAGE_COMMAND = 'wololololo'; // Random command that doesn't exist (and so should fail).
+    const filePath = `./test.${EXE_EXT}`;
+    nock('http://localhost.test')
+      .get('/dummy-cc-reporter')
+      .reply(200, async () => {
+        const dummyReporterFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}`;
+        const dummyReporter = await readFileAsync(dummyReporterFile);
+        return toReadableStream(dummyReporter);
+      });
+
+    nock('http://localhost.test')
+      .get('/dummy-cc-reporter.sha256')
+      .reply(200, async () => {
+        const checksumFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}.sha256`;
+        const checksum = await readFileAsync(checksumFile);
+        return toReadableStream(checksum);
+      });
+
+    nock('http://localhost.test')
+      .get('/dummy-cc-reporter.sha256.sig')
+      .reply(200, async () => {
+        const signatureFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}.sha256.sig`;
+        const signature = await readFileAsync(signatureFile);
+        return toReadableStream(signature);
+      });
+
+    nock('https://keys.openpgp.org')
+      .get(`/vks/v1/by-fingerprint/${CODECLIMATE_GPG_PUBLIC_KEY_ID}`)
+      .reply(200, async () => {
+        const publicKeyFile = `./test/fixtures/9BD9E2DD46DA965A537E5B0A5CBF320243B6FD85.asc`;
+        const publicKey = await readFileAsync(publicKeyFile);
+        return toReadableStream(publicKey);
+      });
+
+    sandbox.stub(utils, 'verifyChecksum').resolves(true);
+    sandbox.stub(utils, 'verifySignature').resolves(true);
+
+    let capturedOutput = '';
+    const stdHook = hookStd((text: string) => {
+      capturedOutput += text;
+    });
+
+    try {
+      await run(
+        'http://localhost.test/dummy-cc-reporter',
+        filePath,
+        COVERAGE_COMMAND,
+      );
+      stdHook.unhook();
+      t.fail('Should throw an error.');
+    } catch (err) {
+      stdHook.unhook();
+      t.equal(
+        capturedOutput,
+        [
+          `::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...`,
+          `::debug::✅ CC Reporter downloaded...`,
+          `::debug::ℹ️ Verifying CC Reporter checksum...`,
+          `::debug::✅ CC Reported checksum verification completed...`,
+          `::debug::ℹ️ Verifying CC Reporter GPG signature...`,
+          `::debug::✅ CC Reported GPG signature verification completed...`,
+          PLATFORM === 'win32'
+            ? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} before-build"`
+            : `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} before-build`,
+          `before-build`,
+          `::debug::✅ CC Reporter before-build checkin completed...`,
+          PLATFORM === 'win32'
+            ? `::error::Unable to locate executable file: ${COVERAGE_COMMAND}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also verify the file has a valid extension for an executable file.`
+            : `::error::Unable to locate executable file: ${COVERAGE_COMMAND}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also check the file mode to verify the file is executable.`,
+          `::error::🚨 Coverage run failed!`,
+          ``,
+        ].join(EOL),
+        'should fail correctly on wrong/invalid coverage command.',
+      );
+    } finally {
+      unlinkSync(filePath);
+      unlinkSync(`${filePath}.sha256`);
+      unlinkSync(`${filePath}.sha256.sig`);
+      unlinkSync('public-key.asc');
+      nock.cleanAll();
+      t.end();
+    }
+  },
+);
 
 t.test('💣 teardown', (t) => {
   nock.restore();
