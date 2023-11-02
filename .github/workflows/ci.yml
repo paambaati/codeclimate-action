@@ -73,8 +73,10 @@ jobs:
 
     - name: publish code coverage to code-climate (duh)
       if: ${{ github.event_name == 'push' && matrix.os.index == 1 }} # Push coverage only once inside the matrix.
-      uses: paambaati/codeclimate-action@v3.2.0
+      uses: paambaati/codeclimate-action@v5.0.0
       env:
         CC_TEST_REPORTER_ID: 3470adaf12ff7cecdfe5a968ae0e95d098b6ee58c340114e1e90d440ee9e66ab
       with:
         debug: true
+        coverageLocations: |
+          ${{github.workspace}}/.tap/report/lcov.info:lcov
