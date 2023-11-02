@@ -367,7 +367,7 @@ export function run(
   });
 }
 
-/* istanbul ignore next */
+/* c8 ignore start */
 if (require.main === module) {
   const coverageCommand = getOptionalString(
     'coverageCommand',
@@ -412,3 +412,4 @@ if (require.main === module) {
     }
   }
 }
+/* c8 ignore stop */
