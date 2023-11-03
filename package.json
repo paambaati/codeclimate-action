@@ -46,6 +46,7 @@
         "@types/node": "18.18.8",
         "@types/node-fetch": "2.6.8",
         "@types/sinon": "10.0.20",
+        "@types/which": "3.0.1",
         "nock": "13.3.7",
         "prettier": "3.0.3",
         "semantic-release-export-data": "1.0.1",
@@ -53,6 +54,7 @@
         "tap": "18.5.6",
         "to-readable-stream": "2.1.0",
         "ts-node": "10.9.1",
-        "typescript": "5.2.2"
+        "typescript": "5.2.2",
+        "which": "4.0.0"
     }
 }

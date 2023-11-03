@@ -4,6 +4,7 @@ import toReadableStream from 'to-readable-stream';
 import { default as hookStd } from 'hook-std';
 import * as glob from '@actions/glob';
 import sinon from 'sinon';
+import which from 'which';
 import { default as os, tmpdir, EOL } from 'node:os';
 import { join as joinPath } from 'node:path';
 import {
@@ -12,7 +13,6 @@ import {
   readFile,
   realpath as realpathCallback,
 } from 'node:fs';
-import { exec as pExec } from 'node:child_process';
 import { promisify } from 'util';
 import { CODECLIMATE_GPG_PUBLIC_KEY_ID, run } from '../src/main';
 import * as utils from '../src/utils';
@@ -37,7 +37,8 @@ const EXE_PATH_PREFIX =
   PLATFORM === 'win32'
     ? 'C:\\Windows\\system32\\cmd.exe /D /S /C'
     : ('' as const);
-let ECHO_CMD = PLATFORM === 'win32' ? `${EXE_PATH_PREFIX} echo` : '/bin/echo';
+// NOTE: We have to use `which` because although `echo` is in `/bin/echo` on most *nix systems, on rare occastions, it is in `/usr/bin/echo`.
+const ECHO_CMD = PLATFORM === 'win32' ? `${EXE_PATH_PREFIX} echo` : which.sync('echo');
 
 const sandbox = sinon.createSandbox();
 
@@ -45,16 +46,7 @@ t.test('🛠 setup', (t) => {
   t.plan(0);
   nock.disableNetConnect();
   if (!nock.isActive()) nock.activate();
-  // Try to detect and set `echo` only on *nix systems.
-  if (PLATFORM !== 'win32') {
-    pExec('which echo', (err, stdout, stderr) => {
-      if (err || stderr) t.fail(err?.message || stderr);
-      ECHO_CMD = stdout.trim(); // Finds system default `echo`.
-      t.end();
-    });
-  } else {
-    t.end();
-  }
+  t.end();
 });
 
 t.test('🧪 run() should run the CC reporter (happy path).', async (t) => {
