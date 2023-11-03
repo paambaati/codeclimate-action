@@ -15,7 +15,7 @@ t.test(
   {
     skip:
       platform() === 'darwin' && arch() === 'arm64'
-        ? 'Skipping because CC reporter not available on macOS Apple Silicon!'
+        ? 'Skipping because the CC reporter is not available on macOS Apple Silicon!'
         : undefined,
   },
   async (t) => {

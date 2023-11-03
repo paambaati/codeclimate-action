@@ -66,7 +66,7 @@ echo "hello"
 t.test(
   '🧪 parsePathAndFormat() should correctly parse path patterns and formats correctly on Windows.',
   {
-    skip: platform() !== 'win32',
+    skip: platform() !== 'win32' ? `Skipping because this test is only for Windows, but the current OS is ${platform()}` : undefined,
   },
   async (t) => {
     t.plan(1);
@@ -89,7 +89,7 @@ t.test(
 t.test(
   '🧪 parsePathAndFormat() should correctly parse path patterns and formats correctly on macOS.',
   {
-    skip: platform() !== 'darwin',
+    skip: platform() !== 'darwin' ? `Skipping because this test is only for macOS, but the current OS is ${platform()}` : undefined,
   },
   async (t) => {
     t.plan(1);
@@ -112,7 +112,7 @@ t.test(
 t.test(
   '🧪 parsePathAndFormat() should correctly parse path patterns and formats correctly on Linux.',
   {
-    skip: platform() !== 'linux',
+    skip: platform() !== 'linux' ? `Skipping because this test is only for Linux, but the current OS is ${platform()}` : undefined,
   },
   async (t) => {
     t.plan(1);
