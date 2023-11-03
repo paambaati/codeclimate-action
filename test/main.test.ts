@@ -38,7 +38,8 @@ const EXE_PATH_PREFIX =
     ? 'C:\\Windows\\system32\\cmd.exe /D /S /C'
     : ('' as const);
 // NOTE: We have to use `which` because although `echo` is in `/bin/echo` on most *nix systems, on rare occastions, it is in `/usr/bin/echo`.
-const ECHO_CMD = PLATFORM === 'win32' ? `${EXE_PATH_PREFIX} echo` : which.sync('echo');
+const ECHO_CMD =
+  PLATFORM === 'win32' ? `${EXE_PATH_PREFIX} echo` : which.sync('echo');
 
 const sandbox = sinon.createSandbox();
 
