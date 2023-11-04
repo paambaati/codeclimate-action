@@ -6,7 +6,7 @@
         "@semantic-release/commit-analyzer",
         "semantic-release-export-data",
         [
-            "@google/semantic-release-replace-plugin",
+            "semantic-release-replace-plugin",
             {
                 "replacements": [
                     {
