@@ -27,6 +27,9 @@ jobs:
       - name: install dependencies
         run: npm ci
 
+      - name: install workflow script dependencies
+        run: npm install semver@7.5.4
+
       - name: find current latest release version
         uses: pozetroninc/github-action-get-latest-release@master
         id: last-release
