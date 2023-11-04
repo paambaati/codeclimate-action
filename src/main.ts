@@ -58,7 +58,7 @@ export async function downloadAndRecord(
   FILE_ARTIFACTS.add(file);
 }
 
-function prepareEnv() {
+export function prepareEnv() {
   const env = process.env as { [key: string]: string };
 
   if (process.env.GITHUB_SHA !== undefined)

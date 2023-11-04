@@ -3,6 +3,7 @@ import nock from 'nock';
 import toReadableStream from 'to-readable-stream';
 import { default as hookStd } from 'hook-std';
 import * as glob from '@actions/glob';
+import { context } from '@actions/github';
 import sinon from 'sinon';
 import which from 'which';
 import { default as os, tmpdir, EOL } from 'node:os';
@@ -14,7 +15,7 @@ import {
   realpath as realpathCallback,
 } from 'node:fs';
 import { promisify } from 'util';
-import { CODECLIMATE_GPG_PUBLIC_KEY_ID, run } from '../src/main';
+import { CODECLIMATE_GPG_PUBLIC_KEY_ID, run, prepareEnv } from '../src/main';
 import * as utils from '../src/utils';
 
 /**
@@ -49,6 +50,108 @@ t.test('🛠 setup', (t) => {
   if (!nock.isActive()) nock.activate();
   t.end();
 });
+
+t.test(
+  '🧪 prepareEnv() should return envs as-is in the absence of any GitHub-related variables.',
+  (t) => {
+    t.plan(1);
+    t.teardown(() => sandbox.restore());
+    const expected = {
+      HOME: '/home',
+      USER: 'gp',
+      PATH: '/usr/local/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin',
+    };
+    sandbox.stub(process, 'env').value(expected);
+    const output = prepareEnv();
+    t.strictSame(output, expected, 'should return envs as-is');
+  },
+);
+
+t.test(
+  '🧪 prepareEnv() should return Git branch correctly when those GitHub-related variables are available.',
+  (t) => {
+    t.plan(1);
+    t.teardown(() => sandbox.restore());
+    const mockEnv = {
+      HOME: '/home',
+      USER: 'gp',
+      PATH: '/usr/local/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin',
+      GIT_BRANCH: 'refs/heads/main',
+    };
+    sandbox.stub(process, 'env').value(mockEnv);
+    const expected = {
+      ...mockEnv,
+      GIT_BRANCH: 'main',
+    };
+    const output = prepareEnv();
+    t.strictSame(
+      output,
+      expected,
+      'should return correctly updated additional environment variables',
+    );
+  },
+);
+
+t.test(
+  '🧪 prepareEnv() should return Git commit SHA and branch correctly when those GitHub-related variables are available.',
+  (t) => {
+    t.plan(1);
+    t.teardown(() => sandbox.restore());
+    const mockEnv = {
+      HOME: '/home',
+      USER: 'gp',
+      PATH: '/usr/local/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin',
+      GITHUB_SHA: '89cac89532a27123c44a8fd77c9f8f2ea5c02528',
+      GITHUB_REF: 'main',
+    };
+    sandbox.stub(process, 'env').value(mockEnv);
+    const expected = {
+      ...mockEnv,
+      GIT_COMMIT_SHA: '89cac89532a27123c44a8fd77c9f8f2ea5c02528',
+      GIT_BRANCH: 'main',
+    };
+    const output = prepareEnv();
+    t.strictSame(
+      output,
+      expected,
+      'should return correctly updated additional environment variables',
+    );
+  },
+);
+
+t.test(
+  '🧪 prepareEnv() should return Git commit SHA and branch correctly when the relevant GitHub event context is available.',
+  (t) => {
+    t.plan(1);
+    t.teardown(() => sandbox.restore());
+    const mockEnv = {
+      HOME: '/home',
+      USER: 'gp',
+      PATH: '/usr/local/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin',
+      GITHUB_EVENT_NAME: 'pull_request',
+      GITHUB_HEAD_REF: 'main',
+    };
+    const mockCommitSHA = '89cac89532a27123c44a8fd77c9f8f2ea5c02528';
+
+    sandbox.stub(process, 'env').value(mockEnv);
+    sandbox
+      .stub(context, 'payload')
+      .value({ pull_request: { head: { sha: mockCommitSHA } } });
+
+    const expected = {
+      ...mockEnv,
+      GIT_COMMIT_SHA: mockCommitSHA,
+      GIT_BRANCH: 'main',
+    };
+
+    const output = prepareEnv();
+    t.strictSame(
+      output,
+      expected,
+      'should return correctly updated additional environment variables',
+    );
+  },
+);
 
 t.test('🧪 run() should run the CC reporter (happy path).', async (t) => {
   t.plan(1);
