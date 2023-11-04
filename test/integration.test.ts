@@ -1,4 +1,4 @@
-import test from 'tape';
+import t from 'tap';
 import { unlinkSync } from 'node:fs';
 import { EOL, arch, platform } from 'node:os';
 import { default as hookStd } from 'hook-std';
@@ -10,11 +10,13 @@ import {
   FILE_ARTIFACTS,
 } from '../src/main';
 
-test.skip(
+t.test(
   '🧪 verifyChecksumAndSignature() should download the CC reporter and pass all validations (happy path).',
   {
-    // NOTE: Skipping integration test because the CC reporter is not available on macOS Apple Silicon!
-    skip: platform() === 'darwin' && arch() === 'arm64',
+    skip:
+      platform() === 'darwin' && arch() === 'arm64'
+        ? 'Skipping because the CC reporter is not available on macOS Apple Silicon!'
+        : undefined,
   },
   async (t) => {
     t.plan(1);

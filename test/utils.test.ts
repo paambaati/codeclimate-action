@@ -1,4 +1,4 @@
-import test from 'tape';
+import t from 'tap';
 import nock from 'nock';
 import toReadableStream from 'to-readable-stream';
 import { stat as statCallback, unlinkSync } from 'node:fs';
@@ -12,13 +12,13 @@ import {
 
 const stat = promisify(statCallback);
 
-test('🛠 setup', (t) => {
+t.test('🛠 setup', (t) => {
   nock.disableNetConnect();
   if (!nock.isActive()) nock.activate();
   t.end();
 });
 
-test('🧪 areObjectsEqual() should correctly check object equality', (t) => {
+t.test('🧪 areObjectsEqual() should correctly check object equality', (t) => {
   t.plan(1);
   const obj1 = {
     a: 1,
@@ -27,43 +27,49 @@ test('🧪 areObjectsEqual() should correctly check object equality', (t) => {
     d: undefined,
     45: -45.223232323,
   };
-  t.true(
+  t.ok(
     areObjectsEqual(obj1, { ...obj1 }),
     'objects should be compared correctly.',
   );
   t.end();
 });
 
-test('🧪 downloadToFile() should download the give URL and write to given file location with given mode.', async (t) => {
-  t.plan(1);
-  const filePath = './test.sh';
-  nock('http://localhost.test')
-    .get('/dummy-cc-reporter')
-    .reply(200, () => {
-      return toReadableStream(`#!/bin/bash
+t.test(
+  '🧪 downloadToFile() should download the give URL and write to given file location with given mode.',
+  async (t) => {
+    t.plan(1);
+    const filePath = './test.sh';
+    nock('http://localhost.test')
+      .get('/dummy-cc-reporter')
+      .reply(200, () => {
+        return toReadableStream(`#!/bin/bash
 echo "hello"
 `);
-    });
-  await downloadToFile(
-    'http://localhost.test/dummy-cc-reporter',
-    filePath,
-    0o777,
-  );
-  const stats = await stat(filePath);
-  t.equal(
-    stats.mode,
-    platform() === 'win32' ? 33206 : 33261,
-    'downloaded file should exist and have executable permissions on valid platforms.',
-  );
-  unlinkSync(filePath);
-  nock.cleanAll();
-  t.end();
-});
+      });
+    await downloadToFile(
+      'http://localhost.test/dummy-cc-reporter',
+      filePath,
+      0o777,
+    );
+    const stats = await stat(filePath);
+    t.equal(
+      stats.mode,
+      platform() === 'win32' ? 33206 : 33261,
+      'downloaded file should exist and have executable permissions on valid platforms.',
+    );
+    unlinkSync(filePath);
+    nock.cleanAll();
+    t.end();
+  },
+);
 
-test(
+t.test(
   '🧪 parsePathAndFormat() should correctly parse path patterns and formats correctly on Windows.',
   {
-    skip: platform() !== 'win32',
+    skip:
+      platform() !== 'win32'
+        ? `Skipping because this test is only for Windows, but the current OS is ${platform()}`
+        : undefined,
   },
   async (t) => {
     t.plan(1);
@@ -74,7 +80,7 @@ test(
       pattern: 'C:\\Users\\gp\\Projects\\codeclimate-action\\test\\*.lcov',
     };
     const result = parsePathAndFormat(fixture);
-    t.deepEqual(
+    t.strictSame(
       result,
       expected,
       'path patterns and formats should be correctly parsed on Windows',
@@ -83,10 +89,13 @@ test(
   },
 );
 
-test(
+t.test(
   '🧪 parsePathAndFormat() should correctly parse path patterns and formats correctly on macOS.',
   {
-    skip: platform() !== 'darwin',
+    skip:
+      platform() !== 'darwin'
+        ? `Skipping because this test is only for macOS, but the current OS is ${platform()}`
+        : undefined,
   },
   async (t) => {
     t.plan(1);
@@ -97,7 +106,7 @@ test(
       pattern: '/Users/gp/Projects/codeclimate-action/test/*.lcov',
     };
     const result = parsePathAndFormat(fixture);
-    t.deepEqual(
+    t.strictSame(
       result,
       expected,
       'path patterns and formats should be correctly parsed on macOS',
@@ -106,10 +115,13 @@ test(
   },
 );
 
-test(
+t.test(
   '🧪 parsePathAndFormat() should correctly parse path patterns and formats correctly on Linux.',
   {
-    skip: platform() !== 'linux',
+    skip:
+      platform() !== 'linux'
+        ? `Skipping because this test is only for Linux, but the current OS is ${platform()}`
+        : undefined,
   },
   async (t) => {
     t.plan(1);
@@ -120,7 +132,7 @@ test(
       pattern: '/Users/gp/Projects/codeclimate-action/test/*.lcov',
     };
     const result = parsePathAndFormat(fixture);
-    t.deepEqual(
+    t.strictSame(
       result,
       expected,
       'path patterns and formats should be correctly parsed on Linux',
@@ -129,7 +141,7 @@ test(
   },
 );
 
-test('💣 teardown', (t) => {
+t.test('💣 teardown', (t) => {
   nock.restore();
   nock.cleanAll();
   nock.enableNetConnect();
