@@ -9,6 +9,7 @@
         "test": "NODE_OPTIONS=\"--no-warnings\" tap run --disable-coverage",
         "test:only": "npm run test -- --only",
         "coverage": "npm run test -- --no-disable-coverage --allow-incomplete-coverage --coverage-report=lcovonly",
+        "coverage:html": "npm run coverage -- --coverage-report=html",
         "format": "prettier --write src/*.ts test/*.ts",
         "format:check": "prettier --check src/*.ts test/*.ts"
     },
