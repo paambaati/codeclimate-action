@@ -6,7 +6,7 @@
     "main": "lib/main.js",
     "scripts": {
         "build": "tsc",
-        "test": "NODE_OPTIONS=\"--no-warnings\" tap run --disable-coverage",
+        "test": "cross-env NODE_OPTIONS=\"--no-warnings\" tap run --disable-coverage",
         "test:only": "npm run test -- --only",
         "coverage": "npm run test -- --no-disable-coverage --allow-incomplete-coverage --coverage-report=lcovonly",
         "coverage:html": "npm run coverage -- --coverage-report=html",
@@ -48,6 +48,7 @@
         "@types/node-fetch": "2.6.8",
         "@types/sinon": "10.0.20",
         "@types/which": "3.0.1",
+        "cross-env": "7.0.3",
         "nock": "13.3.8",
         "prettier": "3.0.3",
         "semantic-release-export-data": "1.0.1",
