@@ -1,5 +1,6 @@
 version: 2
 updates:
+# REFER: https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#package-ecosystem
 - package-ecosystem: npm
   directory: "/"
   schedule:

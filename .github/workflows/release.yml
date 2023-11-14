@@ -18,17 +18,22 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
       - name: setup node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: install dependencies
-        run: npm ci
+        run: pnpm install
 
       - name: install workflow script dependencies
-        run: npm install semver@7.5.4
+        run: pnpm add semver@7.5.4
 
       - name: find current latest release version
         uses: pozetroninc/github-action-get-latest-release@master
@@ -39,7 +44,7 @@ jobs:
 
       - name: find next release version
         id: next-release
-        run: npm_config_yes=true npx semantic-release --dry-run
+        run: pnpm -s dlx semantic-release --dry-run
         env:
           GITHUB_TOKEN: ${{ secrets.CUSTOM_GITHUB_PERSONAL_TOKEN }}
 
@@ -78,17 +83,22 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
       - name: setup node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: install dependencies
-        run: npm ci
+        run: pnpm install
 
       - name: make a release on GitHub
-        run: npm_config_yes=true npx semantic-release
+        run: pnpm -s dlx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.CUSTOM_GITHUB_PERSONAL_TOKEN }}
           GIT_AUTHOR_NAME: 'GP'
