@@ -32,7 +32,7 @@
         "@actions/github": "6.0.0",
         "@actions/glob": "0.4.0",
         "hook-std": "2.0.0",
-        "node-fetch": "2.6.13",
+        "node-fetch": "2.7.0",
         "openpgp": "5.11.0"
     },
     "devDependencies": {
