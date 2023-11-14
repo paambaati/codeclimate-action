@@ -17,21 +17,18 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: 18
-        cache: 'npm'
+        cache: 'pnpm'
 
     - name: install dependencies
-      run: npm ci
-
-    - name: check lock file for untrusted packages
-      run: npm_config_yes=true npx lockfile-lint --path package-lock.json --allowed-hosts npm --validate-https
+      run: pnpm install
 
     - name: build typescript
-      run: npm run build -- --noEmit
+      run: pnpm run build -- --noEmit
 
     - name: check for unformatted sources
       run: |
-        npm run format:check \
-        || (echo "##[error] found unformatted files. please 'npm run format'" \
+        pnpm run format:check \
+        || (echo "##[error] found unformatted files. please 'pnpm run format'" \
                  "and check in all changes" \
             && exit 1)
 
@@ -39,7 +36,7 @@ jobs:
       # Ensure no changes, but ignore node_modules dir since dev/fresh ci deps installed.
       run: |
         git diff --exit-code --stat -- . ':!node_modules' \
-        || (echo "##[error] found changed files after build. please 'npm run build'" \
+        || (echo "##[error] found changed files after build. please 'pnpm run build'" \
                  "and check in all changes" \
             && exit 1)
 
@@ -63,13 +60,13 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: 18
-        cache: 'npm'
+        cache: 'pnpm'
 
     - name: install dependencies
-      run: npm ci
+      run: pnpm install
 
     - name: run tests and instrument coverage
-      run: npm run coverage
+      run: pnpm run coverage
 
     - name: publish code coverage to code-climate (duh)
       if: ${{ github.event_name == 'push' && matrix.os.index == 1 }} # Push coverage only once inside the matrix.
