@@ -8,9 +8,9 @@
     "scripts": {
         "build": "tsc",
         "test": "cross-env NODE_OPTIONS=\"--no-warnings\" tap run --disable-coverage",
-        "test:only": "pnpm run test -- --only",
-        "coverage": "pnpm run test -- --no-disable-coverage --allow-incomplete-coverage --coverage-report=lcovonly",
-        "coverage:html": "pnpm run coverage -- --coverage-report=html",
+        "test:only": "pnpm run test --only",
+        "coverage": "pnpm run test --no-disable-coverage --allow-incomplete-coverage --coverage-report=lcovonly",
+        "coverage:html": "pnpm run coverage --coverage-report=html",
         "format": "prettier --write src/*.ts test/*.ts",
         "format:check": "prettier --check src/*.ts test/*.ts"
     },
