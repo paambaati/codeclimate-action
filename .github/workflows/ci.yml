@@ -28,7 +28,7 @@ jobs:
       run: pnpm install
 
     - name: build typescript
-      run: pnpm run build -- --noEmit
+      run: pnpm run build --noEmit
 
     - name: check for unformatted sources
       run: |
