@@ -30,5 +30,5 @@ inputs:
     description: 'Verify the downloaded reporter''s checksum and GPG signature'
     default: 'true'
 runs:
-  using: 'node16'
+  using: 'node20'
   main: 'lib/main.js'
