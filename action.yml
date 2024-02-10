@@ -31,4 +31,4 @@ inputs:
     default: 'true'
 runs:
   using: 'node20'
-  main: 'lib/main.js'
+  main: 'src/main.ts'
