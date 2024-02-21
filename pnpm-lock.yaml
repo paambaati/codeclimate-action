@@ -44,8 +44,8 @@ devDependencies:
     specifier: 10.0.1
     version: 10.0.1(semantic-release@22.0.7)
   '@semantic-release/github':
-    specifier: 9.2.4
-    version: 9.2.4(semantic-release@22.0.7)
+    specifier: 9.2.6
+    version: 9.2.6(semantic-release@22.0.7)
   '@semantic-release/release-notes-generator':
     specifier: 12.1.0
     version: 12.1.0(semantic-release@22.0.7)
@@ -598,6 +598,33 @@ packages:
       lodash-es: 4.17.21
       mime: 4.0.0
       p-filter: 3.0.0
+      semantic-release: 22.0.7(typescript@5.2.2)
+      url-join: 5.0.0
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  /@semantic-release/github@9.2.6(semantic-release@22.0.7):
+    resolution: {integrity: sha512-shi+Lrf6exeNZF+sBhK+P011LSbhmIAoUEgEY6SsxF8irJ+J2stwI5jkyDQ+4gzYyDImzV6LCKdYB9FXnQRWKA==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      semantic-release: '>=20.1.0'
+    dependencies:
+      '@octokit/core': 5.0.1
+      '@octokit/plugin-paginate-rest': 9.1.4(@octokit/core@5.0.1)
+      '@octokit/plugin-retry': 6.0.1(@octokit/core@5.0.1)
+      '@octokit/plugin-throttling': 8.1.2(@octokit/core@5.0.1)
+      '@semantic-release/error': 4.0.0
+      aggregate-error: 5.0.0
+      debug: 4.3.4
+      dir-glob: 3.0.1
+      globby: 14.0.0
+      http-proxy-agent: 7.0.0
+      https-proxy-agent: 7.0.2
+      issue-parser: 6.0.0
+      lodash-es: 4.17.21
+      mime: 4.0.0
+      p-filter: 4.1.0
       semantic-release: 22.0.7(typescript@5.2.2)
       url-join: 5.0.0
     transitivePeerDependencies:
@@ -3340,6 +3367,13 @@ packages:
       p-map: 5.5.0
     dev: true
 
+  /p-filter@4.1.0:
+    resolution: {integrity: sha512-37/tPdZ3oJwHaS3gNJdenCDB3Tz26i9sjhnguBtvN0vYlRIiDNnvTWkuh+0hETV9rLPdJ3rlL3yVOYPIAnM8rw==}
+    engines: {node: '>=18'}
+    dependencies:
+      p-map: 7.0.1
+    dev: true
+
   /p-is-promise@3.0.0:
     resolution: {integrity: sha512-Wo8VsW4IRQSKVXsJCn7TomUaVtyfjVDn3nUP7kE967BQk0CwFpdbZs0X0uk5sW9mkBa9eNM7hCMaG93WUAwxYQ==}
     engines: {node: '>=8'}
@@ -3385,6 +3419,11 @@ packages:
     engines: {node: '>=12'}
     dependencies:
       aggregate-error: 4.0.1
+    dev: true
+
+  /p-map@7.0.1:
+    resolution: {integrity: sha512-2wnaR0XL/FDOj+TgpDuRb2KTjLnu3Fma6b1ZUwGY7LcqenMcvP/YFpjpbPKY6WVGsbuJZRuoUz8iPrt8ORnAFw==}
+    engines: {node: '>=18'}
     dev: true
 
   /p-reduce@2.1.0:
