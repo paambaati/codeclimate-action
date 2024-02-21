@@ -54,7 +54,7 @@
         "semantic-release-export-data": "1.0.1",
         "semantic-release-replace-plugin": "1.2.7",
         "sinon": "17.0.1",
-        "tap": "18.5.8",
+        "tap": "18.7.0",
         "to-readable-stream": "2.1.0",
         "ts-node": "10.9.2",
         "typescript": "5.3.3",
