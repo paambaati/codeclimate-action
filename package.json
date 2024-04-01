@@ -44,7 +44,7 @@
         "@semantic-release/github": "9.2.6",
         "@semantic-release/release-notes-generator": "12.1.0",
         "@tapjs/test": "1.3.17",
-        "@types/node": "18.19.17",
+        "@types/node": "18.19.28",
         "@types/node-fetch": "2.6.9",
         "@types/sinon": "17.0.2",
         "@types/which": "3.0.3",
