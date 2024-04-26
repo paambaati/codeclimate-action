@@ -8,7 +8,7 @@ import {
 	areObjectsEqual,
 	downloadToFile,
 	parsePathAndFormat,
-} from '../src/utils';
+} from '../src/utils.js';
 
 const stat = promisify(statCallback);
 

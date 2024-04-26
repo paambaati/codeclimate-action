@@ -1,9 +1,11 @@
 import { unlinkSync } from 'node:fs';
 import { arch, platform } from 'node:os';
+import { resolve } from 'node:path';
 import { chdir } from 'node:process';
+import { fileURLToPath } from 'node:url';
 import { debug, error, info, setFailed, warning } from '@actions/core';
 import { exec } from '@actions/exec';
-import type { ExecOptions } from '@actions/exec/lib/interfaces';
+import type { ExecOptions } from '@actions/exec/lib/interfaces.js';
 import { context } from '@actions/github';
 import * as glob from '@actions/glob';
 import {
@@ -12,7 +14,7 @@ import {
 	parsePathAndFormat,
 	verifyChecksum,
 	verifySignature,
-} from './utils';
+} from './utils.js';
 
 const PLATFORM = platform();
 // REFER: https://docs.codeclimate.com/docs/configuring-test-coverage#locations-of-pre-built-binaries
@@ -73,7 +75,7 @@ export function prepareEnv() {
 		process.env.GITHUB_EVENT_NAME &&
 		SUPPORTED_GITHUB_EVENTS.includes(process.env.GITHUB_EVENT_NAME)
 	) {
-		env.GIT_BRANCH = process.env.GITHUB_HEAD_REF || env.GIT_BRANCH; // Report correct branch for PRs (See https://github.com/paambaati/codeclimate-action/issues/86)
+		env.GIT_BRANCH = process.env.GITHUB_HEAD_REF || (env.GIT_BRANCH as string); // Report correct branch for PRs (See https://github.com/paambaati/codeclimate-action/issues/86)
 		env.GIT_COMMIT_SHA = context.payload.pull_request?.head?.sha; // Report correct SHA for the head branch (See https://github.com/paambaati/codeclimate-action/issues/140)
 	}
 
@@ -250,7 +252,7 @@ export async function run(
 		const parts: Array<string> = [];
 		for (const i in coverageLocations) {
 			const { format: type, pattern: location } = parsePathAndFormat(
-				coverageLocations[i],
+				coverageLocations[i] as string,
 			);
 			if (!type) {
 				const err = new Error(`Invalid formatter type ${type}`);
@@ -356,7 +358,10 @@ export async function run(
 }
 
 /* c8 ignore start */
-if (require.main === module) {
+const pathToThisFile = resolve(fileURLToPath(import.meta.url));
+const pathPassedToNode = resolve(process.argv[1] as string);
+const isThisFileBeingRunViaCLI = pathToThisFile.includes(pathPassedToNode);
+if (isThisFileBeingRunViaCLI) {
 	const coverageCommand = getOptionalString(
 		'coverageCommand',
 		DEFAULT_COVERAGE_COMMAND,

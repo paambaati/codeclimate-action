@@ -1,14 +1,13 @@
 import { unlinkSync } from 'node:fs';
 import { EOL, arch, platform } from 'node:os';
-import { default as hookStd } from 'hook-std';
-import t from 'tap';
+import { hookStd } from 'hook-std';
 import {
 	DOWNLOAD_URL,
 	EXECUTABLE,
 	FILE_ARTIFACTS,
 	downloadAndRecord,
 	verifyChecksumAndSignature,
-} from '../src/main';
+} from '../src/main.js';
 
 t.test(
 	'🧪 verifyChecksumAndSignature() should download the CC reporter and pass all validations (happy path).',

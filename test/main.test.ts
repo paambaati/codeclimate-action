@@ -9,14 +9,14 @@ import { join as joinPath } from 'node:path';
 import { promisify } from 'node:util';
 import { context } from '@actions/github';
 import * as glob from '@actions/glob';
-import { default as hookStd } from 'hook-std';
+import { hookStd } from 'hook-std';
 import nock from 'nock';
 import sinon from 'sinon';
 import t from 'tap';
 import toReadableStream from 'to-readable-stream';
 import which from 'which';
-import { CODECLIMATE_GPG_PUBLIC_KEY_ID, prepareEnv, run } from '../src/main';
-import * as utils from '../src/utils';
+import { CODECLIMATE_GPG_PUBLIC_KEY_ID, prepareEnv, run } from '../src/main.js';
+import * as utils from '../src/utils.js';
 
 /**
  * Dev Notes
