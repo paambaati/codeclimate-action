@@ -1,10 +1,10 @@
-import { createHash, timingSafeEqual } from 'crypto';
-import { readFile, createWriteStream } from 'fs';
-import { platform } from 'os';
-import { promisify } from 'util';
+import { createHash, timingSafeEqual } from 'node:crypto';
+import { createWriteStream, readFile } from 'node:fs';
+import { platform } from 'node:os';
+import { promisify } from 'node:util';
 import { getInput } from '@actions/core';
 import fetch from 'node-fetch';
-import { readKey, readSignature, createMessage, verify } from 'openpgp';
+import { createMessage, readKey, readSignature, verify } from 'openpgp';
 
 const readFileAsync = promisify(readFile);
 type ReadFileAsyncOptions = Omit<Parameters<typeof readFileAsync>[1], 'string'>;
@@ -17,7 +17,7 @@ type ReadFileAsyncOptions = Omit<Parameters<typeof readFileAsync>[1], 'string'>;
  * @returns Parsed input value.
  */
 export const getOptionalString = (name: string, defaultValue = '') =>
-  getInput(name, { required: false }) || defaultValue;
+	getInput(name, { required: false }) || defaultValue;
 
 /**
  * Naively checks if 2 given JSON objects are identical.
@@ -27,8 +27,8 @@ export const getOptionalString = (name: string, defaultValue = '') =>
  * @returns `true` if same, `false` if not.
  */
 export const areObjectsEqual = (
-  obj1: object | [],
-  obj2: object | [],
+	obj1: object | [],
+	obj2: object | [],
 ): boolean => JSON.stringify(obj1) === JSON.stringify(obj2);
 
 /**
@@ -39,31 +39,36 @@ export const areObjectsEqual = (
  * @param mode (Optional) File mode.
  */
 export function downloadToFile(
-  url: string,
-  file: string,
-  mode: number = 0o755,
+	url: string,
+	file: string,
+	mode = 0o755,
 ): Promise<void> {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const response = await fetch(url, {
-        redirect: 'follow',
-        follow: 5,
-        timeout: 2 * 60 * 1000, // Timeout in 2 minutes.
-      });
-      if (response.status < 200 || response.status > 299) {
-        throw new Error(
-          `Download of '${url}' failed with response status code ${response.status}`,
-        );
-      }
-      const writer = createWriteStream(file, { mode });
-      response.body.pipe(writer);
-      writer.on('close', () => {
-        return resolve();
-      });
-    } catch (err) {
-      return reject(err);
-    }
-  });
+	return new Promise((resolve, reject) => {
+		try {
+			fetch(url, {
+				redirect: 'follow',
+				follow: 5,
+				timeout: 2 * 60 * 1000, // Timeout in 2 minutes.
+			})
+				.then((response) => {
+					if (response.status < 200 || response.status > 299) {
+						throw new Error(
+							`Download of '${url}' failed with response status code ${response.status}`,
+						);
+					}
+					const writer = createWriteStream(file, { mode });
+					response.body.pipe(writer);
+					writer.on('close', () => {
+						return resolve();
+					});
+				})
+				.catch((err) => {
+					return reject(err);
+				});
+		} catch (err) {
+			return reject(err);
+		}
+	});
 }
 
 /**
@@ -74,10 +79,10 @@ export function downloadToFile(
  * @returns File contents as `Buffer`.
  */
 export async function getFileContents(
-  filePath: string,
-  options?: ReadFileAsyncOptions,
+	filePath: string,
+	options?: ReadFileAsyncOptions,
 ): Promise<Buffer> {
-  return await readFileAsync(filePath, options);
+	return await readFileAsync(filePath, options);
 }
 
 /**
@@ -88,10 +93,10 @@ export async function getFileContents(
  * @returns File contents as string.
  */
 export async function getFileContentsAsString(
-  filePath: string,
-  options?: ReadFileAsyncOptions,
+	filePath: string,
+	options?: ReadFileAsyncOptions,
 ): Promise<string> {
-  return (await getFileContents(filePath, options)).toString('utf8');
+	return (await getFileContents(filePath, options)).toString('utf8');
 }
 
 /**
@@ -102,11 +107,11 @@ export async function getFileContentsAsString(
  * @returns Checksum of file as string.
  */
 export async function getFileChecksum(
-  filePath: string,
-  algorithm: string = 'sha256',
+	filePath: string,
+	algorithm = 'sha256',
 ): Promise<string> {
-  const fileContents = await getFileContents(filePath);
-  return createHash(algorithm).update(fileContents).digest('hex');
+	const fileContents = await getFileContents(filePath);
+	return createHash(algorithm).update(fileContents).digest('hex');
 }
 
 /**
@@ -121,26 +126,26 @@ export async function getFileChecksum(
  * @returns Returns `true` if checksums match, `false` if they don't.
  */
 export async function verifyChecksum(
-  originalFile: string,
-  checksumFile: string,
-  algorithm: string = 'sha256',
+	originalFile: string,
+	checksumFile: string,
+	algorithm = 'sha256',
 ): Promise<boolean> {
-  const binaryChecksum = await getFileChecksum(originalFile, algorithm);
-  const declaredChecksumFileContents = await getFileContents(checksumFile);
-  const declaredChecksum = declaredChecksumFileContents
-    .toString()
-    .trim()
-    .split(/\s+/)[0];
-  try {
-    return timingSafeEqual(
-      Buffer.from(binaryChecksum),
-      Buffer.from(declaredChecksum),
-    );
-  } catch {
-    // Fail on other errors that can definitely cause the comparison to fail, including
-    // mismatched Buffer byte lengths.
-    return false;
-  }
+	const binaryChecksum = await getFileChecksum(originalFile, algorithm);
+	const declaredChecksumFileContents = await getFileContents(checksumFile);
+	const declaredChecksum = declaredChecksumFileContents
+		.toString()
+		.trim()
+		.split(/\s+/)[0];
+	try {
+		return timingSafeEqual(
+			Buffer.from(binaryChecksum),
+			Buffer.from(declaredChecksum),
+		);
+	} catch {
+		// Fail on other errors that can definitely cause the comparison to fail, including
+		// mismatched Buffer byte lengths.
+		return false;
+	}
 }
 
 /**
@@ -152,34 +157,34 @@ export async function verifyChecksum(
  * @returns Returns `true` if signatures match, `false` if they don't.
  */
 export async function verifySignature(
-  messageFilePath: string,
-  signatureFilePath: string,
-  publicKeyFilePath: string,
+	messageFilePath: string,
+	signatureFilePath: string,
+	publicKeyFilePath: string,
 ): Promise<boolean> {
-  const messageText = await getFileContentsAsString(messageFilePath);
-  const signatureBuffer = await getFileContents(signatureFilePath);
-  const publicKeyText = await getFileContentsAsString(publicKeyFilePath);
+	const messageText = await getFileContentsAsString(messageFilePath);
+	const signatureBuffer = await getFileContents(signatureFilePath);
+	const publicKeyText = await getFileContentsAsString(publicKeyFilePath);
 
-  const publicKey = await readKey({
-    armoredKey: publicKeyText,
-  });
+	const publicKey = await readKey({
+		armoredKey: publicKeyText,
+	});
 
-  const signature = await readSignature({
-    binarySignature: signatureBuffer,
-  });
-  const message = await createMessage({ text: messageText });
-  const verificationResult = await verify({
-    message,
-    signature,
-    verificationKeys: publicKey,
-  });
-  const { verified } = verificationResult.signatures[0];
-  try {
-    await verified;
-    return true;
-  } catch {
-    return false;
-  }
+	const signature = await readSignature({
+		binarySignature: signatureBuffer,
+	});
+	const message = await createMessage({ text: messageText });
+	const verificationResult = await verify({
+		message,
+		signature,
+		verificationKeys: publicKey,
+	});
+	const { verified } = verificationResult.signatures[0];
+	try {
+		await verified;
+		return true;
+	} catch {
+		return false;
+	}
 }
 
 /**
@@ -210,20 +215,20 @@ export async function verifySignature(
  * @returns
  */
 export function parsePathAndFormat(coverageConfigLine: string): {
-  format: string;
-  pattern: string;
+	format: string;
+	pattern: string;
 } {
-  let lineParts = coverageConfigLine.split(':');
-  // On Windows, if the glob received an absolute path, the path will
-  // include the Drive letter and the path – for example, `C:\Users\gp\projects\cc\*.lcov:lcov`
-  // which leads to 2 colons. So we handle this special case.
-  if (
-    platform() === 'win32' &&
-    (coverageConfigLine.match(/:/g) || []).length > 1
-  ) {
-    lineParts = [lineParts.slice(0, -1).join(':'), lineParts.slice(-1)[0]];
-  }
-  const format = lineParts.slice(-1)[0];
-  const pattern = lineParts.slice(0, -1)[0];
-  return { format, pattern };
+	let lineParts = coverageConfigLine.split(':');
+	// On Windows, if the glob received an absolute path, the path will
+	// include the Drive letter and the path – for example, `C:\Users\gp\projects\cc\*.lcov:lcov`
+	// which leads to 2 colons. So we handle this special case.
+	if (
+		platform() === 'win32' &&
+		(coverageConfigLine.match(/:/g) || []).length > 1
+	) {
+		lineParts = [lineParts.slice(0, -1).join(':'), lineParts.slice(-1)[0]];
+	}
+	const format = lineParts.slice(-1)[0];
+	const pattern = lineParts.slice(0, -1)[0];
+	return { format, pattern };
 }
