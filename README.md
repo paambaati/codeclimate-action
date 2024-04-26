@@ -1,7 +1,7 @@
 # codeclimate-action
 
 [![Test Coverage](https://api.codeclimate.com/v1/badges/8f2233d4c51c92ad427c/test_coverage)](https://codeclimate.com/github/paambaati/codeclimate-action/test_coverage)
-[![Build Status](https://github.com/paambaati/codeclimate-action/workflows/PR%20Checks/badge.svg)](https://actions-badge.atrox.dev/paambaati/codeclimate-action/goto)
+[![Build Status](https://github.com/paambaati/codeclimate-action/actions/workflows/ci.yml/badge.svg)](https://github.com/paambaati/codeclimate-action/actions/workflows/ci.yml)
 [![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 A GitHub action that publishes your code coverage to [Code Climate](http://codeclimate.com/).
