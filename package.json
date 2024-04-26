@@ -4,15 +4,19 @@
     "private": true,
     "description": "Publish code coverage to Code Climate",
     "main": "lib/main.js",
-    "packageManager": "pnpm@8.10.4",
+    "packageManager": "pnpm@9.0.6",
     "scripts": {
         "build": "tsc",
         "test": "cross-env NODE_OPTIONS=\"--no-warnings\" tap run --disable-coverage",
         "test:only": "pnpm run test --only",
         "coverage": "pnpm run test --no-disable-coverage --allow-incomplete-coverage --coverage-report=lcovonly",
         "coverage:html": "pnpm run coverage --coverage-report=html",
-        "format": "prettier --write src/*.ts test/*.ts",
-        "format:check": "prettier --check src/*.ts test/*.ts"
+        "biome:ci": "biome ci ./",
+        "format:check": "biome format ./",
+        "format": "biome format --write ./",
+        "lint:check": "biome lint ./",
+        "lint": "biome lint --apply ./",
+        "lint:unsafe": "biome lint --apply-unsafe ./"
     },
     "repository": {
         "type": "git",
@@ -33,31 +37,22 @@
         "@actions/glob": "0.4.0",
         "hook-std": "2.0.0",
         "node-fetch": "2.7.0",
-        "openpgp": "5.11.0"
+        "openpgp": "5.11.1"
     },
     "devDependencies": {
-        "@openpgp/web-stream-tools": "0.0.14",
-        "@semantic-release/changelog": "6.0.3",
-        "@semantic-release/commit-analyzer": "11.1.0",
-        "@semantic-release/exec": "6.0.3",
-        "@semantic-release/git": "10.0.1",
-        "@semantic-release/github": "9.2.6",
-        "@semantic-release/release-notes-generator": "12.1.0",
+        "@biomejs/biome": "1.7.1",
+        "@openpgp/web-stream-tools": "0.1.1",
         "@tapjs/test": "1.4.2",
-        "@types/node": "18.19.28",
-        "@types/node-fetch": "2.6.9",
+        "@types/node": "20.12.7",
+        "@types/node-fetch": "2.6.11",
         "@types/sinon": "17.0.3",
         "@types/which": "3.0.3",
         "cross-env": "7.0.3",
-        "nock": "13.4.0",
-        "prettier": "3.2.5",
-        "semantic-release-export-data": "1.0.1",
-        "semantic-release-replace-plugin": "1.2.7",
+        "nock": "13.5.4",
         "sinon": "17.0.1",
-        "tap": "18.7.0",
+        "tap": "18.7.2",
         "to-readable-stream": "2.1.0",
-        "ts-node": "10.9.2",
-        "typescript": "5.3.3",
+        "typescript": "5.4.5",
         "which": "4.0.0"
     }
 }

@@ -1,0 +1,24 @@
+{
+	"$schema": "https://biomejs.dev/schemas/1.7.1/schema.json",
+	"files": {
+		"include": ["./src/**/*.ts", "./test/**/*.ts"],
+		"ignore": ["./test/fixtures/**/*"]
+	},
+	"organizeImports": {
+		"enabled": true
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": true
+		}
+	},
+	"formatter": {
+		"enabled": true
+	},
+	"javascript": {
+		"formatter": {
+			"quoteStyle": "single"
+		}
+	}
+}
