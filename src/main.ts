@@ -61,22 +61,27 @@ export async function downloadAndRecord(
 }
 
 export function prepareEnv() {
-	const env = process.env as { [key: string]: string };
+	const actionEnv = { ...process.env } as Record<
+		'GITHUB_SHA' | 'GITHUB_REF' | 'GITHUB_EVENT_NAME' | 'GITHUB_HEAD_REF',
+		string
+	>;
+	const env = { ...process.env } as typeof actionEnv &
+		Record<'GIT_COMMIT_SHA' | 'GIT_BRANCH', string>;
 
-	if (process.env.GITHUB_SHA !== undefined)
-		env.GIT_COMMIT_SHA = process.env.GITHUB_SHA;
-	if (process.env.GITHUB_REF !== undefined)
-		env.GIT_BRANCH = process.env.GITHUB_REF;
+	if (actionEnv.GITHUB_SHA !== undefined)
+		env.GIT_COMMIT_SHA = actionEnv.GITHUB_SHA;
+	if (actionEnv.GITHUB_REF !== undefined) env.GIT_BRANCH = actionEnv.GITHUB_REF;
 
 	if (env.GIT_BRANCH)
 		env.GIT_BRANCH = env.GIT_BRANCH.replace(/^refs\/heads\//, ''); // Remove 'refs/heads/' prefix (See https://github.com/paambaati/codeclimate-action/issues/42)
 
 	if (
-		process.env.GITHUB_EVENT_NAME &&
-		SUPPORTED_GITHUB_EVENTS.includes(process.env.GITHUB_EVENT_NAME)
+		actionEnv.GITHUB_EVENT_NAME &&
+		SUPPORTED_GITHUB_EVENTS.includes(actionEnv.GITHUB_EVENT_NAME)
 	) {
-		env.GIT_BRANCH = process.env.GITHUB_HEAD_REF || (env.GIT_BRANCH as string); // Report correct branch for PRs (See https://github.com/paambaati/codeclimate-action/issues/86)
-		env.GIT_COMMIT_SHA = context.payload.pull_request?.head?.sha; // Report correct SHA for the head branch (See https://github.com/paambaati/codeclimate-action/issues/140)
+		env.GIT_BRANCH = actionEnv.GITHUB_HEAD_REF || env.GIT_BRANCH; // Report correct branch for PRs (See https://github.com/paambaati/codeclimate-action/issues/86)
+		// biome-ignore lint/complexity/useLiteralKeys: This is so Biome and TypeScript strict mode don't fight.
+		env.GIT_COMMIT_SHA = context.payload.pull_request?.['head']?.sha; // Report correct SHA for the head branch (See https://github.com/paambaati/codeclimate-action/issues/140)
 	}
 
 	return env;
