@@ -5,7 +5,6 @@ on:
       - published
       - created
       - released
-      - rerequested
 
 jobs:
   publish:
@@ -21,7 +20,7 @@ jobs:
           CREATE_MAJOR_VERSION_TAG: true
           CREATE_MINOR_VERSION_TAG: true
           CREATE_PATCH_VERSION_TAG: true
-          CLEAN_TARGETS: '.[!.]*,test,src,*.ts,*.json,CHANGELOG.md,_config.yml,.github,coverage,.nyc_output'
+          CLEAN_TARGETS: '.[!.]*,test,src,*.ts,*.json,CHANGELOG.md,_config.yml,.github,.tap'
           BRANCH_NAME: 'releases/${MAJOR}/${MINOR}/${PATCH}'
         env:
           DEBUG: '*'
