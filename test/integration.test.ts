@@ -1,6 +1,7 @@
 import { unlinkSync } from 'node:fs';
 import { EOL, arch, platform } from 'node:os';
 import { hookStd } from 'hook-std';
+import t from 'tap';
 import {
 	DOWNLOAD_URL,
 	EXECUTABLE,
