@@ -5,10 +5,10 @@
     "description": "Publish code coverage to Code Climate",
     "type": "module",
     "main": "lib/main.js",
-    "packageManager": "pnpm@9.1.1",
+    "packageManager": "pnpm@9.1.2",
     "scripts": {
         "build": "tsc",
-        "test": "cross-env NODE_OPTIONS=\"--no-warnings\" tap run --disable-coverage",
+        "test": "cross-env NODE_OPTIONS=\"--no-warnings --import=@tapjs/tsx/loader\" tap run --disable-coverage --include=\"test/**/*.test.ts\"",
         "test:only": "pnpm run test --only",
         "coverage": "pnpm run test --no-disable-coverage --allow-incomplete-coverage --coverage-report=lcovonly",
         "coverage:html": "pnpm run coverage --coverage-report=html",
@@ -43,8 +43,9 @@
     "devDependencies": {
         "@biomejs/biome": "1.7.3",
         "@openpgp/web-stream-tools": "0.1.1",
-        "@tapjs/core": "1.5.4",
-        "@tapjs/test": "1.4.4",
+        "@tapjs/core": "2.0.0",
+        "@tapjs/test": "2.0.0",
+        "@tapjs/tsx": "1.1.24",
         "@tsconfig/node20": "20.1.4",
         "@tsconfig/strictest": "2.0.5",
         "@types/node": "20.12.12",
@@ -54,10 +55,15 @@
         "cross-env": "7.0.3",
         "nock": "13.5.4",
         "sinon": "18.0.0",
-        "tap": "18.8.0",
+        "tap": "19.0.0",
         "to-readable-stream": "4.0.0",
         "ts-node": "10.9.2",
         "typescript": "5.4.5",
         "which": "4.0.0"
+    },
+    "tap": {
+        "plugin": [
+            "!@tapjs/typescript"
+        ]
     }
 }
