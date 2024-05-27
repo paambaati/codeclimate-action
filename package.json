@@ -43,9 +43,9 @@
     "devDependencies": {
         "@biomejs/biome": "1.7.3",
         "@openpgp/web-stream-tools": "0.1.1",
-        "@tapjs/core": "2.0.0",
-        "@tapjs/test": "2.0.0",
-        "@tapjs/tsx": "1.1.24",
+        "@tapjs/core": "2.0.1",
+        "@tapjs/test": "2.0.1",
+        "@tapjs/tsx": "1.1.25",
         "@tsconfig/node20": "20.1.4",
         "@tsconfig/strictest": "2.0.5",
         "@types/node": "20.12.12",
@@ -55,7 +55,7 @@
         "cross-env": "7.0.3",
         "nock": "13.5.4",
         "sinon": "18.0.0",
-        "tap": "19.0.0",
+        "tap": "19.0.2",
         "to-readable-stream": "4.0.0",
         "ts-node": "10.9.2",
         "typescript": "5.4.5",
@@ -63,7 +63,8 @@
     },
     "tap": {
         "plugin": [
-            "!@tapjs/typescript"
+            "!@tapjs/typescript",
+            "@tapjs/tsx"
         ]
     }
 }
