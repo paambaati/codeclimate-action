@@ -173,16 +173,25 @@ async function getLocationLines(
 	return coverageLocationLines;
 }
 
-export async function run(
-	downloadUrl: string = DOWNLOAD_URL,
-	executable: string = EXECUTABLE,
-	coverageCommand: string = DEFAULT_COVERAGE_COMMAND,
-	workingDirectory: string = DEFAULT_WORKING_DIRECTORY,
-	codeClimateDebug: string = DEFAULT_CODECLIMATE_DEBUG,
-	coverageLocationsParam: string = DEFAULT_COVERAGE_LOCATIONS,
-	coveragePrefix?: string,
-	verifyDownload: string = DEFAULT_VERIFY_DOWNLOAD,
-): Promise<void> {
+export async function run({
+	downloadUrl = DOWNLOAD_URL,
+	executable = EXECUTABLE,
+	coverageCommand = DEFAULT_COVERAGE_COMMAND,
+	workingDirectory = DEFAULT_WORKING_DIRECTORY,
+	codeClimateDebug = DEFAULT_CODECLIMATE_DEBUG,
+	coverageLocationsParam = DEFAULT_COVERAGE_LOCATIONS,
+	coveragePrefix,
+	verifyDownload = DEFAULT_VERIFY_DOWNLOAD,
+}: {
+	downloadUrl?: string;
+	executable?: string;
+	coverageCommand?: string;
+	workingDirectory?: string;
+	codeClimateDebug?: string;
+	coverageLocationsParam?: string;
+	coveragePrefix?: string;
+	verifyDownload?: string;
+} = {}): Promise<void> {
 	let lastExitCode = 1;
 	if (workingDirectory) {
 		debug(`Changing working directory to ${workingDirectory}`);
@@ -389,16 +398,16 @@ if (isThisFileBeingRunViaCLI) {
 		DEFAULT_VERIFY_DOWNLOAD,
 	);
 	try {
-		run(
-			DOWNLOAD_URL,
-			EXECUTABLE,
+		run({
+			downloadUrl: DOWNLOAD_URL,
+			executable: EXECUTABLE,
 			coverageCommand,
 			workingDirectory,
 			codeClimateDebug,
-			coverageLocations,
+			coverageLocationsParam: coverageLocations,
 			coveragePrefix,
 			verifyDownload,
-		);
+		});
 	} finally {
 		// Finally clean up all artifacts that we downloaded.
 		for (const artifact of FILE_ARTIFACTS) {

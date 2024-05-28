@@ -206,11 +206,11 @@ t.test('🧪 run() should run the CC reporter (happy path).', async (t) => {
 	});
 
 	try {
-		await run(
-			'http://localhost.test/dummy-cc-reporter',
-			filePath,
-			`${ECHO_CMD} 'coverage ok'`,
-		);
+		await run({
+			downloadUrl: 'http://localhost.test/dummy-cc-reporter',
+			executable: filePath,
+			coverageCommand: `${ECHO_CMD} 'coverage ok'`,
+		});
 		stdHook.unhook();
 	} catch (err) {
 		stdHook.unhook();
@@ -274,16 +274,12 @@ t.test(
 		});
 
 		try {
-			await run(
-				'http://localhost.test/dummy-cc-reporter',
-				filePath,
-				`${ECHO_CMD} 'coverage ok'`,
-				undefined,
-				undefined,
-				undefined,
-				undefined,
-				'false',
-			);
+			await run({
+				downloadUrl: 'http://localhost.test/dummy-cc-reporter',
+				executable: filePath,
+				coverageCommand: `${ECHO_CMD} 'coverage ok'`,
+				verifyDownload: 'false',
+			});
 			stdHook.unhook();
 		} catch (err) {
 			stdHook.unhook();
@@ -368,7 +364,11 @@ t.test(
 		});
 
 		try {
-			await run('http://localhost.test/dummy-cc-reporter', filePath, '');
+			await run({
+				downloadUrl: 'http://localhost.test/dummy-cc-reporter',
+				executable: filePath,
+				coverageCommand: '',
+			});
 			stdHook.unhook();
 		} catch (err) {
 			stdHook.unhook();
@@ -477,14 +477,13 @@ t.test('🧪 run() should convert patterns to locations.', async (t) => {
 	});
 
 	try {
-		await run(
-			'http://localhost.test/dummy-cc-reporter',
-			filePath,
-			'',
-			'',
-			'false',
-			filePattern,
-		);
+		await run({
+			downloadUrl: 'http://localhost.test/dummy-cc-reporter',
+			executable: filePath,
+			coverageCommand: '',
+			coverageLocationsParam: filePattern,
+			codeClimateDebug: 'false',
+		});
 		stdHook.unhook();
 	} catch (err) {
 		stdHook.unhook();
@@ -617,12 +616,12 @@ t.test(
 
 		const CUSTOM_WORKDIR = await realpath(tmpdir());
 		try {
-			await run(
-				'http://localhost.test/dummy-cc-reporter',
-				filePath,
-				`${ECHO_CMD} 'coverage ok'`,
-				CUSTOM_WORKDIR,
-			);
+			await run({
+				downloadUrl: 'http://localhost.test/dummy-cc-reporter',
+				executable: filePath,
+				coverageCommand: `${ECHO_CMD} 'coverage ok'`,
+				workingDirectory: CUSTOM_WORKDIR,
+			});
 			stdHook.unhook();
 		} catch (err) {
 			stdHook.unhook();
@@ -693,11 +692,11 @@ t.test(
 		});
 
 		try {
-			await run(
-				'http://localhost.test/dummy-cc-reporter',
-				filePath,
-				`${ECHO_CMD} 'coverage ok'`,
-			);
+			await run({
+				downloadUrl: 'http://localhost.test/dummy-cc-reporter',
+				executable: filePath,
+				coverageCommand: `${ECHO_CMD} 'coverage ok'`,
+			});
 			t.fail('should have thrown an error');
 			stdHook.unhook();
 		} catch (err) {
@@ -774,11 +773,11 @@ t.test(
 		});
 
 		try {
-			await run(
-				'http://localhost.test/dummy-cc-reporter',
-				filePath,
-				`echo 'coverage ok'`,
-			);
+			await run({
+				downloadUrl: 'http://localhost.test/dummy-cc-reporter',
+				executable: filePath,
+				coverageCommand: `${ECHO_CMD} 'coverage ok'`,
+			});
 			stdHook.unhook();
 		} catch (err) {
 			stdHook.unhook();
@@ -858,11 +857,11 @@ t.test(
 		});
 
 		try {
-			await run(
-				'http://localhost.test/dummy-cc-reporter',
-				filePath,
-				`${ECHO_CMD} 'coverage ok'`,
-			);
+			await run({
+				downloadUrl: 'http://localhost.test/dummy-cc-reporter',
+				executable: filePath,
+				coverageCommand: `${ECHO_CMD} 'coverage ok'`,
+			});
 			stdHook.unhook();
 		} catch (err) {
 			stdHook.unhook();
@@ -948,11 +947,11 @@ t.test(
 		});
 
 		try {
-			await run(
-				'http://localhost.test/dummy-cc-reporter',
-				filePath,
-				`${ECHO_CMD} 'coverage ok'`,
-			);
+			await run({
+				downloadUrl: 'http://localhost.test/dummy-cc-reporter',
+				executable: filePath,
+				coverageCommand: `${ECHO_CMD} 'coverage ok'`,
+			});
 			stdHook.unhook();
 		} catch (err) {
 			stdHook.unhook();
@@ -1046,11 +1045,12 @@ t.test(
 		});
 
 		try {
-			await run(
-				'http://localhost.test/dummy-cc-reporter',
-				filePath,
-				COVERAGE_COMMAND,
-			);
+			await run({
+				downloadUrl: 'http://localhost.test/dummy-cc-reporter',
+				executable: filePath,
+				coverageCommand: COVERAGE_COMMAND,
+				verifyDownload: 'false',
+			});
 			stdHook.unhook();
 			t.fail('Should throw an error.');
 		} catch (err) {
