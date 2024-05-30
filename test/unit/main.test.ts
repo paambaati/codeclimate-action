@@ -227,7 +227,7 @@ test.group('🫀 core unit tests', (g) => {
 		);
 		unlinkSync(filePath);
 		nock.cleanAll();
-	}).pin();
+	});
 
 	test('🧪 run() should run the CC reporter without verification if configured.', async ({
 		assert,
