@@ -16,6 +16,28 @@ import {
 	verifySignature,
 } from './utils.js';
 
+/**
+ * Main arguments/options for the action to run.
+ */
+export interface ActionArguments {
+	/** Download URL for the Code Climate test reporter binary. @default https://codeclimate.com/downloads/test-reporter/test-reporter-latest-{platform}-{architecture} */
+	downloadUrl?: string;
+	/** Filesystem path where the Code Climate binary should be downloaded to. @default ./{current-directory}/cc-reporter */
+	executable?: string;
+	/** Command to execute to generate coverage report. */
+	coverageCommand?: string;
+	/** Working directory to change to before running the test reporter. @default Current directory */
+	workingDirectory?: string;
+	/** Turn on debugging mode for the Code Climate test reporter. @default false */
+	codeClimateDebug?: string;
+	/** Coverage locations. @see https://github.com/paambaati/codeclimate-action/?tab=readme-ov-file#inputs */
+	coverageLocationsParam?: string;
+	/** Coverage prefix. @see https://docs.codeclimate.com/docs/configuring-test-coverage#list-of-subcommands */
+	coveragePrefix?: string;
+	/** Verifies the downloaded binary with a Code Climate-provided SHA 256 checksum and GPG sinature. @default true */
+	verifyDownload?: string;
+}
+
 const PLATFORM = platform();
 // REFER: https://docs.codeclimate.com/docs/configuring-test-coverage#locations-of-pre-built-binaries
 /** Canonical download URL for the official CodeClimate reporter. */
@@ -182,16 +204,7 @@ export async function run({
 	coverageLocationsParam = DEFAULT_COVERAGE_LOCATIONS,
 	coveragePrefix,
 	verifyDownload = DEFAULT_VERIFY_DOWNLOAD,
-}: {
-	downloadUrl?: string;
-	executable?: string;
-	coverageCommand?: string;
-	workingDirectory?: string;
-	codeClimateDebug?: string;
-	coverageLocationsParam?: string;
-	coveragePrefix?: string;
-	verifyDownload?: string;
-} = {}): Promise<void> {
+}: ActionArguments = {}): Promise<void> {
 	let lastExitCode = 1;
 	if (workingDirectory) {
 		debug(`Changing working directory to ${workingDirectory}`);

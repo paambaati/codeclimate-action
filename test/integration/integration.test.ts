@@ -1,25 +1,20 @@
 import { unlinkSync } from 'node:fs';
 import { EOL, arch, platform } from 'node:os';
+import { test } from '@japa/runner';
 import { hookStd } from 'hook-std';
-import t from 'tap';
 import {
 	DOWNLOAD_URL,
 	EXECUTABLE,
 	FILE_ARTIFACTS,
 	downloadAndRecord,
 	verifyChecksumAndSignature,
-} from '../src/main.js';
+} from '../../src/main.js';
 
-t.test(
-	'🧪 verifyChecksumAndSignature() should download the CC reporter and pass all validations (happy path).',
-	{
-		skip:
-			platform() === 'darwin' && arch() === 'arm64'
-				? 'Skipping because the CC reporter is not available on macOS Apple Silicon!'
-				: undefined,
-	},
-	async (t) => {
-		t.plan(1);
+test.group('🌏 integration tests', () => {
+	test('🧪 verifyChecksumAndSignature() should download the CC reporter and pass all validations (happy path).', async ({
+		assert,
+	}) => {
+		assert.plan(1);
 		let capturedOutput = '';
 		const stdHook = hookStd((text: string) => {
 			capturedOutput += text;
@@ -31,7 +26,7 @@ t.test(
 			stdHook.unhook();
 		} catch (err) {
 			stdHook.unhook();
-			t.fail(err);
+			assert.fail((err as Error).message);
 		} finally {
 			for (const artifact of FILE_ARTIFACTS) {
 				try {
@@ -40,7 +35,7 @@ t.test(
 			}
 		}
 
-		t.equal(
+		assert.equal(
 			capturedOutput,
 			[
 				'::debug::ℹ️ Verifying CC Reporter checksum...',
@@ -51,6 +46,8 @@ t.test(
 			].join(EOL),
 			'should download the reporter and correctly pass checksum and signature verification steps.',
 		);
-		t.end();
-	},
-);
+	}).skip(
+		platform() === 'darwin' && arch() === 'arm64',
+		'Skipping because the CC reporter is not available on macOS Apple Silicon!',
+	);
+});

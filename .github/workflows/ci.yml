@@ -15,8 +15,6 @@ jobs:
 
     - name: setup pnpm
       uses: pnpm/action-setup@v3
-      with:
-        version: 9
 
     - name: setup node.js
       uses: actions/setup-node@v4
@@ -66,8 +64,6 @@ jobs:
 
     - name: setup pnpm
       uses: pnpm/action-setup@v3
-      with:
-        version: 9
 
     - name: setup node.js
       uses: actions/setup-node@v4
@@ -92,8 +88,6 @@ jobs:
 
     - name: setup pnpm
       uses: pnpm/action-setup@v3
-      with:
-        version: 9
 
     - name: setup node.js
       uses: actions/setup-node@v4
@@ -114,4 +108,4 @@ jobs:
       with:
         debug: true
         coverageLocations: |
-          ${{github.workspace}}/.tap/report/lcov.info:lcov
+          ${{github.workspace}}/coverage/lcov.info:lcov
