@@ -46,7 +46,7 @@
         "@types/node": "20.12.7",
         "@types/node-fetch": "2.6.11",
         "@types/sinon": "17.0.3",
-        "@types/which": "3.0.3",
+        "@types/which": "3.0.4",
         "cross-env": "7.0.3",
         "nock": "13.5.4",
         "sinon": "17.0.1",
