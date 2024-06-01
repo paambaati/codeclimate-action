@@ -50,7 +50,7 @@
         "cross-env": "7.0.3",
         "nock": "13.5.4",
         "sinon": "17.0.1",
-        "tap": "18.7.2",
+        "tap": "19.0.2",
         "to-readable-stream": "2.1.0",
         "typescript": "5.4.5",
         "which": "4.0.0"
