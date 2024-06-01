@@ -40,7 +40,7 @@
         "openpgp": "5.11.1"
     },
     "devDependencies": {
-        "@biomejs/biome": "1.7.1",
+        "@biomejs/biome": "1.7.3",
         "@openpgp/web-stream-tools": "0.1.1",
         "@tapjs/test": "1.4.2",
         "@types/node": "20.12.7",
