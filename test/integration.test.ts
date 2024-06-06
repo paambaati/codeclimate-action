@@ -1,20 +1,25 @@
 import { unlinkSync } from 'node:fs';
 import { EOL, arch, platform } from 'node:os';
-import { test } from '@japa/runner';
 import { hookStd } from 'hook-std';
+import t from 'tap';
 import {
 	DOWNLOAD_URL,
 	EXECUTABLE,
 	FILE_ARTIFACTS,
 	downloadAndRecord,
 	verifyChecksumAndSignature,
-} from '../../src/main.js';
+} from '../src/main.js';
 
-test.group('🌏 integration tests', () => {
-	test('🧪 verifyChecksumAndSignature() should download the CC reporter and pass all validations (happy path).', async ({
-		assert,
-	}) => {
-		assert.plan(1);
+t.test(
+	'🧪 verifyChecksumAndSignature() should download the CC reporter and pass all validations (happy path).',
+	{
+		skip:
+			platform() === 'darwin' && arch() === 'arm64'
+				? 'Skipping because the CC reporter is not available on macOS Apple Silicon!'
+				: false,
+	},
+	async (t) => {
+		t.plan(1);
 		let capturedOutput = '';
 		const stdHook = hookStd((text: string) => {
 			capturedOutput += text;
@@ -26,7 +31,7 @@ test.group('🌏 integration tests', () => {
 			stdHook.unhook();
 		} catch (err) {
 			stdHook.unhook();
-			assert.fail((err as Error).message);
+			t.fail(err);
 		} finally {
 			for (const artifact of FILE_ARTIFACTS) {
 				try {
@@ -35,7 +40,7 @@ test.group('🌏 integration tests', () => {
 			}
 		}
 
-		assert.equal(
+		t.equal(
 			capturedOutput,
 			[
 				'::debug::ℹ️ Verifying CC Reporter checksum...',
@@ -46,8 +51,6 @@ test.group('🌏 integration tests', () => {
 			].join(EOL),
 			'should download the reporter and correctly pass checksum and signature verification steps.',
 		);
-	}).skip(
-		platform() === 'darwin' && arch() === 'arm64',
-		'Skipping because the CC reporter is not available on macOS Apple Silicon!',
-	);
-});
+		t.end();
+	},
+);

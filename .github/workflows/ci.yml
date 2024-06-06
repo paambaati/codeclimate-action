@@ -108,4 +108,4 @@ jobs:
       with:
         debug: true
         coverageLocations: |
-          ${{github.workspace}}/coverage/lcov.info:lcov
+          ${{github.workspace}}/.tap/report/lcov.info:lcov

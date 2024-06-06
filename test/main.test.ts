@@ -10,18 +10,14 @@ import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
 import { context } from '@actions/github';
 import * as glob from '@actions/glob';
-import { test } from '@japa/runner';
 import { hookStd } from 'hook-std';
 import intoStream from 'into-stream';
 import nock from 'nock';
 import sinon from 'sinon';
+import t from 'tap';
 import which from 'which';
-import {
-	CODECLIMATE_GPG_PUBLIC_KEY_ID,
-	prepareEnv,
-	run,
-} from '../../src/main.js';
-import * as utils from '../../src/utils.js';
+import { CODECLIMATE_GPG_PUBLIC_KEY_ID, prepareEnv, run } from '../src/main.js';
+import * as utils from '../src/utils.js';
 
 /**
  * Dev Notes
@@ -39,9 +35,7 @@ const readFileAsync = promisify(readFile);
 const PLATFORM = os.platform();
 const EXE_EXT = PLATFORM === 'win32' ? 'bat' : ('sh' as const);
 const DEFAULT_WORKDIR = process.cwd();
-
 const __DIRNAME = dirname(fileURLToPath(import.meta.url));
-
 const EXE_PATH_PREFIX =
 	PLATFORM === 'win32'
 		? 'C:\\Windows\\system32\\cmd.exe /D /S /C'
@@ -52,25 +46,18 @@ const ECHO_CMD =
 
 const sandbox = sinon.createSandbox();
 
-test.group('🫀 core unit tests', (g) => {
-	g.setup(() => {
-		nock.disableNetConnect();
-		if (!nock.isActive()) nock.activate();
-	});
+t.test('🛠 setup', (t) => {
+	t.plan(0);
+	nock.disableNetConnect();
+	if (!nock.isActive()) nock.activate();
+	t.end();
+});
 
-	g.teardown(() => {
-		nock.restore();
-		nock.cleanAll();
-		nock.enableNetConnect();
-		if (process.exitCode === 1) process.exitCode = 0; // This is required because @actions/core `setFailed` sets the exit code to 1 when we're testing errors.
-	});
-
-	test('🧪 prepareEnv() should return envs as-is in the absence of any GitHub-related variables.', ({
-		assert,
-		test,
-	}) => {
-		assert.plan(1);
-		test.teardown(() => sandbox.restore());
+t.test(
+	'🧪 prepareEnv() should return envs as-is in the absence of any GitHub-related variables.',
+	(t) => {
+		t.plan(1);
+		t.teardown(() => sandbox.restore());
 		const expected = {
 			HOME: '/home',
 			USER: 'gp',
@@ -78,15 +65,15 @@ test.group('🫀 core unit tests', (g) => {
 		};
 		sandbox.stub(process, 'env').value(expected);
 		const output = prepareEnv();
-		assert.deepEqual(output, expected, 'should return envs as-is');
-	});
+		t.strictSame(output, expected, 'should return envs as-is');
+	},
+);
 
-	test('🧪 prepareEnv() should return Git branch correctly when those GitHub-related variables are available.', ({
-		assert,
-		test,
-	}) => {
-		assert.plan(1);
-		test.teardown(() => sandbox.restore());
+t.test(
+	'🧪 prepareEnv() should return Git branch correctly when those GitHub-related variables are available.',
+	(t) => {
+		t.plan(1);
+		t.teardown(() => sandbox.restore());
 		const mockEnv = {
 			HOME: '/home',
 			USER: 'gp',
@@ -99,19 +86,19 @@ test.group('🫀 core unit tests', (g) => {
 			GIT_BRANCH: 'main',
 		};
 		const output = prepareEnv();
-		assert.deepEqual(
+		t.strictSame(
 			output,
 			expected,
 			'should return correctly updated additional environment variables',
 		);
-	});
+	},
+);
 
-	test('🧪 prepareEnv() should return Git commit SHA and branch correctly when those GitHub-related variables are available.', ({
-		assert,
-		test,
-	}) => {
-		assert.plan(1);
-		test.teardown(() => sandbox.restore());
+t.test(
+	'🧪 prepareEnv() should return Git commit SHA and branch correctly when those GitHub-related variables are available.',
+	(t) => {
+		t.plan(1);
+		t.teardown(() => sandbox.restore());
 		const mockEnv = {
 			HOME: '/home',
 			USER: 'gp',
@@ -126,19 +113,19 @@ test.group('🫀 core unit tests', (g) => {
 			GIT_BRANCH: 'main',
 		};
 		const output = prepareEnv();
-		assert.deepEqual(
+		t.strictSame(
 			output,
 			expected,
 			'should return correctly updated additional environment variables',
 		);
-	});
+	},
+);
 
-	test('🧪 prepareEnv() should return Git commit SHA and branch correctly when the relevant GitHub event context is available.', ({
-		assert,
-		test,
-	}) => {
-		assert.plan(1);
-		test.teardown(() => sandbox.restore());
+t.test(
+	'🧪 prepareEnv() should return Git commit SHA and branch correctly when the relevant GitHub event context is available.',
+	(t) => {
+		t.plan(1);
+		t.teardown(() => sandbox.restore());
 		const mockEnv = {
 			HOME: '/home',
 			USER: 'gp',
@@ -160,86 +147,90 @@ test.group('🫀 core unit tests', (g) => {
 		};
 
 		const output = prepareEnv();
-		assert.deepEqual(
+		t.strictSame(
 			output,
 			expected,
 			'should return correctly updated additional environment variables',
 		);
-	});
+	},
+);
 
-	test('🧪 run() should run the CC reporter (happy path).', async ({
-		assert,
-		test,
-	}) => {
-		assert.plan(1);
-		test.teardown(() => sandbox.restore());
-		const filePath = `./test.${EXE_EXT}`;
-		nock('http://localhost.test')
-			.get('/dummy-cc-reporter')
-			.reply(200, async () => {
-				const dummyReporterFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}`;
-				const dummyReporter = await readFileAsync(dummyReporterFile);
-				return intoStream(dummyReporter);
-			});
-
-		let capturedOutput = '';
-		const stdHook = hookStd((text: string) => {
-			capturedOutput += text;
+t.test('🧪 run() should run the CC reporter (happy path).', async (t) => {
+	t.plan(1);
+	t.teardown(() => sandbox.restore());
+	const filePath = `./test.${EXE_EXT}`;
+	nock('http://localhost.test')
+		.get('/dummy-cc-reporter')
+		.reply(200, async () => {
+			const dummyReporterFile = joinPath(
+				__DIRNAME,
+				`../test/fixtures/dummy-cc-reporter.${EXE_EXT}`,
+			);
+			const dummyReporter = await readFileAsync(dummyReporterFile);
+			return intoStream(dummyReporter);
 		});
 
-		try {
-			await run({
-				downloadUrl: 'http://localhost.test/dummy-cc-reporter',
-				executable: filePath,
-				coverageCommand: `${ECHO_CMD} 'coverage ok'`,
-				verifyDownload: 'false',
-			});
-			stdHook.unhook();
-		} catch (err) {
-			stdHook.unhook();
-			assert.fail((err as Error).message);
-		} finally {
-			nock.cleanAll();
-		}
+	let capturedOutput = '';
+	const stdHook = hookStd((text: string) => {
+		capturedOutput += text;
+	});
 
-		const expected = [
-			'::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...',
-			'::debug::✅ CC Reporter downloaded...',
-			PLATFORM === 'win32'
-				? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} before-build"`
-				: `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} before-build`,
-			'before-build',
-			'::debug::✅ CC Reporter before-build checkin completed...',
-			`[command]${ECHO_CMD} 'coverage ok'`,
-			`'coverage ok'`,
-			'::debug::✅ Coverage run completed...',
-			PLATFORM === 'win32'
-				? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} after-build --exit-code 0"`
-				: `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} after-build --exit-code 0`,
-			'after-build --exit-code 0',
-			'::debug::✅ CC Reporter after-build checkin completed!',
-			'',
-		].join(EOL);
-		assert.equal(
-			JSON.stringify(capturedOutput),
-			JSON.stringify(expected),
-			'should execute all steps in happy path.',
-		);
-		unlinkSync(filePath);
+	try {
+		await run({
+			downloadUrl: 'http://localhost.test/dummy-cc-reporter',
+			executable: filePath,
+			coverageCommand: `${ECHO_CMD} 'coverage ok'`,
+			verifyDownload: 'false',
+		});
+		stdHook.unhook();
+	} catch (err) {
+		stdHook.unhook();
+		t.fail(err);
+	} finally {
 		nock.cleanAll();
-	});
+	}
 
-	test('🧪 run() should run the CC reporter without verification if configured.', async ({
-		assert,
-		test,
-	}) => {
-		assert.plan(1);
-		test.teardown(() => sandbox.restore());
+	const expected = [
+		'::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...',
+		'::debug::✅ CC Reporter downloaded...',
+		PLATFORM === 'win32'
+			? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} before-build"`
+			: `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} before-build`,
+		'before-build',
+		'::debug::✅ CC Reporter before-build checkin completed...',
+		`[command]${ECHO_CMD} 'coverage ok'`,
+		`'coverage ok'`,
+		'::debug::✅ Coverage run completed...',
+		PLATFORM === 'win32'
+			? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} after-build --exit-code 0"`
+			: `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} after-build --exit-code 0`,
+		'after-build --exit-code 0',
+		'::debug::✅ CC Reporter after-build checkin completed!',
+		'',
+	].join(EOL);
+	t.equal(
+		JSON.stringify(capturedOutput),
+		JSON.stringify(expected),
+		'should execute all steps in happy path.',
+	);
+	unlinkSync(filePath);
+	nock.cleanAll();
+	t.end();
+});
+
+t.test(
+	'🧪 run() should run the CC reporter without verification if configured.',
+	async (t) => {
+		t.plan(1);
+		t.teardown(() => sandbox.restore());
 		const filePath = `./test.${EXE_EXT}`;
 		nock('http://localhost.test')
 			.get('/dummy-cc-reporter')
 			.reply(200, async () => {
-				const dummyReporterFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}`;
+				const dummyReporterFile = joinPath(
+					__DIRNAME,
+					`../test/fixtures/dummy-cc-reporter.${EXE_EXT}`,
+				);
 				const dummyReporter = await readFileAsync(dummyReporterFile);
 				return intoStream(dummyReporter);
 			});
@@ -259,12 +250,12 @@ test.group('🫀 core unit tests', (g) => {
 			stdHook.unhook();
 		} catch (err) {
 			stdHook.unhook();
-			assert.fail((err as Error).message);
+			t.fail(err);
 		} finally {
 			nock.cleanAll();
 		}
 
-		assert.equal(
+		t.equal(
 			capturedOutput,
 			[
 				'::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...',
@@ -288,19 +279,23 @@ test.group('🫀 core unit tests', (g) => {
 		);
 		unlinkSync(filePath);
 		nock.cleanAll();
-	});
+		t.end();
+	},
+);
 
-	test('🧪 run() should run the CC reporter without a coverage command.', async ({
-		assert,
-		test,
-	}) => {
-		assert.plan(1);
-		test.teardown(() => sandbox.restore());
+t.test(
+	'🧪 run() should run the CC reporter without a coverage command.',
+	async (t) => {
+		t.plan(1);
+		t.teardown(() => sandbox.restore());
 		const filePath = `./test.${EXE_EXT}`;
 		nock('http://localhost.test')
 			.get('/dummy-cc-reporter')
 			.reply(200, async () => {
-				const dummyReporterFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}`;
+				const dummyReporterFile = joinPath(
+					__DIRNAME,
+					`../test/fixtures/dummy-cc-reporter.${EXE_EXT}`,
+				);
 				const dummyReporter = await readFileAsync(dummyReporterFile);
 				return intoStream(dummyReporter);
 			});
@@ -314,17 +309,18 @@ test.group('🫀 core unit tests', (g) => {
 			await run({
 				downloadUrl: 'http://localhost.test/dummy-cc-reporter',
 				executable: filePath,
+				coverageCommand: '',
 				verifyDownload: 'false',
 			});
 			stdHook.unhook();
 		} catch (err) {
 			stdHook.unhook();
-			assert.fail((err as Error).message);
+			t.fail(err);
 		} finally {
 			nock.cleanAll();
 		}
 
-		assert.equal(
+		t.equal(
 			capturedOutput,
 			[
 				'::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...',
@@ -346,14 +342,18 @@ test.group('🫀 core unit tests', (g) => {
 		);
 		unlinkSync(filePath);
 		nock.cleanAll();
-	});
+		t.end();
+	},
+);
 
-	test('🧪 run() should convert patterns to locations.', async ({
-		assert,
-		test,
-	}) => {
-		assert.plan(3);
-		test.teardown(() => sandbox.restore());
+t.test(
+	'🧪 run() should convert patterns to locations.',
+	{
+		skip: 'Skipping for now as ES modules cannot be stubbed 😭',
+	},
+	async (t) => {
+		t.plan(3);
+		t.teardown(() => sandbox.restore());
 		const globSpy = sandbox
 			.stub()
 			.resolves([
@@ -369,10 +369,49 @@ test.group('🫀 core unit tests', (g) => {
 		nock('http://localhost.test')
 			.get('/dummy-cc-reporter')
 			.reply(200, async () => {
-				const dummyReporterFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}`;
+				const dummyReporterFile = joinPath(
+					__DIRNAME,
+					`../test/fixtures/dummy-cc-reporter.${EXE_EXT}`,
+				);
 				const dummyReporter = await readFileAsync(dummyReporterFile);
 				return intoStream(dummyReporter);
 			});
+
+		nock('http://localhost.test')
+			.get('/dummy-cc-reporter.sha256')
+			.reply(200, async () => {
+				const checksumFile = joinPath(
+					__DIRNAME,
+					`../test/fixtures/dummy-cc-reporter.${EXE_EXT}.sha256`,
+				);
+				const checksum = await readFileAsync(checksumFile);
+				return intoStream(checksum);
+			});
+
+		nock('http://localhost.test')
+			.get('/dummy-cc-reporter.sha256.sig')
+			.reply(200, async () => {
+				const signatureFile = joinPath(
+					__DIRNAME,
+					`../test/fixtures/dummy-cc-reporter.${EXE_EXT}.sha256.sig`,
+				);
+				const signature = await readFileAsync(signatureFile);
+				return intoStream(signature);
+			});
+
+		nock('https://keys.openpgp.org')
+			.get(`/vks/v1/by-fingerprint/${CODECLIMATE_GPG_PUBLIC_KEY_ID}`)
+			.reply(200, async () => {
+				const publicKeyFile = joinPath(
+					__DIRNAME,
+					'../test/fixtures/9BD9E2DD46DA965A537E5B0A5CBF320243B6FD85.asc',
+				);
+				const publicKey = await readFileAsync(publicKeyFile);
+				return intoStream(publicKey);
+			});
+
+		sandbox.stub(utils, 'verifyChecksum').resolves(true);
+		sandbox.stub(utils, 'verifySignature').resolves(true);
 
 		const filePattern =
 			PLATFORM === 'win32'
@@ -393,33 +432,38 @@ test.group('🫀 core unit tests', (g) => {
 			await run({
 				downloadUrl: 'http://localhost.test/dummy-cc-reporter',
 				executable: filePath,
-				verifyDownload: 'false',
+				coverageCommand: '',
 				coverageLocationsParam: filePattern,
+				codeClimateDebug: 'false',
 			});
 			stdHook.unhook();
 		} catch (err) {
 			stdHook.unhook();
-			assert.fail((err as Error).message);
+			t.fail(err);
 		} finally {
 			nock.cleanAll();
 		}
 
-		assert.equal(
+		t.equal(
 			(glob.create as unknown as sinon.SinonSpy).firstCall.firstArg,
 			PLATFORM === 'win32'
 				? `${DEFAULT_WORKDIR}\\*.lcov`
 				: `${DEFAULT_WORKDIR}/*.lcov`,
 			'should create a globber with given pattern.',
 		);
-		assert.ok(
+		t.ok(
 			globSpy.calledOnceWithExactly(),
 			'should get the paths of the files from the newly created globber instance.',
 		);
-		assert.equal(
+		t.equal(
 			capturedOutput,
 			[
 				'::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...',
 				'::debug::✅ CC Reporter downloaded...',
+				'::debug::ℹ️ Verifying CC Reporter checksum...',
+				'::debug::✅ CC Reported checksum verification completed...',
+				'::debug::ℹ️ Verifying CC Reporter GPG signature...',
+				'::debug::✅ CC Reported GPG signature verification completed...',
 				PLATFORM === 'win32'
 					? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} before-build"`
 					: `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} before-build`,
@@ -458,21 +502,22 @@ test.group('🫀 core unit tests', (g) => {
 		unlinkSync(fileA);
 		unlinkSync(fileB);
 		nock.cleanAll();
-	}).skip(true, 'Skipping because ES modules cannot be stubbed 😭');
+		t.end();
+	},
+);
 
-	test('🧪 run() should correctly switch the working directory if given.', async ({
-		assert,
-		test,
-	}) => {
-		assert.plan(1);
-		test.teardown(() => sandbox.restore());
-		const filePath = `./test.${EXE_EXT}`;
+t.test(
+	'🧪 run() should correctly switch the working directory if given.',{ only: true },
+	async (t) => {
+		t.plan(1);
+		t.teardown(() => sandbox.restore());
+		
 		nock('http://localhost.test')
 			.get('/dummy-cc-reporter')
 			.reply(200, async () => {
 				const dummyReporterFile = joinPath(
-					__DIRNAME,
-					`../fixtures/dummy-cc-reporter.${EXE_EXT}`,
+					__dirname,
+					`./fixtures/dummy-cc-reporter.${EXE_EXT}`,
 				);
 				const dummyReporter = await readFileAsync(dummyReporterFile);
 				return intoStream(dummyReporter);
@@ -484,6 +529,11 @@ test.group('🫀 core unit tests', (g) => {
 		});
 
 		const CUSTOM_WORKDIR = await realpath(tmpdir());
+		const filePath = joinPath(
+			CUSTOM_WORKDIR,
+			`./test.${EXE_EXT}`
+		);
+
 		try {
 			await run({
 				downloadUrl: 'http://localhost.test/dummy-cc-reporter',
@@ -495,12 +545,12 @@ test.group('🫀 core unit tests', (g) => {
 			stdHook.unhook();
 		} catch (err) {
 			stdHook.unhook();
-			assert.fail((err as Error).message);
+			t.fail(err);
 		} finally {
 			nock.cleanAll();
 		}
 
-		assert.equal(
+		t.equal(
 			capturedOutput,
 			[
 				`::debug::Changing working directory to ${CUSTOM_WORKDIR}`,
@@ -527,19 +577,23 @@ test.group('🫀 core unit tests', (g) => {
 		unlinkSync(filePath);
 		nock.cleanAll();
 		process.chdir(DEFAULT_WORKDIR);
-	});
+		t.end();
+	},
+);
 
-	test('🧪 run() should throw an error if the checksum verification fails.', async ({
-		assert,
-		test,
-	}) => {
-		assert.plan(1);
-		test.teardown(() => sandbox.restore());
+t.test(
+	'🧪 run() should throw an error if the checksum verification fails.',
+	async (t) => {
+		t.plan(1);
+		t.teardown(() => sandbox.restore());
 		const filePath = `./test.${EXE_EXT}`;
 		nock('http://localhost.test')
 			.get('/dummy-cc-reporter')
 			.reply(200, async () => {
-				const dummyReporterFile = `./test/fixtures/dummy-cc-reporter-before-build-error.${EXE_EXT}`;
+				const dummyReporterFile = joinPath(
+					__DIRNAME,
+					`../test/fixtures/dummy-cc-reporter-before-build-error.${EXE_EXT}`,
+				);
 				const dummyReporter = await readFileAsync(dummyReporterFile);
 				return intoStream(dummyReporter);
 			});
@@ -561,8 +615,9 @@ test.group('🫀 core unit tests', (g) => {
 				downloadUrl: 'http://localhost.test/dummy-cc-reporter',
 				executable: filePath,
 				coverageCommand: `${ECHO_CMD} 'coverage ok'`,
+				verifyDownload: 'true',
 			});
-			assert.fail('should have thrown an error');
+			t.fail('should have thrown an error');
 			stdHook.unhook();
 		} catch (err) {
 			stdHook.unhook();
@@ -571,7 +626,7 @@ test.group('🫀 core unit tests', (g) => {
 			nock.cleanAll();
 		}
 
-		assert.equal(
+		t.equal(
 			capturedOutput,
 			[
 				'::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...',
@@ -586,19 +641,26 @@ test.group('🫀 core unit tests', (g) => {
 		unlinkSync(filePath);
 		unlinkSync(`${filePath}.sha256`);
 		nock.cleanAll();
-	});
+		t.end();
+	},
+);
 
-	test('🧪 run() should throw an error if the GPG signature verification fails.', async ({
-		assert,
-		test,
-	}) => {
-		assert.plan(1);
-		test.teardown(() => sandbox.restore());
+t.test(
+	'🧪 run() should throw an error if the GPG signature verification fails.',
+	{
+		skip: 'Skipping for now as ES modules cannot be stubbed 😭',
+	},
+	async (t) => {
+		t.plan(1);
+		t.teardown(() => sandbox.restore());
 		const filePath = `./test.${EXE_EXT}`;
 		nock('http://localhost.test')
 			.get('/dummy-cc-reporter')
 			.reply(200, async () => {
-				const dummyReporterFile = `./test/fixtures/dummy-cc-reporter-before-build-error.${EXE_EXT}`;
+				const dummyReporterFile = joinPath(
+					__DIRNAME,
+					`../test/fixtures/dummy-cc-reporter-before-build-error.${EXE_EXT}`,
+				);
 				const dummyReporter = await readFileAsync(dummyReporterFile);
 				return intoStream(dummyReporter);
 			});
@@ -606,7 +668,10 @@ test.group('🫀 core unit tests', (g) => {
 		nock('http://localhost.test')
 			.get('/dummy-cc-reporter.sha256')
 			.reply(200, async () => {
-				const checksumFile = `./test/fixtures/dummy-cc-reporter-before-build-error.${EXE_EXT}.sha256`;
+				const checksumFile = joinPath(
+					__DIRNAME,
+					`../test/fixtures/dummy-cc-reporter-before-build-error.${EXE_EXT}`,
+				);
 				const checksum = await readFileAsync(checksumFile);
 				return intoStream(checksum);
 			});
@@ -614,7 +679,10 @@ test.group('🫀 core unit tests', (g) => {
 		nock('http://localhost.test')
 			.get('/dummy-cc-reporter.sha256.sig')
 			.reply(200, async () => {
-				const signatureFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}.sha256.sig`;
+				const signatureFile = joinPath(
+					__DIRNAME,
+					`../test/fixtures/dummy-cc-reporter.${EXE_EXT}.sha256.sig`,
+				);
 				const signature = await readFileAsync(signatureFile);
 				return intoStream(signature);
 			});
@@ -622,8 +690,10 @@ test.group('🫀 core unit tests', (g) => {
 		nock('https://keys.openpgp.org')
 			.get(`/vks/v1/by-fingerprint/${CODECLIMATE_GPG_PUBLIC_KEY_ID}`)
 			.reply(200, async () => {
-				const publicKeyFile =
-					'./test/fixtures/9BD9E2DD46DA965A537E5B0A5CBF320243B6FD85.asc';
+				const publicKeyFile = joinPath(
+					__DIRNAME,
+					'../test/fixtures/9BD9E2DD46DA965A537E5B0A5CBF320243B6FD85.asc',
+				);
 				const publicKey = await readFileAsync(publicKeyFile);
 				return intoStream(publicKey);
 			});
@@ -650,7 +720,7 @@ test.group('🫀 core unit tests', (g) => {
 			nock.cleanAll();
 		}
 
-		assert.equal(
+		t.equal(
 			capturedOutput,
 			[
 				'::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...',
@@ -665,25 +735,37 @@ test.group('🫀 core unit tests', (g) => {
 			'should correctly throw the error if the GPG signature verification fails.',
 		);
 		unlinkSync(filePath);
-		unlinkSync(`${filePath}.sha256`);
-		unlinkSync(`${filePath}.sha256.sig`);
-		unlinkSync('public-key.asc');
 		nock.cleanAll();
-	}).skip(true, 'Skipping because ES modules cannot be stubbed 😭');
+		t.end();
+	},
+);
 
-	test('🧪 run() should throw an error if the before-build step throws an error.', async ({
-		assert,
-		test,
-	}) => {
-		assert.plan(1);
-		test.teardown(() => sandbox.restore());
+t.test(
+	'🧪 run() should throw an error if the before-build step throws an error.',
+	async (t) => {
+		t.plan(1);
+		t.teardown(() => sandbox.restore());
 		const filePath = `./test.${EXE_EXT}`;
 		nock('http://localhost.test')
 			.get('/dummy-cc-reporter')
 			.reply(200, async () => {
-				const dummyReporterFile = `./test/fixtures/dummy-cc-reporter-before-build-error.${EXE_EXT}`;
+				const dummyReporterFile = joinPath(
+					__DIRNAME,
+					`../test/fixtures/dummy-cc-reporter-before-build-error.${EXE_EXT}`,
+				);
 				const dummyReporter = await readFileAsync(dummyReporterFile);
 				return intoStream(dummyReporter);
+			});
+
+		nock('http://localhost.test')
+			.get('/dummy-cc-reporter.sha256')
+			.reply(200, async () => {
+				const checksumFile = joinPath(
+					__DIRNAME,
+					`../test/fixtures/dummy-cc-reporter-before-build-error.${EXE_EXT}.sha256`,
+				);
+				const checksum = await readFileAsync(checksumFile);
+				return intoStream(checksum);
 			});
 
 		let capturedOutput = '';
@@ -706,7 +788,7 @@ test.group('🫀 core unit tests', (g) => {
 			nock.cleanAll();
 		}
 
-		assert.equal(
+		t.equal(
 			capturedOutput,
 			[
 				'::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...',
@@ -724,19 +806,23 @@ test.group('🫀 core unit tests', (g) => {
 		);
 		unlinkSync(filePath);
 		nock.cleanAll();
-	});
+		t.end();
+	},
+);
 
-	test('🧪 run() should throw an error if the after-build step throws an error.', async ({
-		assert,
-		test,
-	}) => {
-		assert.plan(1);
-		test.teardown(() => sandbox.restore());
+t.test(
+	'🧪 run() should throw an error if the after-build step throws an error.',
+	async (t) => {
+		t.plan(1);
+		t.teardown(() => sandbox.restore());
 		const filePath = `./test.${EXE_EXT}`;
 		nock('http://localhost.test')
 			.get('/dummy-cc-reporter')
 			.reply(200, async () => {
-				const dummyReporterFile = `./test/fixtures/dummy-cc-reporter-after-build-error.${EXE_EXT}`;
+				const dummyReporterFile = joinPath(
+					__DIRNAME,
+					`../test/fixtures/dummy-cc-reporter-after-build-error.${EXE_EXT}`,
+				);
 				const dummyReporter = await readFileAsync(dummyReporterFile);
 				return intoStream(dummyReporter);
 			});
@@ -761,7 +847,7 @@ test.group('🫀 core unit tests', (g) => {
 			nock.cleanAll();
 		}
 
-		assert.equal(
+		t.equal(
 			capturedOutput,
 			[
 				'::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...',
@@ -786,20 +872,24 @@ test.group('🫀 core unit tests', (g) => {
 		);
 		unlinkSync(filePath);
 		nock.cleanAll();
-	});
+		t.end();
+	},
+);
 
-	test('🧪 run() should exit cleanly when the coverage command fails.', async ({
-		assert,
-		test,
-	}) => {
-		assert.plan(1);
-		test.teardown(() => sandbox.restore());
+t.test(
+	'🧪 run() should exit cleanly when the coverage command fails.',
+	async (t) => {
+		t.plan(1);
+		t.teardown(() => sandbox.restore());
 		const COVERAGE_COMMAND = 'wololololo'; // Random command that doesn't exist (and so should fail).
 		const filePath = `./test.${EXE_EXT}`;
 		nock('http://localhost.test')
 			.get('/dummy-cc-reporter')
 			.reply(200, async () => {
-				const dummyReporterFile = `./test/fixtures/dummy-cc-reporter.${EXE_EXT}`;
+				const dummyReporterFile = joinPath(
+					__DIRNAME,
+					`../test/fixtures/dummy-cc-reporter.${EXE_EXT}`,
+				);
 				const dummyReporter = await readFileAsync(dummyReporterFile);
 				return intoStream(dummyReporter);
 			});
@@ -817,10 +907,10 @@ test.group('🫀 core unit tests', (g) => {
 				verifyDownload: 'false',
 			});
 			stdHook.unhook();
-			assert.fail('Should throw an error.');
+			t.fail('Should throw an error.');
 		} catch (err) {
 			stdHook.unhook();
-			assert.equal(
+			t.equal(
 				capturedOutput,
 				[
 					'::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...',
@@ -841,6 +931,16 @@ test.group('🫀 core unit tests', (g) => {
 		} finally {
 			unlinkSync(filePath);
 			nock.cleanAll();
+			t.end();
 		}
-	});
+	},
+);
+
+t.test('💣 teardown', (t) => {
+	nock.restore();
+	nock.cleanAll();
+	nock.enableNetConnect();
+	sandbox.restore();
+	if (process.exitCode === 1) process.exitCode = 0; // This is required because @actions/core `setFailed` sets the exit code to 0 when we're testing errors.
+	t.end();
 });

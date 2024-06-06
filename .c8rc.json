@@ -1,8 +1,0 @@
-{
-    "src": "./src",
-    "all": true,
-    "reporter": [
-        "text",
-        "lcovonly"
-    ]
-}

@@ -7,7 +7,6 @@
     "compilerOptions": {
         "outDir": "./lib",
         "rootDirs": [
-            "./bin",
             "./src",
             "./test"
         ],

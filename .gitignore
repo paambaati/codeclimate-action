@@ -4,6 +4,5 @@ node_modules/
 coverage/
 test.sh
 test.sh.sha256
+.tap/
 .tsimp/
-**/*.js
-
