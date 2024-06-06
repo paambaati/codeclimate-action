@@ -35,7 +35,7 @@ const readFileAsync = promisify(readFile);
 const PLATFORM = os.platform();
 const EXE_EXT = PLATFORM === 'win32' ? 'bat' : ('sh' as const);
 const DEFAULT_WORKDIR = process.cwd();
-const __DIRNAME = dirname(fileURLToPath(import.meta.url));
+const THIS_MODULE_DIRNAME = dirname(fileURLToPath(import.meta.url));
 const EXE_PATH_PREFIX =
 	PLATFORM === 'win32'
 		? 'C:\\Windows\\system32\\cmd.exe /D /S /C'
@@ -163,7 +163,7 @@ t.test('🧪 run() should run the CC reporter (happy path).', async (t) => {
 		.get('/dummy-cc-reporter')
 		.reply(200, async () => {
 			const dummyReporterFile = joinPath(
-				__DIRNAME,
+				THIS_MODULE_DIRNAME,
 				`../test/fixtures/dummy-cc-reporter.${EXE_EXT}`,
 			);
 			const dummyReporter = await readFileAsync(dummyReporterFile);
@@ -228,7 +228,7 @@ t.test(
 			.get('/dummy-cc-reporter')
 			.reply(200, async () => {
 				const dummyReporterFile = joinPath(
-					__DIRNAME,
+					THIS_MODULE_DIRNAME,
 					`../test/fixtures/dummy-cc-reporter.${EXE_EXT}`,
 				);
 				const dummyReporter = await readFileAsync(dummyReporterFile);
@@ -293,7 +293,7 @@ t.test(
 			.get('/dummy-cc-reporter')
 			.reply(200, async () => {
 				const dummyReporterFile = joinPath(
-					__DIRNAME,
+					THIS_MODULE_DIRNAME,
 					`../test/fixtures/dummy-cc-reporter.${EXE_EXT}`,
 				);
 				const dummyReporter = await readFileAsync(dummyReporterFile);
@@ -370,7 +370,7 @@ t.test(
 			.get('/dummy-cc-reporter')
 			.reply(200, async () => {
 				const dummyReporterFile = joinPath(
-					__DIRNAME,
+					THIS_MODULE_DIRNAME,
 					`../test/fixtures/dummy-cc-reporter.${EXE_EXT}`,
 				);
 				const dummyReporter = await readFileAsync(dummyReporterFile);
@@ -381,7 +381,7 @@ t.test(
 			.get('/dummy-cc-reporter.sha256')
 			.reply(200, async () => {
 				const checksumFile = joinPath(
-					__DIRNAME,
+					THIS_MODULE_DIRNAME,
 					`../test/fixtures/dummy-cc-reporter.${EXE_EXT}.sha256`,
 				);
 				const checksum = await readFileAsync(checksumFile);
@@ -392,7 +392,7 @@ t.test(
 			.get('/dummy-cc-reporter.sha256.sig')
 			.reply(200, async () => {
 				const signatureFile = joinPath(
-					__DIRNAME,
+					THIS_MODULE_DIRNAME,
 					`../test/fixtures/dummy-cc-reporter.${EXE_EXT}.sha256.sig`,
 				);
 				const signature = await readFileAsync(signatureFile);
@@ -403,7 +403,7 @@ t.test(
 			.get(`/vks/v1/by-fingerprint/${CODECLIMATE_GPG_PUBLIC_KEY_ID}`)
 			.reply(200, async () => {
 				const publicKeyFile = joinPath(
-					__DIRNAME,
+					THIS_MODULE_DIRNAME,
 					'../test/fixtures/9BD9E2DD46DA965A537E5B0A5CBF320243B6FD85.asc',
 				);
 				const publicKey = await readFileAsync(publicKeyFile);
@@ -516,7 +516,7 @@ t.test(
 			.get('/dummy-cc-reporter')
 			.reply(200, async () => {
 				const dummyReporterFile = joinPath(
-					__dirname,
+					THIS_MODULE_DIRNAME,
 					`./fixtures/dummy-cc-reporter.${EXE_EXT}`,
 				);
 				const dummyReporter = await readFileAsync(dummyReporterFile);
@@ -591,7 +591,7 @@ t.test(
 			.get('/dummy-cc-reporter')
 			.reply(200, async () => {
 				const dummyReporterFile = joinPath(
-					__DIRNAME,
+					THIS_MODULE_DIRNAME,
 					`../test/fixtures/dummy-cc-reporter-before-build-error.${EXE_EXT}`,
 				);
 				const dummyReporter = await readFileAsync(dummyReporterFile);
@@ -658,7 +658,7 @@ t.test(
 			.get('/dummy-cc-reporter')
 			.reply(200, async () => {
 				const dummyReporterFile = joinPath(
-					__DIRNAME,
+					THIS_MODULE_DIRNAME,
 					`../test/fixtures/dummy-cc-reporter-before-build-error.${EXE_EXT}`,
 				);
 				const dummyReporter = await readFileAsync(dummyReporterFile);
@@ -669,7 +669,7 @@ t.test(
 			.get('/dummy-cc-reporter.sha256')
 			.reply(200, async () => {
 				const checksumFile = joinPath(
-					__DIRNAME,
+					THIS_MODULE_DIRNAME,
 					`../test/fixtures/dummy-cc-reporter-before-build-error.${EXE_EXT}`,
 				);
 				const checksum = await readFileAsync(checksumFile);
@@ -680,7 +680,7 @@ t.test(
 			.get('/dummy-cc-reporter.sha256.sig')
 			.reply(200, async () => {
 				const signatureFile = joinPath(
-					__DIRNAME,
+					THIS_MODULE_DIRNAME,
 					`../test/fixtures/dummy-cc-reporter.${EXE_EXT}.sha256.sig`,
 				);
 				const signature = await readFileAsync(signatureFile);
@@ -691,7 +691,7 @@ t.test(
 			.get(`/vks/v1/by-fingerprint/${CODECLIMATE_GPG_PUBLIC_KEY_ID}`)
 			.reply(200, async () => {
 				const publicKeyFile = joinPath(
-					__DIRNAME,
+					THIS_MODULE_DIRNAME,
 					'../test/fixtures/9BD9E2DD46DA965A537E5B0A5CBF320243B6FD85.asc',
 				);
 				const publicKey = await readFileAsync(publicKeyFile);
@@ -750,7 +750,7 @@ t.test(
 			.get('/dummy-cc-reporter')
 			.reply(200, async () => {
 				const dummyReporterFile = joinPath(
-					__DIRNAME,
+					THIS_MODULE_DIRNAME,
 					`../test/fixtures/dummy-cc-reporter-before-build-error.${EXE_EXT}`,
 				);
 				const dummyReporter = await readFileAsync(dummyReporterFile);
@@ -761,7 +761,7 @@ t.test(
 			.get('/dummy-cc-reporter.sha256')
 			.reply(200, async () => {
 				const checksumFile = joinPath(
-					__DIRNAME,
+					THIS_MODULE_DIRNAME,
 					`../test/fixtures/dummy-cc-reporter-before-build-error.${EXE_EXT}.sha256`,
 				);
 				const checksum = await readFileAsync(checksumFile);
@@ -820,7 +820,7 @@ t.test(
 			.get('/dummy-cc-reporter')
 			.reply(200, async () => {
 				const dummyReporterFile = joinPath(
-					__DIRNAME,
+					THIS_MODULE_DIRNAME,
 					`../test/fixtures/dummy-cc-reporter-after-build-error.${EXE_EXT}`,
 				);
 				const dummyReporter = await readFileAsync(dummyReporterFile);
@@ -887,7 +887,7 @@ t.test(
 			.get('/dummy-cc-reporter')
 			.reply(200, async () => {
 				const dummyReporterFile = joinPath(
-					__DIRNAME,
+					THIS_MODULE_DIRNAME,
 					`../test/fixtures/dummy-cc-reporter.${EXE_EXT}`,
 				);
 				const dummyReporter = await readFileAsync(dummyReporterFile);
