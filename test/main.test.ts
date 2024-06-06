@@ -185,7 +185,7 @@ t.test('🧪 run() should run the CC reporter (happy path).', async (t) => {
 		stdHook.unhook();
 	} catch (err) {
 		stdHook.unhook();
-		t.fail(err);
+		t.fail({ error: err });
 	} finally {
 		nock.cleanAll();
 	}
@@ -250,7 +250,7 @@ t.test(
 			stdHook.unhook();
 		} catch (err) {
 			stdHook.unhook();
-			t.fail(err);
+			t.fail({ error: err });
 		} finally {
 			nock.cleanAll();
 		}
@@ -315,7 +315,7 @@ t.test(
 			stdHook.unhook();
 		} catch (err) {
 			stdHook.unhook();
-			t.fail(err);
+			t.fail({ error: err });
 		} finally {
 			nock.cleanAll();
 		}
@@ -439,7 +439,7 @@ t.test(
 			stdHook.unhook();
 		} catch (err) {
 			stdHook.unhook();
-			t.fail(err);
+			t.fail({ error: err });
 		} finally {
 			nock.cleanAll();
 		}
@@ -542,7 +542,7 @@ t.test(
 			stdHook.unhook();
 		} catch (err) {
 			stdHook.unhook();
-			t.fail(err);
+			t.fail({ error: err });
 		} finally {
 			nock.cleanAll();
 		}

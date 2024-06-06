@@ -31,7 +31,7 @@ t.test(
 			stdHook.unhook();
 		} catch (err) {
 			stdHook.unhook();
-			t.fail(err);
+			t.fail({ error: err });
 		} finally {
 			for (const artifact of FILE_ARTIFACTS) {
 				try {
