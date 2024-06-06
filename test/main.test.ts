@@ -507,11 +507,11 @@ t.test(
 );
 
 t.test(
-	'🧪 run() should correctly switch the working directory if given.',{ only: true },
+	'🧪 run() should correctly switch the working directory if given.',
 	async (t) => {
 		t.plan(1);
 		t.teardown(() => sandbox.restore());
-		
+
 		nock('http://localhost.test')
 			.get('/dummy-cc-reporter')
 			.reply(200, async () => {
@@ -529,10 +529,7 @@ t.test(
 		});
 
 		const CUSTOM_WORKDIR = await realpath(tmpdir());
-		const filePath = joinPath(
-			CUSTOM_WORKDIR,
-			`./test.${EXE_EXT}`
-		);
+		const filePath = joinPath(CUSTOM_WORKDIR, `./test.${EXE_EXT}`);
 
 		try {
 			await run({
