@@ -1,58 +1,63 @@
 {
-    "name": "codeclimate-action",
-    "version": "6.0.0",
-    "private": true,
-    "description": "Publish code coverage to Code Climate",
-    "main": "lib/main.js",
-    "packageManager": "pnpm@9.0.6",
-    "scripts": {
-        "build": "tsc",
-        "test": "cross-env NODE_OPTIONS=\"--no-warnings\" tap run --disable-coverage",
-        "test:only": "pnpm run test --only",
-        "coverage": "pnpm run test --no-disable-coverage --allow-incomplete-coverage --coverage-report=lcovonly",
-        "coverage:html": "pnpm run coverage --coverage-report=html",
-        "biome:ci": "biome ci ./",
-        "format:check": "biome format ./",
-        "format": "biome format --write ./",
-        "lint:check": "biome lint ./",
-        "lint": "biome lint --apply ./",
-        "lint:unsafe": "biome lint --apply-unsafe ./"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/paambaati/codeclimate-action.git"
-    },
-    "keywords": [
-        "actions",
-        "codeclimate",
-        "quality",
-        "coverage"
-    ],
-    "author": "GP <me@httgp.com>",
-    "license": "MIT",
-    "dependencies": {
-        "@actions/core": "1.10.1",
-        "@actions/exec": "1.1.1",
-        "@actions/github": "6.0.0",
-        "@actions/glob": "0.4.0",
-        "hook-std": "2.0.0",
-        "node-fetch": "2.7.0",
-        "openpgp": "5.11.1"
-    },
-    "devDependencies": {
-        "@biomejs/biome": "1.7.1",
-        "@openpgp/web-stream-tools": "0.1.1",
-        "@tapjs/test": "1.4.2",
-        "@types/node": "20.12.7",
-        "@types/node-fetch": "2.6.11",
-        "@types/sinon": "17.0.3",
-        "@types/which": "3.0.3",
-        "cross-env": "7.0.3",
-        "nock": "13.5.4",
-        "sinon": "17.0.1",
-        "tap": "18.7.2",
-        "to-readable-stream": "2.1.0",
-        "typescript": "5.4.5",
-        "which": "4.0.0"
-    }
+  "name": "codeclimate-action",
+  "version": "6.0.0",
+  "private": true,
+  "description": "Publish code coverage to Code Climate",
+  "type": "module",
+  "main": "lib/main.js",
+  "packageManager": "pnpm@9.3.0",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "test": "cross-env NODE_OPTIONS=\"--no-warnings\" tap run --disable-coverage",
+    "test:only": "pnpm run test --only",
+    "coverage": "pnpm run test --no-disable-coverage --allow-incomplete-coverage --coverage-report=lcovonly",
+    "coverage:html": "pnpm run coverage --coverage-report=html",
+    "biome:ci": "biome ci",
+    "format:check": "biome format",
+    "format": "biome format --fix",
+    "lint:check": "biome lint",
+    "lint": "biome lint --fix",
+    "lint:unsafe": "biome lint --fix --unsafe ./"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/paambaati/codeclimate-action.git"
+  },
+  "keywords": [
+    "actions",
+    "codeclimate",
+    "quality",
+    "coverage"
+  ],
+  "author": "GP <me@httgp.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@actions/core": "1.10.1",
+    "@actions/exec": "1.1.1",
+    "@actions/github": "6.0.0",
+    "@actions/glob": "0.4.0",
+    "hook-std": "3.0.0",
+    "node-fetch": "3.3.2",
+    "openpgp": "5.11.1"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.8.1",
+    "@openpgp/web-stream-tools": "0.1.1",
+    "@tapjs/tsx": "1.1.32",
+    "@tsconfig/node20": "20.1.4",
+    "@tsconfig/strictest": "2.0.5",
+    "@types/node": "20.14.2",
+    "@types/node-fetch": "2.6.11",
+    "@types/sinon": "17.0.3",
+    "@types/which": "3.0.4",
+    "c8": "10.1.1",
+    "cross-env": "7.0.3",
+    "into-stream": "8.0.1",
+    "nock": "13.5.4",
+    "sinon": "18.0.0",
+    "tap": "19.2.5",
+    "tsimp": "2.0.11",
+    "typescript": "5.4.5",
+    "which": "4.0.0"
+  }
 }

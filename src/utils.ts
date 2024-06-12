@@ -4,7 +4,13 @@ import { platform } from 'node:os';
 import { promisify } from 'node:util';
 import { getInput } from '@actions/core';
 import fetch from 'node-fetch';
-import { createMessage, readKey, readSignature, verify } from 'openpgp';
+import {
+	type VerificationResult,
+	createMessage,
+	readKey,
+	readSignature,
+	verify,
+} from 'openpgp';
 
 const readFileAsync = promisify(readFile);
 type ReadFileAsyncOptions = Omit<Parameters<typeof readFileAsync>[1], 'string'>;
@@ -44,11 +50,19 @@ export function downloadToFile(
 	mode = 0o755,
 ): Promise<void> {
 	return new Promise((resolve, reject) => {
+		const controller = new AbortController();
+		const timeout = setTimeout(
+			() => {
+				controller.abort();
+			},
+			// Timeout in 2 minutes.
+			2 * 60 * 1000,
+		);
 		try {
 			fetch(url, {
 				redirect: 'follow',
 				follow: 5,
-				timeout: 2 * 60 * 1000, // Timeout in 2 minutes.
+				signal: controller.signal,
 			})
 				.then((response) => {
 					if (response.status < 200 || response.status > 299) {
@@ -57,7 +71,7 @@ export function downloadToFile(
 						);
 					}
 					const writer = createWriteStream(file, { mode });
-					response.body.pipe(writer);
+					response.body?.pipe(writer);
 					writer.on('close', () => {
 						return resolve();
 					});
@@ -67,6 +81,8 @@ export function downloadToFile(
 				});
 		} catch (err) {
 			return reject(err);
+		} finally {
+			clearTimeout(timeout);
 		}
 	});
 }
@@ -132,10 +148,8 @@ export async function verifyChecksum(
 ): Promise<boolean> {
 	const binaryChecksum = await getFileChecksum(originalFile, algorithm);
 	const declaredChecksumFileContents = await getFileContents(checksumFile);
-	const declaredChecksum = declaredChecksumFileContents
-		.toString()
-		.trim()
-		.split(/\s+/)[0];
+	const declaredChecksum =
+		declaredChecksumFileContents.toString().trim().split(/\s+/)[0] || '';
 	try {
 		return timingSafeEqual(
 			Buffer.from(binaryChecksum),
@@ -178,7 +192,7 @@ export async function verifySignature(
 		signature,
 		verificationKeys: publicKey,
 	});
-	const { verified } = verificationResult.signatures[0];
+	const { verified } = verificationResult.signatures[0] as VerificationResult;
 	try {
 		await verified;
 		return true;
@@ -226,9 +240,12 @@ export function parsePathAndFormat(coverageConfigLine: string): {
 		platform() === 'win32' &&
 		(coverageConfigLine.match(/:/g) || []).length > 1
 	) {
-		lineParts = [lineParts.slice(0, -1).join(':'), lineParts.slice(-1)[0]];
+		lineParts = [
+			lineParts.slice(0, -1).join(':'),
+			lineParts.slice(-1)[0] as string,
+		];
 	}
-	const format = lineParts.slice(-1)[0];
-	const pattern = lineParts.slice(0, -1)[0];
+	const format = lineParts.slice(-1)[0] as string;
+	const pattern = lineParts.slice(0, -1)[0] as string;
 	return { format, pattern };
 }

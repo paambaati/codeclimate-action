@@ -1,0 +1,15 @@
+plugin:
+  - "!@tapjs/typescript"
+  - "@tapjs/tsx"
+browser: true
+timeout: 30
+jobs: 6
+include:
+  - "**/*.test.ts"
+exclude:
+  - "**/@(fixture*(s)|lib)/**"
+snapshot-clean-cwd: true
+color: true
+reporter: base
+coverage-report:
+  - text

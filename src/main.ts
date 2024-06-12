@@ -1,9 +1,11 @@
 import { unlinkSync } from 'node:fs';
 import { arch, platform } from 'node:os';
+import { resolve } from 'node:path';
 import { chdir } from 'node:process';
+import { fileURLToPath } from 'node:url';
 import { debug, error, info, setFailed, warning } from '@actions/core';
 import { exec } from '@actions/exec';
-import type { ExecOptions } from '@actions/exec/lib/interfaces';
+import type { ExecOptions } from '@actions/exec/lib/interfaces.js';
 import { context } from '@actions/github';
 import * as glob from '@actions/glob';
 import {
@@ -12,7 +14,29 @@ import {
 	parsePathAndFormat,
 	verifyChecksum,
 	verifySignature,
-} from './utils';
+} from './utils.js';
+
+/**
+ * Main arguments/options for the action to run.
+ */
+export interface ActionArguments {
+	/** Download URL for the Code Climate test reporter binary. @default https://codeclimate.com/downloads/test-reporter/test-reporter-latest-{platform}-{architecture} */
+	downloadUrl?: string;
+	/** Filesystem path where the Code Climate binary should be downloaded to. @default ./{current-directory}/cc-reporter */
+	executable?: string;
+	/** Command to execute to generate coverage report. */
+	coverageCommand?: string;
+	/** Working directory to change to before running the test reporter. @default Current directory */
+	workingDirectory?: string;
+	/** Turn on debugging mode for the Code Climate test reporter. @default false */
+	codeClimateDebug?: string;
+	/** Coverage locations. @see https://github.com/paambaati/codeclimate-action/?tab=readme-ov-file#inputs */
+	coverageLocationsParam?: string;
+	/** Coverage prefix. @see https://docs.codeclimate.com/docs/configuring-test-coverage#list-of-subcommands */
+	coveragePrefix?: string;
+	/** Verifies the downloaded binary with a Code Climate-provided SHA 256 checksum and GPG sinature. @default true */
+	verifyDownload?: string;
+}
 
 const PLATFORM = platform();
 // REFER: https://docs.codeclimate.com/docs/configuring-test-coverage#locations-of-pre-built-binaries
@@ -59,22 +83,27 @@ export async function downloadAndRecord(
 }
 
 export function prepareEnv() {
-	const env = process.env as { [key: string]: string };
+	const actionEnv = { ...process.env } as Record<
+		'GITHUB_SHA' | 'GITHUB_REF' | 'GITHUB_EVENT_NAME' | 'GITHUB_HEAD_REF',
+		string
+	>;
+	const env = { ...process.env } as typeof actionEnv &
+		Record<'GIT_COMMIT_SHA' | 'GIT_BRANCH', string>;
 
-	if (process.env.GITHUB_SHA !== undefined)
-		env.GIT_COMMIT_SHA = process.env.GITHUB_SHA;
-	if (process.env.GITHUB_REF !== undefined)
-		env.GIT_BRANCH = process.env.GITHUB_REF;
+	if (actionEnv.GITHUB_SHA !== undefined)
+		env.GIT_COMMIT_SHA = actionEnv.GITHUB_SHA;
+	if (actionEnv.GITHUB_REF !== undefined) env.GIT_BRANCH = actionEnv.GITHUB_REF;
 
 	if (env.GIT_BRANCH)
 		env.GIT_BRANCH = env.GIT_BRANCH.replace(/^refs\/heads\//, ''); // Remove 'refs/heads/' prefix (See https://github.com/paambaati/codeclimate-action/issues/42)
 
 	if (
-		process.env.GITHUB_EVENT_NAME &&
-		SUPPORTED_GITHUB_EVENTS.includes(process.env.GITHUB_EVENT_NAME)
+		actionEnv.GITHUB_EVENT_NAME &&
+		SUPPORTED_GITHUB_EVENTS.includes(actionEnv.GITHUB_EVENT_NAME)
 	) {
-		env.GIT_BRANCH = process.env.GITHUB_HEAD_REF || env.GIT_BRANCH; // Report correct branch for PRs (See https://github.com/paambaati/codeclimate-action/issues/86)
-		env.GIT_COMMIT_SHA = context.payload.pull_request?.head?.sha; // Report correct SHA for the head branch (See https://github.com/paambaati/codeclimate-action/issues/140)
+		env.GIT_BRANCH = actionEnv.GITHUB_HEAD_REF || env.GIT_BRANCH; // Report correct branch for PRs (See https://github.com/paambaati/codeclimate-action/issues/86)
+		// biome-ignore lint/complexity/useLiteralKeys: This is so Biome and TypeScript strict mode don't fight.
+		env.GIT_COMMIT_SHA = context.payload.pull_request?.['head']?.sha; // Report correct SHA for the head branch (See https://github.com/paambaati/codeclimate-action/issues/140)
 	}
 
 	return env;
@@ -166,16 +195,16 @@ async function getLocationLines(
 	return coverageLocationLines;
 }
 
-export async function run(
-	downloadUrl: string = DOWNLOAD_URL,
-	executable: string = EXECUTABLE,
-	coverageCommand: string = DEFAULT_COVERAGE_COMMAND,
-	workingDirectory: string = DEFAULT_WORKING_DIRECTORY,
-	codeClimateDebug: string = DEFAULT_CODECLIMATE_DEBUG,
-	coverageLocationsParam: string = DEFAULT_COVERAGE_LOCATIONS,
-	coveragePrefix?: string,
-	verifyDownload: string = DEFAULT_VERIFY_DOWNLOAD,
-): Promise<void> {
+export async function run({
+	downloadUrl = DOWNLOAD_URL,
+	executable = EXECUTABLE,
+	coverageCommand = DEFAULT_COVERAGE_COMMAND,
+	workingDirectory = DEFAULT_WORKING_DIRECTORY,
+	codeClimateDebug = DEFAULT_CODECLIMATE_DEBUG,
+	coverageLocationsParam = DEFAULT_COVERAGE_LOCATIONS,
+	coveragePrefix,
+	verifyDownload = DEFAULT_VERIFY_DOWNLOAD,
+}: ActionArguments = {}): Promise<void> {
 	let lastExitCode = 1;
 	if (workingDirectory) {
 		debug(`Changing working directory to ${workingDirectory}`);
@@ -250,7 +279,7 @@ export async function run(
 		const parts: Array<string> = [];
 		for (const i in coverageLocations) {
 			const { format: type, pattern: location } = parsePathAndFormat(
-				coverageLocations[i],
+				coverageLocations[i] as string,
 			);
 			if (!type) {
 				const err = new Error(`Invalid formatter type ${type}`);
@@ -356,7 +385,10 @@ export async function run(
 }
 
 /* c8 ignore start */
-if (require.main === module) {
+const pathToThisFile = resolve(fileURLToPath(import.meta.url));
+const pathPassedToNode = resolve(process.argv[1] as string);
+const isThisFileBeingRunViaCLI = pathToThisFile.includes(pathPassedToNode);
+if (isThisFileBeingRunViaCLI) {
 	const coverageCommand = getOptionalString(
 		'coverageCommand',
 		DEFAULT_COVERAGE_COMMAND,
@@ -379,16 +411,16 @@ if (require.main === module) {
 		DEFAULT_VERIFY_DOWNLOAD,
 	);
 	try {
-		run(
-			DOWNLOAD_URL,
-			EXECUTABLE,
+		run({
+			downloadUrl: DOWNLOAD_URL,
+			executable: EXECUTABLE,
 			coverageCommand,
 			workingDirectory,
 			codeClimateDebug,
-			coverageLocations,
+			coverageLocationsParam: coverageLocations,
 			coveragePrefix,
 			verifyDownload,
-		);
+		});
 	} finally {
 		// Finally clean up all artifacts that we downloaded.
 		for (const artifact of FILE_ARTIFACTS) {

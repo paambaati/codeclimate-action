@@ -6,22 +6,3 @@ updates:
   schedule:
     interval: monthly
   open-pull-requests-limit: 5
-  ignore:
-  # Ignore ESM-only package versions.
-  # This can be fully removed once everything is ESM-native without all the weird issues.
-  - dependency-name: hook-std
-    versions:
-    - '3.x'
-  - dependency-name: node-fetch
-    versions:
-    - '3.x'
-  - dependency-name: to-readable-stream
-    versions:
-    - '3.x'
-    - '4.x'
-  - dependency-name: '@semantic-release/release-notes-generator'
-    versions:
-    - '11.x'
-  - dependency-name: '@types/node'
-    versions:
-    - '20.x'

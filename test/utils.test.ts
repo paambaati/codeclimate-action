@@ -1,14 +1,14 @@
 import { stat as statCallback, unlinkSync } from 'node:fs';
 import { platform } from 'node:os';
 import { promisify } from 'node:util';
+import intoStream from 'into-stream';
 import nock from 'nock';
 import t from 'tap';
-import toReadableStream from 'to-readable-stream';
 import {
 	areObjectsEqual,
 	downloadToFile,
 	parsePathAndFormat,
-} from '../src/utils';
+} from '../src/utils.js';
 
 const stat = promisify(statCallback);
 
@@ -42,7 +42,7 @@ t.test(
 		nock('http://localhost.test')
 			.get('/dummy-cc-reporter')
 			.reply(200, () => {
-				return toReadableStream(`#!/bin/bash
+				return intoStream(`#!/bin/bash
 echo "hello"
 `);
 			});
@@ -69,7 +69,7 @@ t.test(
 		skip:
 			platform() !== 'win32'
 				? `Skipping because this test is only for Windows, but the current OS is ${platform()}`
-				: undefined,
+				: false,
 	},
 	async (t) => {
 		t.plan(1);
@@ -95,7 +95,7 @@ t.test(
 		skip:
 			platform() !== 'darwin'
 				? `Skipping because this test is only for macOS, but the current OS is ${platform()}`
-				: undefined,
+				: false,
 	},
 	async (t) => {
 		t.plan(1);
@@ -121,7 +121,7 @@ t.test(
 		skip:
 			platform() !== 'linux'
 				? `Skipping because this test is only for Linux, but the current OS is ${platform()}`
-				: undefined,
+				: false,
 	},
 	async (t) => {
 		t.plan(1);

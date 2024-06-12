@@ -1,6 +1,6 @@
 import { unlinkSync } from 'node:fs';
 import { EOL, arch, platform } from 'node:os';
-import { default as hookStd } from 'hook-std';
+import { hookStd } from 'hook-std';
 import t from 'tap';
 import {
 	DOWNLOAD_URL,
@@ -8,7 +8,7 @@ import {
 	FILE_ARTIFACTS,
 	downloadAndRecord,
 	verifyChecksumAndSignature,
-} from '../src/main';
+} from '../src/main.js';
 
 t.test(
 	'🧪 verifyChecksumAndSignature() should download the CC reporter and pass all validations (happy path).',
@@ -16,7 +16,7 @@ t.test(
 		skip:
 			platform() === 'darwin' && arch() === 'arm64'
 				? 'Skipping because the CC reporter is not available on macOS Apple Silicon!'
-				: undefined,
+				: false,
 	},
 	async (t) => {
 		t.plan(1);
@@ -31,7 +31,7 @@ t.test(
 			stdHook.unhook();
 		} catch (err) {
 			stdHook.unhook();
-			t.fail(err);
+			t.fail({ error: err });
 		} finally {
 			for (const artifact of FILE_ARTIFACTS) {
 				try {
