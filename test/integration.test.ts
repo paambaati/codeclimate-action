@@ -1,5 +1,6 @@
 import { unlinkSync } from 'node:fs';
-import { EOL, arch, platform } from 'node:os';
+import { EOL, platform } from 'node:os';
+import arch from 'arch';
 import { hookStd } from 'hook-std';
 import t from 'tap';
 import {

@@ -1,5 +1,4 @@
 import { unlinkSync } from 'node:fs';
-import { arch, platform } from 'node:os';
 import { resolve } from 'node:path';
 import { chdir } from 'node:process';
 import { fileURLToPath } from 'node:url';
@@ -11,6 +10,7 @@ import * as glob from '@actions/glob';
 import {
 	downloadToFile,
 	getOptionalString,
+	getSupportedEnvironmentInfo,
 	parsePathAndFormat,
 	verifyChecksum,
 	verifySignature,
@@ -36,14 +36,17 @@ export interface ActionArguments {
 	coveragePrefix?: string;
 	/** Verifies the downloaded binary with a Code Climate-provided SHA 256 checksum and GPG sinature. @default true */
 	verifyDownload?: string;
+	/** Verifies if the current OS and CPU architecture is supported by CodeClimate test reporter. */
+	verifyEnvironment?: string;
 }
 
-const PLATFORM = platform();
+const CURRENT_ENVIRONMENT = getSupportedEnvironmentInfo();
+const PLATFORM = CURRENT_ENVIRONMENT.platform;
 // REFER: https://docs.codeclimate.com/docs/configuring-test-coverage#locations-of-pre-built-binaries
 /** Canonical download URL for the official CodeClimate reporter. */
 export const DOWNLOAD_URL = `https://codeclimate.com/downloads/test-reporter/test-reporter-latest-${
 	PLATFORM === 'win32' ? 'windows' : PLATFORM
-}-${arch() === 'arm64' ? 'arm64' : 'amd64'}`;
+}-${CURRENT_ENVIRONMENT.architecture === 'arm64' ? 'arm64' : 'amd64'}`;
 /** Local file name of the CodeClimate reporter. */
 export const EXECUTABLE = './cc-reporter';
 export const CODECLIMATE_GPG_PUBLIC_KEY_ID =
@@ -55,6 +58,7 @@ const DEFAULT_WORKING_DIRECTORY = '';
 const DEFAULT_CODECLIMATE_DEBUG = 'false';
 const DEFAULT_COVERAGE_LOCATIONS = '';
 const DEFAULT_VERIFY_DOWNLOAD = 'true';
+const DEFAULT_VERIFY_ENVIRONMENT = 'true';
 
 const SUPPORTED_GITHUB_EVENTS = [
 	// Regular PRs.
@@ -204,10 +208,24 @@ export async function run({
 	coverageLocationsParam = DEFAULT_COVERAGE_LOCATIONS,
 	coveragePrefix,
 	verifyDownload = DEFAULT_VERIFY_DOWNLOAD,
+	verifyEnvironment = DEFAULT_VERIFY_ENVIRONMENT,
 }: ActionArguments = {}): Promise<void> {
 	let lastExitCode = 1;
+	if (verifyEnvironment === 'true') {
+		debug('ℹ️ Verifying environment...');
+		const { supported, platform, architecture } = getSupportedEnvironmentInfo();
+		if (!supported) {
+			const errorMessage = `Unsupported platform and architecture! CodeClimate Test Reporter currently is not available for ${architecture} on ${platform} OS`;
+			error(errorMessage);
+			setFailed('🚨 Environment verification failed!');
+			throw new Error(errorMessage);
+		}
+		lastExitCode = 0;
+		debug('✅ Environment verification completed...');
+	}
+
 	if (workingDirectory) {
-		debug(`Changing working directory to ${workingDirectory}`);
+		debug(`ℹ️ Changing working directory to ${workingDirectory}`);
 		try {
 			chdir(workingDirectory);
 			lastExitCode = 0;
@@ -410,6 +428,11 @@ if (isThisFileBeingRunViaCLI) {
 		'verifyDownload',
 		DEFAULT_VERIFY_DOWNLOAD,
 	);
+	const verifyEnvironment = getOptionalString(
+		'verifyEnvironment',
+		DEFAULT_VERIFY_ENVIRONMENT,
+	);
+
 	try {
 		run({
 			downloadUrl: DOWNLOAD_URL,
@@ -420,6 +443,7 @@ if (isThisFileBeingRunViaCLI) {
 			coverageLocationsParam: coverageLocations,
 			coveragePrefix,
 			verifyDownload,
+			verifyEnvironment,
 		});
 	} finally {
 		// Finally clean up all artifacts that we downloaded.
