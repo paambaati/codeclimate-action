@@ -102,7 +102,7 @@ jobs:
       run: pnpm run coverage
 
     - name: publish code coverage to code-climate (duh)
-      uses: paambaati/codeclimate-action@v6.0.0
+      uses: paambaati/codeclimate-action@v7.0.0
       env:
         CC_TEST_REPORTER_ID: 3470adaf12ff7cecdfe5a968ae0e95d098b6ee58c340114e1e90d440ee9e66ab
       with:
