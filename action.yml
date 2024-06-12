@@ -29,6 +29,10 @@ inputs:
     required: false
     description: 'Verify the downloaded reporter''s checksum and GPG signature'
     default: 'true'
+  verifyEnvironment:
+    required: false
+    description: 'Verify that the Action environment (OS and CPU architecture) is supported by Code Climate test reporter'
+    default: 'true'
 runs:
   using: 'node20'
   main: 'lib/main.mjs'
