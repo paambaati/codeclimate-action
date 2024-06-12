@@ -18,6 +18,7 @@ import t from 'tap';
 import which from 'which';
 import { CODECLIMATE_GPG_PUBLIC_KEY_ID, prepareEnv, run } from '../src/main.js';
 import * as utils from '../src/utils.js';
+import { getSupportedEnvironmentInfo } from '../src/utils.js';
 
 /**
  * Dev Notes
@@ -181,6 +182,7 @@ t.test('🧪 run() should run the CC reporter (happy path).', async (t) => {
 			executable: filePath,
 			coverageCommand: `${ECHO_CMD} 'coverage ok'`,
 			verifyDownload: 'false',
+			verifyEnvironment: 'false',
 		});
 		stdHook.unhook();
 	} catch (err) {
@@ -246,6 +248,7 @@ t.test(
 				executable: filePath,
 				coverageCommand: `${ECHO_CMD} 'coverage ok'`,
 				verifyDownload: 'false',
+				verifyEnvironment: 'false',
 			});
 			stdHook.unhook();
 		} catch (err) {
@@ -284,6 +287,122 @@ t.test(
 );
 
 t.test(
+	'🧪 run() should run environment verification if configured and fail on unsupported platforms.',
+	{
+		skip: getSupportedEnvironmentInfo().supported
+			? 'Skipping as test is targeted only for unsupported platforms.'
+			: false,
+	},
+	async (t) => {
+		t.plan(1);
+		t.teardown(() => sandbox.restore());
+
+		let capturedOutput = '';
+		const stdHook = hookStd((text: string) => {
+			capturedOutput += text;
+		});
+
+		try {
+			await run({
+				downloadUrl: 'http://localhost.test/dummy-cc-reporter',
+				verifyDownload: 'false',
+				verifyEnvironment: 'true',
+			});
+			t.fail({ error: 'should have thrown an error on unsupported platforms' });
+			stdHook.unhook();
+		} catch (err) {
+			stdHook.unhook();
+			t.equal(
+				capturedOutput,
+				[
+					'::debug::ℹ️ Verifying environment...',
+					`::error::Unsupported platform and architecture! CodeClimate Test Reporter currently is not available for ${getSupportedEnvironmentInfo().architecture} on ${getSupportedEnvironmentInfo().platform} OS`,
+					'::error::🚨 Environment verification failed!',
+					'',
+				].join(EOL),
+				'should execute all steps (including environment verification).',
+			);
+		} finally {
+			nock.cleanAll();
+		}
+		t.end();
+	},
+);
+
+t.test(
+	'🧪 run() should run environment verification if configured.',
+	{
+		skip: getSupportedEnvironmentInfo().supported
+			? false
+			: 'Skipping as test is targeted only for supported platforms.',
+	},
+	async (t) => {
+		t.plan(1);
+		t.teardown(() => sandbox.restore());
+		const filePath = `./test.${EXE_EXT}`;
+		nock('http://localhost.test')
+			.get('/dummy-cc-reporter')
+			.reply(200, async () => {
+				const dummyReporterFile = joinPath(
+					THIS_MODULE_DIRNAME,
+					`../test/fixtures/dummy-cc-reporter.${EXE_EXT}`,
+				);
+				const dummyReporter = await readFileAsync(dummyReporterFile);
+				return intoStream(dummyReporter);
+			});
+
+		let capturedOutput = '';
+		const stdHook = hookStd((text: string) => {
+			capturedOutput += text;
+		});
+
+		try {
+			await run({
+				downloadUrl: 'http://localhost.test/dummy-cc-reporter',
+				executable: filePath,
+				coverageCommand: `${ECHO_CMD} 'coverage ok'`,
+				verifyDownload: 'false',
+				verifyEnvironment: 'true',
+			});
+			stdHook.unhook();
+		} catch (err) {
+			stdHook.unhook();
+			t.fail({ error: err });
+		} finally {
+			nock.cleanAll();
+		}
+
+		t.equal(
+			capturedOutput,
+			[
+				'::debug::ℹ️ Verifying environment...',
+				'::debug::✅ Environment verification completed...',
+				'::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...',
+				'::debug::✅ CC Reporter downloaded...',
+				PLATFORM === 'win32'
+					? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} before-build"`
+					: `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} before-build`,
+				'before-build',
+				'::debug::✅ CC Reporter before-build checkin completed...',
+				`[command]${ECHO_CMD} 'coverage ok'`,
+				`'coverage ok'`,
+				'::debug::✅ Coverage run completed...',
+				PLATFORM === 'win32'
+					? `[command]${EXE_PATH_PREFIX} "${DEFAULT_WORKDIR}\\test.${EXE_EXT} after-build --exit-code 0"`
+					: `[command]${DEFAULT_WORKDIR}/test.${EXE_EXT} after-build --exit-code 0`,
+				'after-build --exit-code 0',
+				'::debug::✅ CC Reporter after-build checkin completed!',
+				'',
+			].join(EOL),
+			'should execute all steps (including environment verification).',
+		);
+		unlinkSync(filePath);
+		nock.cleanAll();
+		t.end();
+	},
+);
+
+t.test(
 	'🧪 run() should run the CC reporter without a coverage command.',
 	async (t) => {
 		t.plan(1);
@@ -311,6 +430,7 @@ t.test(
 				executable: filePath,
 				coverageCommand: '',
 				verifyDownload: 'false',
+				verifyEnvironment: 'false',
 			});
 			stdHook.unhook();
 		} catch (err) {
@@ -435,6 +555,7 @@ t.test(
 				coverageCommand: '',
 				coverageLocationsParam: filePattern,
 				codeClimateDebug: 'false',
+				verifyEnvironment: 'false',
 			});
 			stdHook.unhook();
 		} catch (err) {
@@ -538,6 +659,7 @@ t.test(
 				coverageCommand: `${ECHO_CMD} 'coverage ok'`,
 				workingDirectory: CUSTOM_WORKDIR,
 				verifyDownload: 'false',
+				verifyEnvironment: 'false',
 			});
 			stdHook.unhook();
 		} catch (err) {
@@ -550,7 +672,7 @@ t.test(
 		t.equal(
 			capturedOutput,
 			[
-				`::debug::Changing working directory to ${CUSTOM_WORKDIR}`,
+				`::debug::ℹ️ Changing working directory to ${CUSTOM_WORKDIR}`,
 				'::debug::✅ Changing working directory completed...',
 				'::debug::ℹ️ Downloading CC Reporter from http://localhost.test/dummy-cc-reporter ...',
 				'::debug::✅ CC Reporter downloaded...',
@@ -613,6 +735,7 @@ t.test(
 				executable: filePath,
 				coverageCommand: `${ECHO_CMD} 'coverage ok'`,
 				verifyDownload: 'true',
+				verifyEnvironment: 'false',
 			});
 			t.fail('should have thrown an error');
 			stdHook.unhook();
@@ -708,6 +831,7 @@ t.test(
 				downloadUrl: 'http://localhost.test/dummy-cc-reporter',
 				executable: filePath,
 				coverageCommand: `${ECHO_CMD} 'coverage ok'`,
+				verifyEnvironment: 'false',
 			});
 			stdHook.unhook();
 		} catch (err) {
@@ -776,6 +900,7 @@ t.test(
 				executable: filePath,
 				coverageCommand: `${ECHO_CMD} 'coverage ok'`,
 				verifyDownload: 'false',
+				verifyEnvironment: 'false',
 			});
 			stdHook.unhook();
 		} catch (err) {
@@ -835,6 +960,7 @@ t.test(
 				executable: filePath,
 				coverageCommand: `${ECHO_CMD} 'coverage ok'`,
 				verifyDownload: 'false',
+				verifyEnvironment: 'false',
 			});
 			stdHook.unhook();
 		} catch (err) {
@@ -902,6 +1028,7 @@ t.test(
 				executable: filePath,
 				coverageCommand: COVERAGE_COMMAND,
 				verifyDownload: 'false',
+				verifyEnvironment: 'false',
 			});
 			stdHook.unhook();
 			t.fail('Should throw an error.');

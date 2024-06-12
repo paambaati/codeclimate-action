@@ -20,6 +20,7 @@ This action requires that you set the [`CC_TEST_REPORTER_ID`](https://docs.codec
 | `coverageLocations` |                 | Locations to find code coverage as a multiline string.<br>Each line should be of the form `<location>:<type>`.<br>`type` can be any one of `clover, cobertura, coverage.py, excoveralls, gcov, gocov, jacoco, lcov, lcov-json, simplecov, xccov`. See examples below. |
 | `prefix`            | `undefined`     | See [`--prefix`](https://docs.codeclimate.com/docs/configuring-test-coverage)      |
 | `verifyDownload`    | `true`          | Verifies the downloaded Code Climate reporter binary's checksum and GPG signature. See [Verifying binaries](https://github.com/codeclimate/test-reporter#verifying-binaries)      |
+| `verifyEnvironment` | `true`          | Verifies the current runtime environment (operating system and CPU architecture) is supported by the Code Climate reporter. See [list of supported platforms](https://github.com/codeclimate/test-reporter#binaries)      |
 
 > **Note**
 > If you are a Ruby developer using [SimpleCov](https://github.com/simplecov-ruby/simplecov), other users have recommended installing an additional gem – `gem "simplecov_json_formatter"` – this gem fixes `json` error from the default `coverage/.resultset.json` output from SimpleCov.

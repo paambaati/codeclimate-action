@@ -3,6 +3,7 @@ import { createWriteStream, readFile } from 'node:fs';
 import { platform } from 'node:os';
 import { promisify } from 'node:util';
 import { getInput } from '@actions/core';
+import arch from 'arch';
 import fetch from 'node-fetch';
 import {
 	type VerificationResult,
@@ -14,6 +15,18 @@ import {
 
 const readFileAsync = promisify(readFile);
 type ReadFileAsyncOptions = Omit<Parameters<typeof readFileAsync>[1], 'string'>;
+
+/** List of environments not supported by the CodeClimate test reporter. */
+// REFER: https://github.com/codeclimate/test-reporter#download
+export const UNSUPPORTED_ENVIRONMENTS: Array<{
+	platform: ReturnType<typeof platform>;
+	architecture: ReturnType<typeof arch>;
+}> = [
+	{
+		platform: 'darwin',
+		architecture: 'arm64',
+	},
+];
 
 /**
  * Parses GitHub Action input and returns the optional value as a string.
@@ -248,4 +261,26 @@ export function parsePathAndFormat(coverageConfigLine: string): {
 	const format = lineParts.slice(-1)[0] as string;
 	const pattern = lineParts.slice(0, -1)[0] as string;
 	return { format, pattern };
+}
+
+/**
+ * Reads information about the current operating system and the CPU architecture
+ * and tells if the CodeClimate test reporter supports it.
+ */
+export function getSupportedEnvironmentInfo() {
+	const currentEnvironment = {
+		platform: platform(),
+		architecture: arch(),
+	};
+
+	return {
+		supported: !UNSUPPORTED_ENVIRONMENTS.some((e) => {
+			return (
+				e.architecture === currentEnvironment.architecture &&
+				e.platform === currentEnvironment.platform
+			);
+		}),
+		platform: currentEnvironment.platform,
+		architecture: currentEnvironment.architecture,
+	};
 }
