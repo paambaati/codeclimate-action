@@ -37,8 +37,8 @@ importers:
         specifier: 0.1.1
         version: 0.1.1(typescript@5.4.5)
       '@tapjs/tsx':
-        specifier: 1.1.31
-        version: 1.1.31(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+        specifier: 1.1.32
+        version: 1.1.32(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       '@tsconfig/node20':
         specifier: 20.1.4
         version: 20.1.4
@@ -58,8 +58,8 @@ importers:
         specifier: 3.0.4
         version: 3.0.4
       c8:
-        specifier: 10.0.0
-        version: 10.0.0
+        specifier: 10.1.1
+        version: 10.1.1
       cross-env:
         specifier: 7.0.3
         version: 7.0.3
@@ -73,8 +73,8 @@ importers:
         specifier: 18.0.0
         version: 18.0.0
       tap:
-        specifier: 19.2.4
-        version: 19.2.4(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.4.5)
+        specifier: 19.2.5
+        version: 19.2.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.4.5)
       tsimp:
         specifier: 2.0.11
         version: 2.0.11(typescript@5.4.5)
@@ -492,150 +492,150 @@ packages:
   '@sinonjs/text-encoding@0.7.2':
     resolution: {integrity: sha512-sXXKG+uL9IrKqViTtao2Ws6dy0znu9sOaP1di/jKGW1M6VssO8vlpXCQcpZ+jisQ1tTFAC5Jo/EOzFbggBagFQ==}
 
-  '@tapjs/after-each@2.0.7':
-    resolution: {integrity: sha512-q0SBhyN+KOWhQOxbQ3+WQSlObcG7XYhzrB5JyYDg4liZlUr0f3wAcw0C8VXxlpjkmPI75/wB2agkDfn3kKSe3w==}
+  '@tapjs/after-each@2.0.8':
+    resolution: {integrity: sha512-btkpQ/BhmRyG50rezduxEZb3pMJblECvTQa41+U2ln2te1prDTlllHlpq4lOjceUksl8KFF1avDqcBqIqPzneQ==}
     engines: {node: 16 >=16.17.0 || 18 >= 18.6.0 || >=20}
     peerDependencies:
-      '@tapjs/core': 2.1.5
+      '@tapjs/core': 2.1.6
 
-  '@tapjs/after@1.1.30':
-    resolution: {integrity: sha512-Hjdbb1NtVMVB5BXTJ+1wzmE6WFx5ep0vd43G+VGv8Y/kSsJbLpPtczuhUfuDVl7t6xWYjnFpBrgm9ieI+vl04g==}
+  '@tapjs/after@1.1.31':
+    resolution: {integrity: sha512-531NkYOls9PvqfnLsEDRzIWwjynoFRbUVq7pTYuA3PRIw4Ka7jA9uUjILeUurcWjaHrQNzUua0jj/Yu94f6YYw==}
     engines: {node: 16 >=16.17.0 || 18 >= 18.6.0 || >=20}
     peerDependencies:
-      '@tapjs/core': 2.1.5
+      '@tapjs/core': 2.1.6
 
-  '@tapjs/asserts@2.0.7':
-    resolution: {integrity: sha512-RIm/KDKKBBSmYNI47xZf5wtTdIvHI9MEbl/LmtYJCWlEqh6uVjdGNpS3f0tXFMp65+9/UlATcEMJqpaC8G5paQ==}
+  '@tapjs/asserts@2.0.8':
+    resolution: {integrity: sha512-57VrI0p2kAqfgHHUwowDvd31eTfDHw3HO4FSSVUCvngPGWa96R6eH9gXa9fNig4qIp4Dup+nI7gJlJfU0R80SA==}
     engines: {node: 16 >=16.17.0 || 18 >= 18.6.0 || >=20}
     peerDependencies:
-      '@tapjs/core': 2.1.5
+      '@tapjs/core': 2.1.6
 
-  '@tapjs/before-each@2.0.7':
-    resolution: {integrity: sha512-doQ/ZFufyr2B9V5YWYWQj0+CxIV4dKEK8pirzFurnuVciJCcdOqoPOiFN+pNgs6ZxZ+YX7DRtEKyNQ7r6HvtSg==}
+  '@tapjs/before-each@2.0.8':
+    resolution: {integrity: sha512-Xjgk8/fuP7iFa5CYjFDl05p5PZGRe//VyHJNuYNzWpF1K9PNMtVdlmwplfpFmbrNrw/bIPq7R6LuiPmTBgzuOw==}
     engines: {node: 16 >=16.17.0 || 18 >= 18.6.0 || >=20}
     peerDependencies:
-      '@tapjs/core': 2.1.5
+      '@tapjs/core': 2.1.6
 
-  '@tapjs/before@2.0.7':
-    resolution: {integrity: sha512-ZYPwY61gIfNBjgqeFNWm7WzPGH2iKRBl/hgMvlBIiewS7IMPktXmthfhP5I48HoMfYJz0Ey+FVs+nYXwWrTXbw==}
+  '@tapjs/before@2.0.8':
+    resolution: {integrity: sha512-22ZdGSn/zOKf8J8cb3yfw5R4I/ozdHEDKL8lBWon/zsxxMMvaRTgOtFXEjb4RE+5SDrqQ4NM7ZRYPGhE7T97dw==}
     engines: {node: 16 >=16.17.0 || 18 >= 18.6.0 || >=20}
     peerDependencies:
-      '@tapjs/core': 2.1.5
+      '@tapjs/core': 2.1.6
 
-  '@tapjs/chdir@1.1.3':
-    resolution: {integrity: sha512-WjElL0UU0dGwEvtaUwhw4+sKj6f0L8J50pRWtiK0hqXldIGz3saQMNxjZgfWvokyiZIPFWxtdxpDHpoMnz4i3A==}
+  '@tapjs/chdir@1.1.4':
+    resolution: {integrity: sha512-axXkT5kWp2/X8l6inKyrqzUhqgvsgrWI8/0xLAdmirpFZ8H6gFxrl763Ozdm27EAmkLnnnWgFITPqUQCuB/tMA==}
     engines: {node: 16 >=16.17.0 || 18 >= 18.6.0 || >=20}
     peerDependencies:
-      '@tapjs/core': 2.1.5
+      '@tapjs/core': 2.1.6
 
-  '@tapjs/config@3.1.5':
-    resolution: {integrity: sha512-eIusvWwviuFeLbm794U6W81FnNTbOvBewpIBpYL+sdEofCXHBTNm8kIzncjI+4WwF0sZj0D2fJ/LN8A0goClbw==}
+  '@tapjs/config@3.1.6':
+    resolution: {integrity: sha512-5gkDMSLXL5798bbCdX4RdLpB4OUQeu9TXftzKmL1+1T2xbcd4q7zfDnCfOB9zTk50x2f04+4h6Q7Z1NcSKIspg==}
     engines: {node: 16 >=16.17.0 || 18 >= 18.6.0 || >=20}
     peerDependencies:
-      '@tapjs/core': 2.1.5
-      '@tapjs/test': 2.2.3
+      '@tapjs/core': 2.1.6
+      '@tapjs/test': 2.2.4
 
-  '@tapjs/core@2.1.5':
-    resolution: {integrity: sha512-s0WHh5ZzGCUbHe5XfapbBdv8EE2xsejrh97ALvKclcdZVYDK0dMl2fdBiVTF72hm1dyabeLYB0wzMGrnpoBe9Q==}
+  '@tapjs/core@2.1.6':
+    resolution: {integrity: sha512-NYMp0bl52DxXfcLmivMKvOIE14aaB9qJjdHeUbs6GZ9yxgD5w0yeiOT+gWEL+1PzZgGWRxSFEpghID1YfXAc4w==}
     engines: {node: 16 >=16.17.0 || 18 >= 18.6.0 || >=20}
 
   '@tapjs/error-serdes@2.0.1':
     resolution: {integrity: sha512-P+M4rtcfkDsUveKKmoRNF+07xpbPnRY5KrstIUOnyn483clQ7BJhsnWr162yYNCsyOj4zEfZmAJI1f8Bi7h/ZA==}
     engines: {node: 16 >=16.17.0 || 18 >= 18.6.0 || >=20}
 
-  '@tapjs/filter@2.0.7':
-    resolution: {integrity: sha512-pH5Tbn7n/4r3hfQTsTpuzydcIQonM9cBALiRVMnWtaP2G0S8oDQNcoIxr5/NZy4tsyNo5H9FXp6BqVzOfgOV+g==}
+  '@tapjs/filter@2.0.8':
+    resolution: {integrity: sha512-/ps6nOS3CTh1WLfCjJnU7tS4PH4KFgEasFSVPCIFN+BasyoqDapzj4JKIlzQvppZOGTQadKH3wUakafZl7uz8w==}
     engines: {node: 16 >=16.17.0 || 18 >= 18.6.0 || >=20}
     peerDependencies:
-      '@tapjs/core': 2.1.5
+      '@tapjs/core': 2.1.6
 
-  '@tapjs/fixture@2.0.7':
-    resolution: {integrity: sha512-btDTBaqIjGKQ6kZJrbTT+h+chefiB4YI1quU2Vnjf/jkB2JxulAM+//OwIJhLBLtu3aaobyITdacJnP4gUa6xQ==}
+  '@tapjs/fixture@2.0.8':
+    resolution: {integrity: sha512-LJnjeAMSozPFXzu+wQw2HJsjA9djHbTcyeMnsgiRL/Q8ffcLqAawV3SN6XKdDLdWYUg3e1fXhHspnbsouZj+xA==}
     engines: {node: 16 >=16.17.0 || 18 >= 18.6.0 || >=20}
     peerDependencies:
-      '@tapjs/core': 2.1.5
+      '@tapjs/core': 2.1.6
 
-  '@tapjs/intercept@2.0.7':
-    resolution: {integrity: sha512-dRC15GMgBAFxscKal+x5b4V8Ss5pryCVvj6B3o65i0sH4CKkBqFuPPHpqEsnhKJztguIYLgtU3vx1mUhTeKgww==}
+  '@tapjs/intercept@2.0.8':
+    resolution: {integrity: sha512-OF2Q35jtZ20bwV4hRNoca7vqIrzPFR3JR25G2rGru+fgPmq4heN0RLoh0d1O34AbrtXqra2lXkacMB/DPgb01A==}
     engines: {node: 16 >=16.17.0 || 18 >= 18.6.0 || >=20}
     peerDependencies:
-      '@tapjs/core': 2.1.5
+      '@tapjs/core': 2.1.6
 
-  '@tapjs/mock@2.1.5':
-    resolution: {integrity: sha512-x7u2fz71ThaEiZAGPtuIG0BkjpxIp0WknHFAwE9XEW+Z/o8KslMH7EdlZgffB8c3Cv4VHBtsACy+CX1vP53xZQ==}
+  '@tapjs/mock@2.1.6':
+    resolution: {integrity: sha512-bNXKrjg/r+i/gfKij5Oo/5Md2DvGNHPSRCHQmjz3VQjpyxqK7S1FGcR0kyqJ8Nof6Wc8yIhpNOCuibj19200IQ==}
     engines: {node: 16 >=16.17.0 || 18 >= 18.6.0 || >=20}
     peerDependencies:
-      '@tapjs/core': 2.1.5
+      '@tapjs/core': 2.1.6
 
-  '@tapjs/node-serialize@2.0.7':
-    resolution: {integrity: sha512-eYse85dsDozkELIIQfcAZ0Eu7HoLXepyIQlNYAGAD0RkG6SHA71NB6IpDgdNkglu3pzMEPW4LyqPDm2LyDzG4g==}
+  '@tapjs/node-serialize@2.0.8':
+    resolution: {integrity: sha512-92oqhkmIz5wr0yRs1CPQfim5JSwHPSmoDWnQmJlYUZsY1OYgYouQm3ifnPkqK/9hJpVYzlZEQmefxehxbs2WNQ==}
     engines: {node: 16 >=16.17.0 || 18 >= 18.6.0 || >=20}
     peerDependencies:
-      '@tapjs/core': 2.1.5
+      '@tapjs/core': 2.1.6
 
   '@tapjs/processinfo@3.1.8':
     resolution: {integrity: sha512-FIriEB+qqArPhmVYc1PZwRHD99myRdl7C9Oe/uts04Q2LOxQ5MEmqP9XOP8vVYzpDOYwmL8OmL6eOYt9eZlQKQ==}
     engines: {node: '>=16.17'}
 
-  '@tapjs/reporter@2.0.7':
-    resolution: {integrity: sha512-3rradmTmoduKs57dNgpr8awxxRQQ04EElL8oaoqfmwLhbUCJJDruUUJ6w3777tGu8/TIG3yER2dtQjSSxZIYgw==}
+  '@tapjs/reporter@2.0.8':
+    resolution: {integrity: sha512-tZn5ZHIrFwjbi59djtdXHBwgSIZSBXdJpz2i9CZ9HEC1nFhWtIr2Jczvrz4ScfixUgA0GNFirz+q+9iA4IFMvw==}
     engines: {node: 16 >=16.17.0 || 18 >= 18.6.0 || >=20}
     peerDependencies:
-      '@tapjs/core': 2.1.5
+      '@tapjs/core': 2.1.6
 
-  '@tapjs/run@2.1.6':
-    resolution: {integrity: sha512-DEhRoBOZSXV2EKuZpQ1mKvyMiOw96DYmU2t/thv8TGbvWNhFXL+pHRFds24jPEUMCo3lh6MBjy2+lxm+nMyd2A==}
+  '@tapjs/run@2.1.7':
+    resolution: {integrity: sha512-Hk41E68f1x4eLBm6Rrxx4ARzZzrjwaLbKThb16+f3bGYiajmqAvBdeyNEoQpEWmW+Sv2HSlueOk2SS2P4fyetg==}
     engines: {node: 16 >=16.17.0 || 18 >= 18.6.0 || >=20}
     hasBin: true
     peerDependencies:
-      '@tapjs/core': 2.1.5
+      '@tapjs/core': 2.1.6
 
-  '@tapjs/snapshot@2.0.7':
-    resolution: {integrity: sha512-uAlPEGQRkCTgDSCOJu0oB5lf6dUNqryQT+ivniJAo8HRkRDVM/vIghKu/mMy+fwgJ+uCVKf6EhOYHme+IWHPMA==}
+  '@tapjs/snapshot@2.0.8':
+    resolution: {integrity: sha512-L0vtqWKkgnQt/XNQkvHOme9Np7ffteCNf1P0F9mz2YiJion4er1nv6pZuJoKVxXFQsbNd2k+LGyx0Iw+bIzwFg==}
     engines: {node: 16 >=16.17.0 || 18 >= 18.6.0 || >=20}
     peerDependencies:
-      '@tapjs/core': 2.1.5
+      '@tapjs/core': 2.1.6
 
-  '@tapjs/spawn@2.0.7':
-    resolution: {integrity: sha512-88YRMMWpKR+gtO/mpzDPuKH7WdVHa8P6DCTk5XfY4yvztcpiMZcMIuQa9De7nfWE7gdpMu3aA7Ovoq7YzsdspQ==}
+  '@tapjs/spawn@2.0.8':
+    resolution: {integrity: sha512-vCYwynIYJNijY87uHFANe+gCu9rdGoe4GOBmghl6kwDy7eISmcN/FW5TlmrjePMNhTvrDMeYqOIAzqh3WRYmPA==}
     engines: {node: 16 >=16.17.0 || 18 >= 18.6.0 || >=20}
     peerDependencies:
-      '@tapjs/core': 2.1.5
+      '@tapjs/core': 2.1.6
 
   '@tapjs/stack@2.0.1':
     resolution: {integrity: sha512-3rKbZkRkLeJl9ilV/6b80YfI4C4+OYf7iEz5/d0MIVhmVvxv0ttIy5JnZutAc4Gy9eRp5Ne5UTAIFOVY5k36cg==}
     engines: {node: 16 >=16.17.0 || 18 >= 18.6.0 || >=20}
 
-  '@tapjs/stdin@2.0.7':
-    resolution: {integrity: sha512-uq73L2F9AnUqNbvkz90NTpTn2LZTOuf6MGkHRaHeIAEVy1LJm6A/ZNnNXQHK2KZ/gmTP/BNhbG/Uxcav+7zemg==}
+  '@tapjs/stdin@2.0.8':
+    resolution: {integrity: sha512-tW/exLXuDqjtH2wjptiPHXBahkdSyoppxDY56l9MG4tiz66dMN6NTCZFvQxp7+3t+lsQKqJp/74z8T/ayp+vZA==}
     engines: {node: 16 >=16.17.0 || 18 >= 18.6.0 || >=20}
     peerDependencies:
-      '@tapjs/core': 2.1.5
+      '@tapjs/core': 2.1.6
 
-  '@tapjs/test@2.2.3':
-    resolution: {integrity: sha512-iJqJXt3PuCI169QcKSNAuQJsXCDg6O9NhY/z4i0/6zNeZd8LZ1Dtn4bSwg0lv28yO2UR3hcJ2/8j8MNNJLyl6w==}
+  '@tapjs/test@2.2.4':
+    resolution: {integrity: sha512-QIgq2BhMpwO9SN8I0qlwZYXAllO4xWCfJ0MgAGhc+J7p69B5p9dDNPmyOreHeXWMmk6VlNj3oWveoXb5Zn9xZQ==}
     engines: {node: 16 >=16.17.0 || 18 >= 18.6.0 || >=20}
     hasBin: true
     peerDependencies:
-      '@tapjs/core': 2.1.5
+      '@tapjs/core': 2.1.6
 
-  '@tapjs/tsx@1.1.31':
-    resolution: {integrity: sha512-kjJ63UMG5DWR9wx0CAMhRy82NPP7qCMGs/jlz65iabfb8iQH0Ao138y928lyxHBqoS0OW5jBaQzCD1U+ke8D+A==}
+  '@tapjs/tsx@1.1.32':
+    resolution: {integrity: sha512-ben8+JH9j9YPcBnHAkwuzEjv4zxBKu/dgM486P9vh5TuKjE7cBMuufzG3LQvEtut1j3w6je7Y05NljH6HPtmGw==}
     engines: {node: 16 >=16.17.0 || 18 >= 18.6.0 || >=20}
     peerDependencies:
-      '@tapjs/core': 2.1.5
+      '@tapjs/core': 2.1.6
 
-  '@tapjs/typescript@1.4.12':
-    resolution: {integrity: sha512-pDIZfpiW2rer7ri6Ug8qqlxBv048JKuZKEkAj4Na+fGzkH48dHDtj95M4fokpuMhJqD4Nef0PdKZug5UED0CIA==}
+  '@tapjs/typescript@1.4.13':
+    resolution: {integrity: sha512-MNs7zlhM6G3pNUIjkKXDxgNCwCGZt2bUCGtVunSTDVIrKiUlHAl4QSjQ1oTjumHlCi9gFIWiwFAvpHekzFti0w==}
     engines: {node: 16 >=16.17.0 || 18 >= 18.6.0 || >=20}
     peerDependencies:
-      '@tapjs/core': 2.1.5
+      '@tapjs/core': 2.1.6
 
-  '@tapjs/worker@2.0.7':
-    resolution: {integrity: sha512-wJ7UFi9x+96O3ogssrptNyz90zHoNrON6ZQshVqWuY066pyVimw/dcqx0tNcQ/iZqBJXNcwVYQ6RJy1/+0G38w==}
+  '@tapjs/worker@2.0.8':
+    resolution: {integrity: sha512-AySf2kV6OHvwgD3DrLdT2az2g4hRdoRtKsFCLdZo3jOoKte+ft/IQJEnOW7CPT0RYUskS3elv6eabYgSyTH4tg==}
     engines: {node: 16 >=16.17.0 || 18 >= 18.6.0 || >=20}
     peerDependencies:
-      '@tapjs/core': 2.1.5
+      '@tapjs/core': 2.1.6
 
   '@tsconfig/node14@14.1.2':
     resolution: {integrity: sha512-1vncsbfCZ3TBLPxesRYz02Rn7SNJfbLoDVkcZ7F/ixOV6nwxwgdhD1mdPcc5YQ413qBJ8CvMxXMFfJ7oawjo7Q==}
@@ -763,8 +763,8 @@ packages:
     resolution: {integrity: sha512-yQbXgO/OSZVD2IsiLlro+7Hf6Q18EJrKSEsdoMzKePKXct3gvD8oLcOQdIzGupr5Fj+EDe8gO/lxc1BzfMpxvA==}
     engines: {node: '>=8'}
 
-  c8@10.0.0:
-    resolution: {integrity: sha512-rdQecjxw16P8kwgMBjruaQyfF+R2o/mucCCK4VPktwq2HFMWLOHGyUasb46+WlUOVJX94d6dZolcJxzjCzWmXg==}
+  c8@10.1.1:
+    resolution: {integrity: sha512-+aAvpNMwnzncW27XsEf2eMrGTF8HXIGZ24UQ1dW679+8SQ/UvDXxHNoKwMohcI9ZVj0xl/bI4/meqxvIWOBYaw==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -1613,8 +1613,8 @@ packages:
     resolution: {integrity: sha512-MWG4OpAKtNoNVjCz/BqlDJiwTM99tiHRhHPS4iGOe1ZS0CgM4jSFH92lthSFvvy4EdDjQZDV7uYqUFlU9JuNhw==}
     engines: {node: 16 >=16.17.0 || 18 >= 18.6.0 || >=20}
 
-  tap@19.2.4:
-    resolution: {integrity: sha512-rH2HlRPbCpSFgKWo4mjhkPByZIzeW1PJIAZRNZs43V3sJbxyHyMYg69KZDXbyWNG9Hf65OQI6/O5x1A+kKdWzQ==}
+  tap@19.2.5:
+    resolution: {integrity: sha512-Mz7MznUuKCqrN9dr0s8REt6zLg6WLNrvGXwDSaUyPO73dpXXjakYA7YVKRWu6TBnj7NsSYKuHXpQFROlqZ2KTg==}
     engines: {node: 16 >=16.17.0 || 18 >= 18.6.0 || >=20}
     hasBin: true
 
@@ -2172,19 +2172,19 @@ snapshots:
 
   '@sinonjs/text-encoding@0.7.2': {}
 
-  '@tapjs/after-each@2.0.7(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
+  '@tapjs/after-each@2.0.8(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
     dependencies:
-      '@tapjs/core': 2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tapjs/core': 2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       function-loop: 4.0.0
 
-  '@tapjs/after@1.1.30(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
+  '@tapjs/after@1.1.31(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
     dependencies:
-      '@tapjs/core': 2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tapjs/core': 2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       is-actual-promise: 1.0.2
 
-  '@tapjs/asserts@2.0.7(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@tapjs/asserts@2.0.8(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@tapjs/core': 2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tapjs/core': 2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tapjs/stack': 2.0.1
       is-actual-promise: 1.0.2
       tcompare: 7.0.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -2193,35 +2193,35 @@ snapshots:
       - react
       - react-dom
 
-  '@tapjs/before-each@2.0.7(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
+  '@tapjs/before-each@2.0.8(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
     dependencies:
-      '@tapjs/core': 2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tapjs/core': 2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       function-loop: 4.0.0
 
-  '@tapjs/before@2.0.7(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
+  '@tapjs/before@2.0.8(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
     dependencies:
-      '@tapjs/core': 2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tapjs/core': 2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       is-actual-promise: 1.0.2
 
-  '@tapjs/chdir@1.1.3(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
+  '@tapjs/chdir@1.1.4(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
     dependencies:
-      '@tapjs/core': 2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tapjs/core': 2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
 
-  '@tapjs/config@3.1.5(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@tapjs/test@2.2.3(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
+  '@tapjs/config@3.1.6(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@tapjs/test@2.2.4(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
     dependencies:
-      '@tapjs/core': 2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@tapjs/test': 2.2.3(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tapjs/core': 2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tapjs/test': 2.2.4(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       chalk: 5.3.0
       jackspeak: 3.4.0
       polite-json: 4.0.1
       tap-yaml: 2.2.2
       walk-up-path: 3.0.1
 
-  '@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@tapjs/processinfo': 3.1.8
       '@tapjs/stack': 2.0.1
-      '@tapjs/test': 2.2.3(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tapjs/test': 2.2.4(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       async-hook-domain: 4.0.1
       diff: 5.2.0
       is-actual-promise: 1.0.2
@@ -2242,33 +2242,33 @@ snapshots:
     dependencies:
       minipass: 7.1.2
 
-  '@tapjs/filter@2.0.7(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
+  '@tapjs/filter@2.0.8(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
     dependencies:
-      '@tapjs/core': 2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tapjs/core': 2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
 
-  '@tapjs/fixture@2.0.7(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
+  '@tapjs/fixture@2.0.8(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
     dependencies:
-      '@tapjs/core': 2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tapjs/core': 2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       mkdirp: 3.0.1
       rimraf: 5.0.7
 
-  '@tapjs/intercept@2.0.7(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
+  '@tapjs/intercept@2.0.8(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
     dependencies:
-      '@tapjs/after': 1.1.30(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
-      '@tapjs/core': 2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tapjs/after': 1.1.31(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      '@tapjs/core': 2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tapjs/stack': 2.0.1
 
-  '@tapjs/mock@2.1.5(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
+  '@tapjs/mock@2.1.6(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
     dependencies:
-      '@tapjs/after': 1.1.30(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
-      '@tapjs/core': 2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tapjs/after': 1.1.31(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      '@tapjs/core': 2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tapjs/stack': 2.0.1
       resolve-import: 1.4.5
       walk-up-path: 3.0.1
 
-  '@tapjs/node-serialize@2.0.7(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
+  '@tapjs/node-serialize@2.0.8(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
     dependencies:
-      '@tapjs/core': 2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tapjs/core': 2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tapjs/error-serdes': 2.0.1
       '@tapjs/stack': 2.0.1
       tap-parser: 16.0.1
@@ -2280,10 +2280,10 @@ snapshots:
       signal-exit: 4.1.0
       uuid: 8.3.2
 
-  '@tapjs/reporter@2.0.7(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@tapjs/test@2.2.3(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))':
+  '@tapjs/reporter@2.0.8(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@tapjs/test@2.2.4(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))':
     dependencies:
-      '@tapjs/config': 3.1.5(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@tapjs/test@2.2.3(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
-      '@tapjs/core': 2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tapjs/config': 3.1.6(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@tapjs/test@2.2.4(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      '@tapjs/core': 2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tapjs/stack': 2.0.1
       chalk: 5.3.0
       ink: 4.4.1(react@18.3.1)
@@ -2304,17 +2304,17 @@ snapshots:
       - react-dom
       - utf-8-validate
 
-  '@tapjs/run@2.1.6(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@tapjs/run@2.1.7(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@tapjs/after': 1.1.30(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
-      '@tapjs/before': 2.0.7(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
-      '@tapjs/config': 3.1.5(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@tapjs/test@2.2.3(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
-      '@tapjs/core': 2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tapjs/after': 1.1.31(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      '@tapjs/before': 2.0.8(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      '@tapjs/config': 3.1.6(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@tapjs/test@2.2.4(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      '@tapjs/core': 2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tapjs/processinfo': 3.1.8
-      '@tapjs/reporter': 2.0.7(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@tapjs/test@2.2.3(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))
-      '@tapjs/spawn': 2.0.7(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
-      '@tapjs/stdin': 2.0.7(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
-      '@tapjs/test': 2.2.3(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tapjs/reporter': 2.0.8(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@tapjs/test@2.2.4(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))
+      '@tapjs/spawn': 2.0.8(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      '@tapjs/stdin': 2.0.8(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      '@tapjs/test': 2.2.4(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       c8: 9.1.0
       chalk: 5.3.0
       chokidar: 3.6.0
@@ -2346,9 +2346,9 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@tapjs/snapshot@2.0.7(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@tapjs/snapshot@2.0.8(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@tapjs/core': 2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tapjs/core': 2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       is-actual-promise: 1.0.2
       tcompare: 7.0.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       trivial-deferred: 2.0.0
@@ -2356,36 +2356,36 @@ snapshots:
       - react
       - react-dom
 
-  '@tapjs/spawn@2.0.7(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
+  '@tapjs/spawn@2.0.8(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
     dependencies:
-      '@tapjs/core': 2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tapjs/core': 2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
 
   '@tapjs/stack@2.0.1': {}
 
-  '@tapjs/stdin@2.0.7(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
+  '@tapjs/stdin@2.0.8(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
     dependencies:
-      '@tapjs/core': 2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tapjs/core': 2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
 
-  '@tapjs/test@2.2.3(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@tapjs/test@2.2.4(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@isaacs/ts-node-temp-fork-for-pr-2009': 10.9.7(@types/node@20.14.2)(typescript@5.4.5)
-      '@tapjs/after': 1.1.30(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
-      '@tapjs/after-each': 2.0.7(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
-      '@tapjs/asserts': 2.0.7(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@tapjs/before': 2.0.7(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
-      '@tapjs/before-each': 2.0.7(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
-      '@tapjs/chdir': 1.1.3(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
-      '@tapjs/core': 2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@tapjs/filter': 2.0.7(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
-      '@tapjs/fixture': 2.0.7(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
-      '@tapjs/intercept': 2.0.7(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
-      '@tapjs/mock': 2.1.5(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
-      '@tapjs/node-serialize': 2.0.7(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
-      '@tapjs/snapshot': 2.0.7(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@tapjs/spawn': 2.0.7(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
-      '@tapjs/stdin': 2.0.7(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
-      '@tapjs/typescript': 1.4.12(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/node@20.14.2)(typescript@5.4.5)
-      '@tapjs/worker': 2.0.7(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      '@tapjs/after': 1.1.31(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      '@tapjs/after-each': 2.0.8(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      '@tapjs/asserts': 2.0.8(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tapjs/before': 2.0.8(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      '@tapjs/before-each': 2.0.8(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      '@tapjs/chdir': 1.1.4(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      '@tapjs/core': 2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tapjs/filter': 2.0.8(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      '@tapjs/fixture': 2.0.8(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      '@tapjs/intercept': 2.0.8(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      '@tapjs/mock': 2.1.6(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      '@tapjs/node-serialize': 2.0.8(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      '@tapjs/snapshot': 2.0.8(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tapjs/spawn': 2.0.8(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      '@tapjs/stdin': 2.0.8(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      '@tapjs/typescript': 1.4.13(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/node@20.14.2)(typescript@5.4.5)
+      '@tapjs/worker': 2.0.8(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       glob: 10.4.1
       jackspeak: 3.4.0
       mkdirp: 3.0.1
@@ -2404,24 +2404,24 @@ snapshots:
       - react
       - react-dom
 
-  '@tapjs/tsx@1.1.31(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
+  '@tapjs/tsx@1.1.32(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
     dependencies:
-      '@tapjs/core': 2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tapjs/core': 2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       tsx: 4.15.1
 
-  '@tapjs/typescript@1.4.12(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/node@20.14.2)(typescript@5.4.5)':
+  '@tapjs/typescript@1.4.13(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/node@20.14.2)(typescript@5.4.5)':
     dependencies:
       '@isaacs/ts-node-temp-fork-for-pr-2009': 10.9.7(@types/node@20.14.2)(typescript@5.4.5)
-      '@tapjs/core': 2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tapjs/core': 2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     transitivePeerDependencies:
       - '@swc/core'
       - '@swc/wasm'
       - '@types/node'
       - typescript
 
-  '@tapjs/worker@2.0.7(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
+  '@tapjs/worker@2.0.8(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
     dependencies:
-      '@tapjs/core': 2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tapjs/core': 2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
 
   '@tsconfig/node14@14.1.2': {}
 
@@ -2529,7 +2529,7 @@ snapshots:
     dependencies:
       fill-range: 7.1.1
 
-  c8@10.0.0:
+  c8@10.1.1:
     dependencies:
       '@bcoe/v8-coverage': 0.2.3
       '@istanbuljs/schema': 0.1.3
@@ -3443,27 +3443,27 @@ snapshots:
       yaml: 2.4.5
       yaml-types: 0.3.0(yaml@2.4.5)
 
-  tap@19.2.4(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.4.5):
+  tap@19.2.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.4.5):
     dependencies:
-      '@tapjs/after': 1.1.30(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
-      '@tapjs/after-each': 2.0.7(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
-      '@tapjs/asserts': 2.0.7(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@tapjs/before': 2.0.7(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
-      '@tapjs/before-each': 2.0.7(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
-      '@tapjs/chdir': 1.1.3(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
-      '@tapjs/core': 2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@tapjs/filter': 2.0.7(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
-      '@tapjs/fixture': 2.0.7(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
-      '@tapjs/intercept': 2.0.7(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
-      '@tapjs/mock': 2.1.5(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
-      '@tapjs/node-serialize': 2.0.7(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
-      '@tapjs/run': 2.1.6(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@tapjs/snapshot': 2.0.7(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@tapjs/spawn': 2.0.7(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
-      '@tapjs/stdin': 2.0.7(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
-      '@tapjs/test': 2.2.3(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@tapjs/typescript': 1.4.12(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/node@20.14.2)(typescript@5.4.5)
-      '@tapjs/worker': 2.0.7(@tapjs/core@2.1.5(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      '@tapjs/after': 1.1.31(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      '@tapjs/after-each': 2.0.8(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      '@tapjs/asserts': 2.0.8(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tapjs/before': 2.0.8(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      '@tapjs/before-each': 2.0.8(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      '@tapjs/chdir': 1.1.4(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      '@tapjs/core': 2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tapjs/filter': 2.0.8(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      '@tapjs/fixture': 2.0.8(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      '@tapjs/intercept': 2.0.8(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      '@tapjs/mock': 2.1.6(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      '@tapjs/node-serialize': 2.0.8(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      '@tapjs/run': 2.1.7(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tapjs/snapshot': 2.0.8(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tapjs/spawn': 2.0.8(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      '@tapjs/stdin': 2.0.8(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      '@tapjs/test': 2.2.4(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tapjs/typescript': 1.4.13(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/node@20.14.2)(typescript@5.4.5)
+      '@tapjs/worker': 2.0.8(@tapjs/core@2.1.6(@types/node@20.14.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       resolve-import: 1.4.5
     transitivePeerDependencies:
       - '@swc/core'
