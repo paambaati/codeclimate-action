@@ -5,7 +5,6 @@
   "description": "Publish code coverage to Code Climate",
   "type": "module",
   "main": "lib/main.js",
-  "packageManager": "pnpm@9.3.0",
   "scripts": {
     "build": "tsup --config tsup.config.ts",
     "test": "cross-env NODE_OPTIONS=\"--no-warnings\" tap run --disable-coverage",
@@ -59,8 +58,10 @@
     "sinon": "18.0.0",
     "tap": "21.0.0",
     "tsimp": "2.0.11",
-    "tsup": "8.2.0",
+    "tsup": "8.2.1",
     "typescript": "5.5.3",
     "which": "4.0.0"
-  }
+  },
+  "packageManager": "pnpm@9.6.0",
+  "$schema": "https://json.schemastore.org/package"
 }
