@@ -33,6 +33,10 @@ inputs:
     required: false
     description: 'Verify that the Action environment (OS and CPU architecture) is supported by Code Climate test reporter'
     default: 'true'
+  batchSize:
+    required: false
+    description: 'Batch size for source files (cc-test-reporter upload-coverage uses 500 by default)'
+    default: ''
 runs:
   using: 'node20'
   main: 'lib/main.mjs'
