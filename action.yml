@@ -35,8 +35,8 @@ inputs:
     default: 'true'
   batchSize:
     required: false
-    description: 'Batch size for source files to be sent to Code Climate in upload coverage step'
-    default: '500'
+    description: 'Batch size for source files (cc-test-reporter upload-coverage uses 500 by default)'
+    default: ''
 runs:
   using: 'node20'
   main: 'lib/main.mjs'

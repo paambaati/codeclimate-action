@@ -212,7 +212,7 @@ export async function run({
 	coveragePrefix,
 	verifyDownload = DEFAULT_VERIFY_DOWNLOAD,
 	verifyEnvironment = DEFAULT_VERIFY_ENVIRONMENT,
-	batchSize = DEFAULT_BATCH_SIZE,
+	batchSize,
 }: ActionArguments = {}): Promise<void> {
 	let lastExitCode = 1;
 	if (verifyEnvironment === 'true') {
@@ -439,10 +439,7 @@ if (isThisFileBeingRunViaCLI) {
 		'verifyEnvironment',
 		DEFAULT_VERIFY_ENVIRONMENT,
 	);
-	const batchSize = getOptionalString(
-		'batchSize',
-		DEFAULT_BATCH_SIZE,
-	);
+	const batchSize = getOptionalString('batchSize');
 
 	try {
 		run({
