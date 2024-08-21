@@ -38,6 +38,8 @@ export interface ActionArguments {
 	verifyDownload?: string;
 	/** Verifies if the current OS and CPU architecture is supported by CodeClimate test reporter. */
 	verifyEnvironment?: string;
+	/** Batch size for source files used by upload-coverage command (default 500) */
+	batchSize?: string;
 }
 
 const CURRENT_ENVIRONMENT = getSupportedEnvironmentInfo();
@@ -209,6 +211,7 @@ export async function run({
 	coveragePrefix,
 	verifyDownload = DEFAULT_VERIFY_DOWNLOAD,
 	verifyEnvironment = DEFAULT_VERIFY_ENVIRONMENT,
+	batchSize,
 }: ActionArguments = {}): Promise<void> {
 	let lastExitCode = 1;
 	if (verifyEnvironment === 'true') {
@@ -368,6 +371,9 @@ export async function run({
 		// Upload to Code Climate.
 		const uploadCommands = ['upload-coverage', '-i', 'coverage.total.json'];
 		if (codeClimateDebug === 'true') uploadCommands.push('--debug');
+		if (batchSize) {
+			uploadCommands.push('--batch-size', batchSize);
+		}
 		try {
 			lastExitCode = await exec(executable, uploadCommands, execOpts);
 			if (lastExitCode !== 0) {
@@ -432,6 +438,7 @@ if (isThisFileBeingRunViaCLI) {
 		'verifyEnvironment',
 		DEFAULT_VERIFY_ENVIRONMENT,
 	);
+	const batchSize = getOptionalString('batchSize');
 
 	try {
 		run({
@@ -444,6 +451,7 @@ if (isThisFileBeingRunViaCLI) {
 			coveragePrefix,
 			verifyDownload,
 			verifyEnvironment,
+			batchSize,
 		});
 	} finally {
 		// Finally clean up all artifacts that we downloaded.
