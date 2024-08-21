@@ -183,6 +183,7 @@ t.test('🧪 run() should run the CC reporter (happy path).', async (t) => {
 			coverageCommand: `${ECHO_CMD} 'coverage ok'`,
 			verifyDownload: 'false',
 			verifyEnvironment: 'false',
+			batchSize: 200,
 		});
 		stdHook.unhook();
 	} catch (err) {

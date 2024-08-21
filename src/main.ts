@@ -38,6 +38,8 @@ export interface ActionArguments {
 	verifyDownload?: string;
 	/** Verifies if the current OS and CPU architecture is supported by CodeClimate test reporter. */
 	verifyEnvironment?: string;
+	/** Batch size for source files used by upload-coverage command (default 500) */
+	batchSize?: number;
 }
 
 const CURRENT_ENVIRONMENT = getSupportedEnvironmentInfo();
@@ -59,6 +61,7 @@ const DEFAULT_CODECLIMATE_DEBUG = 'false';
 const DEFAULT_COVERAGE_LOCATIONS = '';
 const DEFAULT_VERIFY_DOWNLOAD = 'true';
 const DEFAULT_VERIFY_ENVIRONMENT = 'true';
+const DEFAULT_BATCH_SIZE = 500;
 
 const SUPPORTED_GITHUB_EVENTS = [
 	// Regular PRs.
@@ -206,6 +209,7 @@ export async function run({
 	workingDirectory = DEFAULT_WORKING_DIRECTORY,
 	codeClimateDebug = DEFAULT_CODECLIMATE_DEBUG,
 	coverageLocationsParam = DEFAULT_COVERAGE_LOCATIONS,
+	batchSize = DEFAULT_BATCH_SIZE,
 	coveragePrefix,
 	verifyDownload = DEFAULT_VERIFY_DOWNLOAD,
 	verifyEnvironment = DEFAULT_VERIFY_ENVIRONMENT,
@@ -368,6 +372,9 @@ export async function run({
 		// Upload to Code Climate.
 		const uploadCommands = ['upload-coverage', '-i', 'coverage.total.json'];
 		if (codeClimateDebug === 'true') uploadCommands.push('--debug');
+		if (batchSize) {
+			uploadCommands.push('--batch-size', batchSize.toString());
+		}
 		try {
 			lastExitCode = await exec(executable, uploadCommands, execOpts);
 			if (lastExitCode !== 0) {
