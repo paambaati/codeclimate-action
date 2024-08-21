@@ -1,5 +1,19 @@
 # Changelog
 
+## [9.0.0](https://github.com/paambaati/codeclimate-action/compare/v8.0.0...v9.0.0) (2024-08-21)
+
+
+### Features
+
+* **core:** add support for batch-size ([3c144ec](https://github.com/paambaati/codeclimate-action/commit/3c144ec8e4074dcc15884b780b4eed12d8ab0f3a))
+
+### Miscellaneous Chores
+
+* release 6.0.0 ([5c9d4de](https://github.com/paambaati/codeclimate-action/commit/5c9d4de11fe96247f3539e4e8c7cdd448b0c6dca))
+* release 7.0.0 ([bae515b](https://github.com/paambaati/codeclimate-action/commit/bae515b41c8a9de774d011c8796742112d8c903f))
+* release 8.0.0 ([26b2a65](https://github.com/paambaati/codeclimate-action/commit/26b2a652c38277ae8185d000fecbbbfe08e761a4))
+* release 9.0.0 ([d84270d](https://github.com/paambaati/codeclimate-action/commit/d84270d264e7c7176492228c88790bd551c6dfcf))
+
 ## [8.0.0](https://github.com/paambaati/codeclimate-action/compare/v7.0.0...v8.0.0) (2024-06-12)
 
 
