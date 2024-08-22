@@ -1,7 +1,7 @@
 import { createHash, timingSafeEqual } from 'node:crypto';
 import { createWriteStream, readFile } from 'node:fs';
-import { platform, arch as nodeArch } from 'node:os';
-import { platform as nodePlatform, release, config } from 'node:process';
+import { arch as nodeArch } from 'node:os';
+import { config, platform as nodePlatform, release } from 'node:process';
 import { promisify } from 'node:util';
 import { getInput } from '@actions/core';
 import arch from 'arch';
@@ -292,6 +292,7 @@ export function getSupportedEnvironmentInfo() {
 		nodeArchitecture: nodeArch,
 		/** The CPU architecture of the host machine that compiled the current Node.js binary. */
 		nodeHostArchitecture: config.variables.host_arch,
+		/** Metadata related to the Node.js binary's release, including URLs for the source tarball and headers-only tarball. */
 		nodeRelease: release,
 	};
 }
