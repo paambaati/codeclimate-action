@@ -1,6 +1,6 @@
 import { createHash, timingSafeEqual } from 'node:crypto';
 import { createWriteStream, readFile } from 'node:fs';
-import { arch as nodeArch } from 'node:os';
+import { arch as nodeArch, platform } from 'node:os';
 import { config, platform as nodePlatform, release } from 'node:process';
 import { promisify } from 'node:util';
 import { getInput } from '@actions/core';
