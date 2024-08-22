@@ -296,6 +296,7 @@ export function getSupportedEnvironmentInfo() {
 	};
 }
 
+/* c8 ignore start */
 /**
  * Detects if the logic is being currently executed inside a `tap` test.
  */
@@ -303,3 +304,4 @@ export function amICurrentlyBeingTestedByTap() {
 	// REFER: https://node-tap.org/environment/#environment-variables-used-by-tap
 	return Object.prototype.hasOwnProperty.call(process.env, 'TAP_CHILD_ID');
 }
+/* c8 ignore stop */
