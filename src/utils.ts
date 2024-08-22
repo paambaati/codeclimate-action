@@ -1,6 +1,7 @@
 import { createHash, timingSafeEqual } from 'node:crypto';
 import { createWriteStream, readFile } from 'node:fs';
-import { platform } from 'node:os';
+import { platform, arch as nodeArch } from 'node:os';
+import { platform as nodePlatform, release, config } from 'node:process';
 import { promisify } from 'node:util';
 import { getInput } from '@actions/core';
 import arch from 'arch';
@@ -274,13 +275,31 @@ export function getSupportedEnvironmentInfo() {
 	};
 
 	return {
+		/** Returns `true` if the CodeClimate test reporter is actually supported on this environment. */
 		supported: !UNSUPPORTED_ENVIRONMENTS.some((e) => {
 			return (
 				e.architecture === currentEnvironment.architecture &&
 				e.platform === currentEnvironment.platform
 			);
 		}),
+		/** The platform that the action is running on. */
 		platform: currentEnvironment.platform,
+		/** The CPU architecture that the action is running on. */
 		architecture: currentEnvironment.architecture,
+		/** The platform that the current Node.js binary was compiled for. */
+		nodePlatform: nodePlatform,
+		/** The CPU architecture that the current Node.js binary was compiled for. */
+		nodeArchitecture: nodeArch,
+		/** The CPU architecture of the host machine that compiled the current Node.js binary. */
+		nodeHostArchitecture: config.variables.host_arch,
+		nodeRelease: release,
 	};
+}
+
+/**
+ * Detects if the logic is being currently executed inside a `tap` test.
+ */
+export function amICurrentlyBeingTestedByTap() {
+	// REFER: https://node-tap.org/environment/#environment-variables-used-by-tap
+	return Object.prototype.hasOwnProperty.call(process.env, 'TAP_CHILD_ID');
 }

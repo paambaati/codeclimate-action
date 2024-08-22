@@ -8,6 +8,7 @@ import type { ExecOptions } from '@actions/exec/lib/interfaces.js';
 import { context } from '@actions/github';
 import * as glob from '@actions/glob';
 import {
+	amICurrentlyBeingTestedByTap,
 	downloadToFile,
 	getOptionalString,
 	getSupportedEnvironmentInfo,
@@ -213,6 +214,12 @@ export async function run({
 	verifyEnvironment = DEFAULT_VERIFY_ENVIRONMENT,
 	batchSize,
 }: ActionArguments = {}): Promise<void> {
+	/* c8 ignore start */
+	if (!amICurrentlyBeingTestedByTap) {
+		debug(`ℹ️ Environment data: ${JSON.stringify(CURRENT_ENVIRONMENT)}`);
+	}
+	/* c8 ignore stop */
+
 	let lastExitCode = 1;
 	if (verifyEnvironment === 'true') {
 		debug('ℹ️ Verifying environment...');
