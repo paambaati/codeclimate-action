@@ -289,7 +289,7 @@ export function getSupportedEnvironmentInfo() {
 		/** The platform that the current Node.js binary was compiled for. */
 		nodePlatform: nodePlatform,
 		/** The CPU architecture that the current Node.js binary was compiled for. */
-		nodeArchitecture: nodeArch,
+		nodeArchitecture: nodeArch(),
 		/** The CPU architecture of the host machine that compiled the current Node.js binary. */
 		nodeHostArchitecture: config.variables.host_arch,
 		/** Metadata related to the Node.js binary's release, including URLs for the source tarball and headers-only tarball. */
