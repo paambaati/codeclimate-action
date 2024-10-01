@@ -47,7 +47,7 @@
     "@tapjs/tsx": "3.0.0",
     "@tsconfig/node20": "20.1.4",
     "@tsconfig/strictest": "2.0.5",
-    "@types/node": "20.16.1",
+    "@types/node": "22.7.4",
     "@types/node-fetch": "2.6.11",
     "@types/sinon": "17.0.3",
     "@types/which": "3.0.4",
