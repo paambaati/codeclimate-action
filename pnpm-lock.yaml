@@ -73,8 +73,8 @@ importers:
         specifier: 8.0.1
         version: 8.0.1
       nock:
-        specifier: 13.5.5
-        version: 13.5.5
+        specifier: 13.5.6
+        version: 13.5.6
       sinon:
         specifier: 18.0.0
         version: 18.0.0
@@ -1204,15 +1204,6 @@ packages:
     resolution: {integrity: sha512-0R9ikRb668HB7QDxT1vkpuUBtqc53YyAwMwGeUFKRojY/NWKvdZ+9UYtRfGmhqNbRkTSVpMbmyhXipFFv2cb/A==}
     engines: {node: '>= 12'}
 
-  debug@4.3.5:
-    resolution: {integrity: sha512-pt0bNEmneDIvdL1Xsd9oDQ/wrQRkXDT4AUWlNZNPKvW5x/jyO9VFXkJUP07vQ2upmw5PlaITaPKc31jK13V+jg==}
-    engines: {node: '>=6.0'}
-    peerDependencies:
-      supports-color: '*'
-    peerDependenciesMeta:
-      supports-color:
-        optional: true
-
   debug@4.3.7:
     resolution: {integrity: sha512-Er2nc/H7RrMXZBFCEim6TCmMk02Z8vLC2Rbi1KEBggpo0fS6l0S1nnapwmIi3yW/+GOJap1Krg4w0Hg80oCqgQ==}
     engines: {node: '>=6.0'}
@@ -1660,9 +1651,6 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
-  ms@2.1.2:
-    resolution: {integrity: sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==}
-
   ms@2.1.3:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
 
@@ -1676,8 +1664,8 @@ packages:
   nise@6.0.0:
     resolution: {integrity: sha512-K8ePqo9BFvN31HXwEtTNGzgrPpmvgciDsFz8aztFjt4LqKO/JeFD8tBOeuDiCMXrIl/m1YvfH8auSpxfaD09wg==}
 
-  nock@13.5.5:
-    resolution: {integrity: sha512-XKYnqUrCwXC8DGG1xX4YH5yNIrlh9c065uaMZZHUoeUUINTOyt+x/G+ezYk0Ft6ExSREVIs+qBJDK503viTfFA==}
+  nock@13.5.6:
+    resolution: {integrity: sha512-o2zOYiCpzRqSzPj0Zt/dQ/DqZeYoaQ7TUonc/xUPjCGl9WeHpNbxgVvOquXYAaJzI0M9BXV3HTzG0p8IUAbBTQ==}
     engines: {node: '>= 10.13'}
 
   node-domexception@1.0.0:
@@ -3207,7 +3195,7 @@ snapshots:
 
   agent-base@7.1.1:
     dependencies:
-      debug: 4.3.5
+      debug: 4.3.7
     transitivePeerDependencies:
       - supports-color
 
@@ -3385,10 +3373,6 @@ snapshots:
       which: 2.0.2
 
   data-uri-to-buffer@4.0.1: {}
-
-  debug@4.3.5:
-    dependencies:
-      ms: 2.1.2
 
   debug@4.3.7:
     dependencies:
@@ -3582,14 +3566,14 @@ snapshots:
   http-proxy-agent@7.0.2:
     dependencies:
       agent-base: 7.1.1
-      debug: 4.3.5
+      debug: 4.3.7
     transitivePeerDependencies:
       - supports-color
 
   https-proxy-agent@7.0.4:
     dependencies:
       agent-base: 7.1.1
-      debug: 4.3.5
+      debug: 4.3.7
     transitivePeerDependencies:
       - supports-color
 
@@ -3833,8 +3817,6 @@ snapshots:
 
   mkdirp@3.0.1: {}
 
-  ms@2.1.2: {}
-
   ms@2.1.3: {}
 
   mz@2.7.0:
@@ -3853,9 +3835,9 @@ snapshots:
       just-extend: 6.2.0
       path-to-regexp: 6.3.0
 
-  nock@13.5.5:
+  nock@13.5.6:
     dependencies:
-      debug: 4.3.5
+      debug: 4.3.7
       json-stringify-safe: 5.0.1
       propagate: 2.0.1
     transitivePeerDependencies:
@@ -4197,7 +4179,7 @@ snapshots:
   socks-proxy-agent@8.0.3:
     dependencies:
       agent-base: 7.1.1
-      debug: 4.3.5
+      debug: 4.3.7
       socks: 2.8.3
     transitivePeerDependencies:
       - supports-color
@@ -4450,7 +4432,7 @@ snapshots:
   tuf-js@2.2.1:
     dependencies:
       '@tufjs/models': 2.0.1
-      debug: 4.3.5
+      debug: 4.3.7
       make-fetch-happen: 13.0.1
     transitivePeerDependencies:
       - supports-color
