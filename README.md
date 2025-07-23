@@ -4,6 +4,9 @@
 [![Build Status](https://github.com/paambaati/codeclimate-action/actions/workflows/ci.yml/badge.svg)](https://github.com/paambaati/codeclimate-action/actions/workflows/ci.yml)
 [![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
+> [!IMPORTANT]  
+> CodeClimate has now been deprecated in favour of Qlty ([read announcement post](https://codeclimate.com/blog/code-climate-quality-is-now-qlty-software)). See https://docs.qlty.sh/migration/coverage to learn how to migrate to their new official GitHub Action workflow.
+
 A GitHub action that publishes your code coverage to [Code Climate](http://codeclimate.com/).
 
 ## Usage
